@@ -1,0 +1,40 @@
+@using Reconciler.Application
+@using Reconciler.Domain
+
+@inject ITransactionRepository _transactionRepository;
+
+<table>
+    <thead>
+        <td></td>
+        <td>Hash</td>
+        <td>Date</td>
+        <td>Charge</td>
+        <td>Class</td>
+        <td>Details</td>
+    </thead>
+    @foreach (var transaction in _transactions) {
+        if(transaction.Charge > 0) continue;
+        <tr>
+            <td>
+                <TransactionClassifierSelect 
+                    Transaction=@transaction />
+            </td>
+            <td>@( new String(transaction.ToHash().ToString().Take(6).ToArray()) )</td>
+            <td>@transaction.Date.ToShortDateString()</td>
+            <td>@transaction.Charge</td>
+            <td>@transaction.Class</td>
+            <td>@transaction.Details</td>
+        </tr>
+    }
+</table>
+
+@code {
+
+    Transaction[] _transactions;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var transactions = await _transactionRepository.GetTransactions();
+        _transactions = transactions.ToArray();
+    }
+}

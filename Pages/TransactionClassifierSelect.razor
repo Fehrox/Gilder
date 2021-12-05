@@ -1,0 +1,44 @@
+@using Reconciler.Domain
+@using Reconciler.Application
+@using System.Diagnostics
+
+@inject IGroupRepository _groupRepository;
+@inject ITransactionGroupMapper _transactionGroupMapper;
+
+<select value="@_selectedGroup?.GroupName" @onchange=HandleOptionChanged>
+    <option>Select</option>
+    @foreach (var option in _classificationOptions) {
+        <option value="@option.GroupName">@option.GroupName</option>
+    }
+</select>
+
+@code {
+
+    [Parameter]
+    public Transaction Transaction { get; set; }
+
+    [Parameter]
+    public Action<Group> OnClassificationChanged { get; set; }
+
+    private Group[] _classificationOptions;
+    private Group _selectedGroup;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var options = await _groupRepository.GetGroups();
+        _classificationOptions = options.ToArray();
+        
+        var selectedGroup = await _transactionGroupMapper.GetGroupForTransaction(Transaction);
+        _selectedGroup = selectedGroup;
+    }
+
+    private void HandleOptionChanged(ChangeEventArgs e)
+    {
+        var option = _classificationOptions
+            .FirstOrDefault(o => o.GroupName == (string)e.Value);
+        _selectedGroup = option;
+
+        _transactionGroupMapper.MapTransactionToGroup(Transaction, option);
+    }
+
+}

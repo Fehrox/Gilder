@@ -7,5 +7,6 @@ namespace Reconciler.Application
     public interface ITransactionRepository
     {
         Task<IEnumerable<Transaction>> GetTransactions();
+        Task<Transaction> GetTransactionByHash(Hash transactionHash);
     }
 }

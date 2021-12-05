@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fluxor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -15,10 +16,7 @@ namespace Reconciler
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
@@ -29,6 +27,10 @@ namespace Reconciler
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.InstallInfrastructure();
+            services.AddFluxor(opt => {
+                opt.ScanAssemblies(typeof(Program).Assembly);
+                opt.UseRouting();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

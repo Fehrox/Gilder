@@ -39,21 +39,21 @@ namespace Reconciler.Infrastructure
             return null;
         }
 
-        public Task MapTransactionToGroup(Transaction transaction, Group group)
+        public Task UpdateTransactionGroup(Hash transaction, Hash group)
         {
             bool existingUpdated = false;
             var maps = GetGroupTransactionMaps().ToList();
             foreach (var map in maps) {
-                var isMatchingTransaction = map.TransactionHash == transaction.ToHash().ToString();
+                var isMatchingTransaction = map.TransactionHash == transaction.ToString();
                 if (!isMatchingTransaction) continue;
-                map.GroupHash = group.ToHash().ToString();
+                map.GroupHash = group.ToString();
                 existingUpdated = true;
             }
             
             if(!existingUpdated)
                 maps.Add(new GroupTransactionMap {
-                    GroupHash = group.ToHash().ToString(),
-                    TransactionHash = transaction.ToHash().ToString()
+                    GroupHash = group.ToString(),
+                    TransactionHash = transaction.ToString()
                 });
             
             using (var writer = new StreamWriter(_csvPath))

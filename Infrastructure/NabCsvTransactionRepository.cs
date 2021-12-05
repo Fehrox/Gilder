@@ -38,6 +38,15 @@ namespace Reconciler.Infrastructure
             return Task.FromResult(transactions.AsEnumerable());
         }
 
+        public async Task<Transaction> GetTransactionByHash(Hash transactionHash)
+        {
+            var transactions = await GetTransactions();
+            var transactionForHash = transactions
+                .FirstOrDefault(t => t.ToHash().ToString() == transactionHash.ToString());
+
+            return transactionForHash;
+        }
+
         private Transaction.Classification ParseClassification(string transaction)
         {
             switch (transaction) {

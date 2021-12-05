@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="27.2.1" />
+    <PackageReference Include="Fluxor.Blazor.Web" Version="4.2.1" />
   </ItemGroup>
 
   <ItemGroup>

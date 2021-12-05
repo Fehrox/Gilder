@@ -1,11 +1,16 @@
 @using Reconciler.Domain
 @using Reconciler.Application
 @using System.Diagnostics
+@using Fluxor
+@using Reconciler.Store
+@using Fluxor.Blazor.Web.Components;
 
 @inject IGroupRepository _groupRepository;
-@inject ITransactionGroupMapper _transactionGroupMapper;
+@inject IDispatcher _dispatcher;
 
-<select value="@_selectedGroup?.GroupName" @onchange=HandleOptionChanged>
+@inherits FluxorComponent
+
+<select value="@Transaction.Group?.Name" @onchange=HandleOptionChanged>
     <option>Select</option>
     @foreach (var option in _classificationOptions) {
         <option value="@option.GroupName">@option.GroupName</option>
@@ -15,30 +20,29 @@
 @code {
 
     [Parameter]
-    public Transaction Transaction { get; set; }
+    public TransactionViewModel Transaction { get; set; }
 
     [Parameter]
     public Action<Group> OnClassificationChanged { get; set; }
 
     private Group[] _classificationOptions;
-    private Group _selectedGroup;
     
     protected override async Task OnInitializedAsync()
     {
         var options = await _groupRepository.GetGroups();
         _classificationOptions = options.ToArray();
-        
-        var selectedGroup = await _transactionGroupMapper.GetGroupForTransaction(Transaction);
-        _selectedGroup = selectedGroup;
     }
 
     private void HandleOptionChanged(ChangeEventArgs e)
     {
-        var option = _classificationOptions
-            .FirstOrDefault(o => o.GroupName == (string)e.Value);
-        _selectedGroup = option;
+        var newGroupName = (string)e.Value;
+        var group = _classificationOptions.First(g => g.GroupName == newGroupName);
 
-        _transactionGroupMapper.MapTransactionToGroup(Transaction, option);
+        var transactionHash = Transaction.Hash;
+        var groupHash = @group.ToHash();
+        var groupChangeAction = new TransactionGroupChangeAction(transactionHash, groupHash);
+        
+        _dispatcher.Dispatch(groupChangeAction);
     }
 
 }

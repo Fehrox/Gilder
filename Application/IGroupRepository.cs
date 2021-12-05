@@ -7,5 +7,6 @@ namespace Reconciler.Application
     public interface IGroupRepository
     {
         Task<IEnumerable<Group>> GetGroups();
+        Task<Group> GetGroupByHash(Hash groupHash);
     }
 }

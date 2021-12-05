@@ -6,6 +6,6 @@ namespace Reconciler.Application
     public interface ITransactionGroupMapper
     {
         Task<Group> GetGroupForTransaction(Transaction transaction);
-        Task MapTransactionToGroup(Transaction transaction, Group option);
+        Task UpdateTransactionGroup(Hash actionTransactionHash, Hash actionGroupHash);
     }
 }

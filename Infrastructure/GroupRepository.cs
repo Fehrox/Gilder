@@ -20,5 +20,14 @@ namespace Reconciler.Infrastructure
 
             return Task.FromResult(recordsArray.AsEnumerable());
         }
+
+        public async Task<Group> GetGroupByHash(Hash groupHash)
+        {
+            var groups = await GetGroups();
+            var groupForHash = groups
+                .FirstOrDefault(g => g.ToHash().ToString() == groupHash.ToString());
+
+            return groupForHash;
+        }
     }
 }

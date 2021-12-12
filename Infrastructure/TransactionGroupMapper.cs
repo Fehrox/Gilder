@@ -15,9 +15,7 @@ namespace Reconciler.Infrastructure
         private readonly IGroupRepository _groupRepository;
         private static readonly string _csvPath = $"Data/{nameof(GroupTransactionMap)}.csv";
 
-        public TransactionGroupMapper(
-            ITransactionRepository transactionRepository,
-            IGroupRepository groupRepository)
+        public TransactionGroupMapper(IGroupRepository groupRepository)
         {
             _groupRepository = groupRepository;
         }
@@ -58,9 +56,8 @@ namespace Reconciler.Infrastructure
             
             using (var writer = new StreamWriter(_csvPath))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
                 csv.WriteRecords(maps);
-            }
+            
             
             return Task.CompletedTask;
         }

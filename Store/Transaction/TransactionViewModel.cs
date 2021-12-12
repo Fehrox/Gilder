@@ -10,8 +10,8 @@ namespace Reconciler.Store
         public Transaction.Classification Class { get; set; }
         public double Charge { get; set; }
         public DateTime Date { get; set; }
-
         public GroupViewModel Group { get; set; }
+        public string Note { get; set; }
     }
 
     public class GroupViewModel

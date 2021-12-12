@@ -1,0 +1,19 @@
+@using Fluxor
+@using Reconciler.Store
+
+@inject IDispatcher _dispatcher;
+
+<input value=@Transaction.Note @onchange=@HandleTextChanged>
+
+@code {
+    [Parameter]
+    public TransactionViewModel Transaction { get; set; }
+
+    public void HandleTextChanged(ChangeEventArgs e){
+
+        var updatedText = (string)e.Value;
+        var groupChangeAction = new TransactionNoteChangeAction(Transaction.Hash, updatedText);
+        
+        _dispatcher.Dispatch(groupChangeAction);
+    }
+}

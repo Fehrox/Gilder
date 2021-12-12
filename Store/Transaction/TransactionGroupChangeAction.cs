@@ -2,5 +2,5 @@ using Reconciler.Domain;
 
 namespace Reconciler.Store
 {
-    public record TransactionGroupChangeAction(Hash TransactionHash, Hash GroupHash);
+    public record TransactionGroupChangeAction(Hash TransctionHash, Hash GroupHash);
 }

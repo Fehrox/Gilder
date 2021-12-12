@@ -10,6 +10,7 @@ namespace Reconciler.Infrastructure
             services.AddSingleton<ITransactionRepository, NabCsvTransactionRepository>();
             services.AddSingleton<IGroupRepository, GroupRepository>();
             services.AddSingleton<ITransactionGroupMapper, TransactionGroupMapper>();
+            services.AddSingleton<ITransactionNoteMapper, TransactionNoteMapper>();
         }
     }
 }

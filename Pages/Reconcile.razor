@@ -16,6 +16,7 @@
         <td>Charge</td>
         <td>Class</td>
         <td>Details</td>
+        <td>Note</td>
     </thead>
     <tr><td colspan="999"><h1>Unreconsiled</h1></td></tr>
     @foreach (var transaction in _state.Value.Transactions) {
@@ -29,6 +30,10 @@
             <td>@transaction.Charge</td>
             <td>@transaction.Class</td>
             <td>@transaction.Details</td>
+            <td>
+                <TransactionNoteInput 
+                    Transaction=@transaction />
+            </td>
         </tr>
     }
     <tr><td colspan="999"><h2>Reconsiled</h2></td></tr>
@@ -46,6 +51,10 @@
                 <td>@transaction.Charge</td>
                 <td>@transaction.Class</td>
                 <td>@transaction.Details</td>
+                <td>
+                    <TransactionNoteInput 
+                        Transaction=@transaction />
+                </td>
             </tr>   
         }
         <tr>
@@ -57,7 +66,6 @@
 </table>
 
 @code {
-
     protected override Task OnInitializedAsync()
     {
         _dispatcher.Dispatch(new TransactionsLoadAction());

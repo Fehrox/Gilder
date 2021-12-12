@@ -39,8 +39,7 @@
         var group = _classificationOptions.First(g => g.GroupName == newGroupName);
 
         var transactionHash = Transaction.Hash;
-        var groupHash = @group.ToHash();
-        var groupChangeAction = new TransactionGroupChangeAction(transactionHash, groupHash);
+        var groupChangeAction = new TransactionGroupChangeAction(transactionHash, group.ToHash());
         
         _dispatcher.Dispatch(groupChangeAction);
     }

@@ -26,9 +26,10 @@
     public Action<Group> OnClassificationChanged { get; set; }
 
     private Group[] _classificationOptions;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         var options = await _groupRepository.GetGroups();
         _classificationOptions = options.ToArray();
     }
@@ -39,8 +40,11 @@
         var group = _classificationOptions.First(g => g.GroupName == newGroupName);
 
         var transactionHash = Transaction.Hash;
-        var groupChangeAction = new TransactionGroupChangeAction(transactionHash, group.ToHash());
-        
+        var groupChangeAction = new TransactionGroupChangeAction {
+            TransactionHash = transactionHash,
+            GroupHash = group.ToHash()
+        };
+
         _dispatcher.Dispatch(groupChangeAction);
     }
 

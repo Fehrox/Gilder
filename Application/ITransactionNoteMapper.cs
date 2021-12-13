@@ -6,6 +6,6 @@ namespace Reconciler.Application
     public interface ITransactionNoteMapper
     {
         Task UpdateTransactionNote(Hash noteHash, string note);
-        Task<string> GetNoteForTransaction(Transaction transaction);
+        Task<string> GetNoteForTransaction(Hash transactionHash);
     }
 }

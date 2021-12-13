@@ -20,11 +20,11 @@ namespace Reconciler.Infrastructure
             _groupRepository = groupRepository;
         }
 
-        public async Task<Group> GetGroupForTransaction(Transaction transaction)
+        public async Task<Group> GetGroupForTransaction(Hash transaction)
         {
             var records = GetGroupTransactionMaps();
             foreach (var map in records) {
-                if (map.TransactionHash == transaction.ToHash().ToString()) {
+                if (map.TransactionHash == transaction.ToString()) {
                     var groups = await _groupRepository.GetGroups();
                     foreach (var group in groups) {
                         if (map.GroupHash == group.ToHash().ToString()) {

@@ -18,8 +18,9 @@ namespace Reconciler.Store
                         Class = action.Transaction.Class,
                         Date = action.Transaction.Date,
                         Details = action.Transaction.Details,
+                        Note = action.UpdatedNote,
                         Group = new GroupViewModel {
-                            Name = action.UpdatedGroup.GroupName,
+                            Name = action.UpdatedGroup?.GroupName,
                         }
                     };
                     updatedTransactions.Add(updated);

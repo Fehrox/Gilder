@@ -1,6 +1,4 @@
 @using Fluxor.Blazor.Web.Components; 
-@using Reconciler.Application
-@using Reconciler.Domain
 @using Reconciler.Store
 @using Fluxor
 
@@ -66,10 +64,9 @@
 </table>
 
 @code {
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         _dispatcher.Dispatch(new TransactionsLoadAction());
-        
-        return Task.CompletedTask;
     }
 }

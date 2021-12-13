@@ -18,7 +18,8 @@ namespace Reconciler.Store
                 Class = action.Transaction.Class,
                 Details = action.Transaction.Details,
                 Date = action.Transaction.Date,
-                Group = groupViewModel
+                Group = groupViewModel,
+                Note = action.Note
             };
 
             var newTransactions = new[] { transactionViewModel };

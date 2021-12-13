@@ -20,15 +20,15 @@ namespace Reconciler.Infrastructure
             _transactionRepository = transactionRepository;
         } 
         
-        public Task<string> GetNoteForTransaction(Transaction transaction)
+        public Task<string> GetNoteForTransaction(Hash transaction)
         {
-            var transactionHash = transaction.ToHash();
+            var transactionHash = transaction;
             var records = GetGroupTransactionMaps();
             foreach(var record in records)
                 if(record.TransactionHash == transactionHash.ToString())
                     return Task.FromResult(record.Note);
 
-            return null;
+            return Task.FromResult<string>(null);
         }
 
         public Task UpdateTransactionNote(Hash noteHash, string note)
@@ -61,8 +61,6 @@ namespace Reconciler.Infrastructure
             using var reader = new StreamReader(_csvPath);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
             var records = csv.GetRecords<NoteTransactionMap>();
-
-            System.Console.WriteLine(records);
             
             return records.ToArray();
         }

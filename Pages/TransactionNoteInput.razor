@@ -1,7 +1,10 @@
 @using Fluxor
 @using Reconciler.Store
+@using Fluxor.Blazor.Web.Components
 
 @inject IDispatcher _dispatcher;
+
+@inherits FluxorComponent;
 
 <input value=@Transaction.Note @onchange=@HandleTextChanged>
 
@@ -9,11 +12,12 @@
     [Parameter]
     public TransactionViewModel Transaction { get; set; }
 
-    public void HandleTextChanged(ChangeEventArgs e){
+    public void HandleTextChanged(ChangeEventArgs e)
+    {
 
         var updatedText = (string)e.Value;
         var groupChangeAction = new TransactionNoteChangeAction(Transaction.Hash, updatedText);
-        
+
         _dispatcher.Dispatch(groupChangeAction);
     }
 }

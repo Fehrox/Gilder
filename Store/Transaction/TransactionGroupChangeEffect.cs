@@ -10,6 +10,7 @@ namespace Reconciler.Store
         private readonly ITransactionGroupMapper _transactionGroupMapper;
         private readonly IGroupRepository _groupRepository;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly ITransactionNoteMapper _noteMapper;
 
         public TransactionGroupChangeEffect(
             ITransactionGroupMapper transactionGroupMapper,
@@ -23,11 +24,18 @@ namespace Reconciler.Store
 
         public override async Task HandleAsync(TransactionGroupChangeAction action, IDispatcher dispatcher)
         {
+            var groupHash = action.GroupHash;
+            var transactionHash = action.TransactionHash;
+
             await _transactionGroupMapper
-                .UpdateTransactionGroup(action.TransactionHash, action.GroupHash);
-            var transaction = await _transactionRepository.GetTransactionByHash(action.TransactionHash);
-            var group = await _groupRepository.GetGroupByHash(action.GroupHash);
-            dispatcher.Dispatch(new TransactionUpdateAction(transaction, group));
+                .UpdateTransactionGroup(transactionHash, groupHash);
+            var transaction = await _transactionRepository
+                .GetTransactionByHash(transactionHash);
+            var note = await _noteMapper
+                .GetNoteForTransaction(transactionHash);
+
+            var group = await _groupRepository.GetGroupByHash(groupHash);
+            dispatcher.Dispatch(new TransactionUpdateAction(transaction, group, note));
         }
     }
 }

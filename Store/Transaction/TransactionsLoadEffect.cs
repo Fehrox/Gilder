@@ -1,8 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using Fluxor;
 using Reconciler.Application;
-using Reconciler.Infrastructure;
 
 namespace Reconciler.Store
 {
@@ -27,8 +25,10 @@ namespace Reconciler.Store
             var transactions = await _transactionRepository.GetTransactions();
             
             foreach (var transaction in transactions) {
-                var group = await _transactionGroupMapper.GetGroupForTransaction(transaction);
-                var note = await _transactionNoteMapper.GetNoteForTransaction(transaction);
+                var transactionHash = transaction.ToHash();
+
+                var group = await _transactionGroupMapper.GetGroupForTransaction(transactionHash);
+                var note = await _transactionNoteMapper.GetNoteForTransaction(transactionHash);
                 
                 dispatcher.Dispatch(new TransactionAddAction(transaction, group, note));
             }

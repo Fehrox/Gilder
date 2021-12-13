@@ -1,0 +1,15 @@
+﻿@using Reconciler.Domain;
+
+<tr>
+    <td><TransactionGroupSelect Transaction=@Transaction /></td>
+    <td>@Transaction.Date.ToShortDateString()</td>
+    <td>@Transaction.Charge</td>
+    <td>@Transaction.Class</td>
+    <td>@Transaction.Details</td>
+    <td><TransactionNoteInput Transaction=@Transaction /></td>
+</tr>
+
+@code {
+    [Parameter]
+    public Transaction Transaction { get; set; }
+}

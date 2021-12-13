@@ -10,9 +10,9 @@ using Reconciler.Domain;
 
 namespace Reconciler.Infrastructure
 {
-    public class NabCsvTransactionRepository : ITransactionRepository
+    public class NabCsvTransactionImporter : ITransactionImporter
     {
-        public Task<IEnumerable<Transaction>> GetTransactions()
+        public Task<IEnumerable<Transaction>> ImportTransactions()
         {
             using var reader = new StreamReader($"Data/{nameof(Transaction)}.csv");
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -40,7 +40,7 @@ namespace Reconciler.Infrastructure
 
         public async Task<Transaction> GetTransactionByHash(Hash transactionHash)
         {
-            var transactions = await GetTransactions();
+            var transactions = await ImportTransactions();
             var transactionForHash = transactions
                 .FirstOrDefault(t => t.ToHash().ToString() == transactionHash.ToString());
 

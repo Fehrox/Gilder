@@ -7,6 +7,6 @@ namespace Reconciler.Store
     public class TransactionsFeature : Feature<TransactionsState>
     {
         public override string GetName() => nameof(TransactionsFeature);
-        protected override TransactionsState GetInitialState() => new(new List<TransactionViewModel>());
+        protected override TransactionsState GetInitialState() => new(new List<Transaction>());
     }
 }

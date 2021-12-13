@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Fluxor;
 using Reconciler.Application;
@@ -6,31 +7,30 @@ namespace Reconciler.Store
 {
     public class TransactionsLoadEffect : Effect<TransactionsLoadAction>
     {
+        private readonly ITransactionImporter _transactionImporter;
         private readonly ITransactionRepository _transactionRepository;
-        private readonly ITransactionGroupMapper _transactionGroupMapper;
-        private readonly ITransactionNoteMapper _transactionNoteMapper;
 
         public TransactionsLoadEffect(
-            ITransactionRepository transactionRepository,
-            ITransactionGroupMapper transactionGroupMapper,
-            ITransactionNoteMapper transactionNoteMapper
-        ) {
+            ITransactionImporter transactionImporter, 
+            ITransactionRepository transactionRepository) 
+        {
+            _transactionImporter = transactionImporter;
             _transactionRepository = transactionRepository;
-            _transactionGroupMapper = transactionGroupMapper;
-            _transactionNoteMapper =  transactionNoteMapper;
         }
 
         public override async Task HandleAsync(TransactionsLoadAction action, IDispatcher dispatcher)
         {
-            var transactions = await _transactionRepository.GetTransactions();
-            
-            foreach (var transaction in transactions) {
-                var transactionHash = transaction.ToHash();
+            var existingTransactions = await _transactionRepository.ReadTransactions();
+            var importedTransactions = await _transactionImporter.ImportTransactions();
 
-                var group = await _transactionGroupMapper.GetGroupForTransaction(transactionHash);
-                var note = await _transactionNoteMapper.GetNoteForTransaction(transactionHash);
-                
-                dispatcher.Dispatch(new TransactionAddAction(transaction, group, note));
+            foreach (var transaction in importedTransactions) {
+                var alreadyImported = existingTransactions
+                    .Any(t => t.ToHash().ToString() == transaction.ToHash().ToString());
+                if (alreadyImported) continue;
+
+                transaction.Id = System.Guid.NewGuid();
+                var transactionCreateAction = new TransactionCreateAction(transaction);
+                dispatcher.Dispatch(transactionCreateAction);
             }
         }
     }

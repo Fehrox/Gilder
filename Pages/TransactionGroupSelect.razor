@@ -1,51 +1,48 @@
 @using Reconciler.Domain
 @using Reconciler.Application
-@using System.Diagnostics
+@using Reconciler.Application
+@using Reconciler.Store 
 @using Fluxor
-@using Reconciler.Store
 @using Fluxor.Blazor.Web.Components;
 
-@inject IGroupRepository _groupRepository;
 @inject IDispatcher _dispatcher;
+@inject IGroupRepository _groupRepository;
 
 @inherits FluxorComponent
 
 <select value="@Transaction.Group?.Name" @onchange=HandleOptionChanged>
     <option>Select</option>
-    @foreach (var option in _classificationOptions) {
-        <option value="@option.GroupName">@option.GroupName</option>
+    @foreach (var option in _options) {
+        <option value="@option.Name">@option.Name</option>
     }
 </select>
 
 @code {
 
     [Parameter]
-    public TransactionViewModel Transaction { get; set; }
+    public Transaction Transaction { get; set; }
 
     [Parameter]
     public Action<Group> OnClassificationChanged { get; set; }
 
-    private Group[] _classificationOptions;
+    private IEnumerable<Group> _options;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var options = await _groupRepository.GetGroups();
-        _classificationOptions = options.ToArray();
+        var options = await _groupRepository.ReadGroups();
+        _options = options.ToArray();
     }
 
     private void HandleOptionChanged(ChangeEventArgs e)
     {
         var newGroupName = (string)e.Value;
-        var group = _classificationOptions.First(g => g.GroupName == newGroupName);
+        var group = _options.First(g => g.Name == newGroupName);
 
-        var transactionHash = Transaction.Hash;
-        var groupChangeAction = new TransactionGroupChangeAction {
-            TransactionHash = transactionHash,
-            GroupHash = group.ToHash()
+        var updatedTransaction = Transaction with { 
+            Group = group
         };
-
-        _dispatcher.Dispatch(groupChangeAction);
+        _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
     }
 
 }

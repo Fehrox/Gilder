@@ -7,10 +7,9 @@ namespace Reconciler.Infrastructure
     {
         public static void InstallInfrastructure(this IServiceCollection services)
         {
-            services.AddSingleton<ITransactionRepository, NabCsvTransactionRepository>();
-            services.AddSingleton<IGroupRepository, GroupRepository>();
-            services.AddSingleton<ITransactionGroupMapper, TransactionGroupMapper>();
-            services.AddSingleton<ITransactionNoteMapper, TransactionNoteMapper>();
+            services.AddSingleton<ITransactionImporter, NabCsvTransactionImporter>();
+            services.AddSingleton<ITransactionRepository, InMemoryTransactionRepository>();
+            services.AddSingleton<IGroupRepository, InMemoryTransactionRepository>();
         }
     }
 }

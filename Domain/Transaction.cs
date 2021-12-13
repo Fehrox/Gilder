@@ -3,12 +3,15 @@ using System.Linq;
 
 namespace Reconciler.Domain
 {
-    public class Transaction
+    public record Transaction
     {
+        public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public double Charge { get; set; }
         public Classification Class { get; set; }
         public string Details { get; set; }
+        public Group Group { get; set; }
+        public string Note { get; set; }
 
         public enum Classification
         {

@@ -6,11 +6,11 @@ namespace Reconciler.Store
 {
     public class TransactionsState
     {
-        public TransactionsState(IEnumerable<TransactionViewModel> transactions)
+        public TransactionsState(IEnumerable<Transaction> transactions)
         {
             Transactions = transactions.ToList();
         }
 
-        public List<TransactionViewModel> Transactions { get; }
+        public List<Transaction> Transactions { get; }
     }
 }

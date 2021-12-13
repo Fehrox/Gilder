@@ -1,12 +1,14 @@
+﻿using Reconciler.Domain;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Reconciler.Domain;
 
 namespace Reconciler.Application
 {
-    public interface IGroupRepository
+    interface IGroupRepository
     {
-        Task<IEnumerable<Group>> GetGroups();
-        Task<Group> GetGroupByHash(Hash groupHash);
+        Task<IEnumerable<Group>> ReadGroups();
+        Task<Group> ReadGroup(Guid id);
     }
 }

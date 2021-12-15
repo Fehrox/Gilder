@@ -1,8 +1,12 @@
 ﻿@using Reconciler.Domain;
 
+@{var dateLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{Transaction.Date:yyyy-M-d}";}
+
 <tr>
     <td><TransactionGroupSelect Transaction=@Transaction /></td>
-    <td>@Transaction.Date.ToShortDateString()</td>
+    <td>
+        <a href=@dateLink> @Transaction.Date.ToShortDateString() </a>
+    </td>
     <td>@Transaction.Charge</td>
     <td>@Transaction.Class</td>
     <td>@Transaction.Details</td>

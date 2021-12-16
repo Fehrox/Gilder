@@ -57,7 +57,7 @@ namespace Reconciler.Infrastructure
                 case "TRANSFER DEBIT" : return Transaction.Classification.TransferDebit;
                 case "FEES": return Transaction.Classification.Fees;
                 case "REVERSAL CREDIT" : return Transaction.Classification.ReversalCredit;
-                default: throw new FormatException($"{transaction} is not a know transaction type");
+                default: throw new FormatException($"{transaction} is not a know transaction type.");
             }
         }
 

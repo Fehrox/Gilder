@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Reconciler.Infrastructure
 {
-    public class InMemoryTransactionRepository : ITransactionRepository, IGroupRepository
+    public class InMemoryRepository : ITransactionRepository, IGroupRepository
     {
 
         readonly List<Transaction> _transactions = new List<Transaction>();
@@ -18,6 +18,28 @@ namespace Reconciler.Infrastructure
             new Group { Id = Guid.NewGuid(), Name = "Exercise" },
             new Group { Id = Guid.NewGuid(), Name = "Going Out" },
         };
+
+        public Task Create(Transaction transaction)
+        {
+            _transactions.Add(transaction);
+            return Task.CompletedTask;
+        }
+
+        public Task Update(Transaction transaction)
+        {
+            foreach (var current in _transactions) {
+                if (current.Id == transaction.Id) {
+                    current.Note = transaction.Note;
+                    current.Group = transaction.Group;
+                    current.Details = transaction.Details;
+                    current.Charge = transaction.Charge;
+                    current.Class = transaction.Class;
+                    current.Date = transaction.Date;
+                }
+            }
+
+            return Task.CompletedTask;
+        }
 
         Task<Group> IGroupRepository.ReadGroup(Guid id)
         {

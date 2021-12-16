@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Fluxor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -27,6 +28,7 @@ namespace Reconciler
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.InstallInfrastructure();
+            services.AddBlazoredLocalStorage();
             services.AddFluxor(opt => {
                 opt.ScanAssemblies(typeof(Program).Assembly);
                 opt.UseRouting();

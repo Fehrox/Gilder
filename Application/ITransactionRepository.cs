@@ -9,5 +9,7 @@ namespace Reconciler.Application
     {
         Task<IEnumerable<Transaction>> ReadTransactions();
         Task<Transaction> ReadTransaction(Guid id);
+        Task Create(Transaction transaction);
+        Task Update(Transaction transaction);
     }
 }

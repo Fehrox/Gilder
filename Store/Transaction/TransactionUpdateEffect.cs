@@ -15,7 +15,7 @@ namespace Reconciler.Store
 
         public override async Task HandleAsync(TransactionUpdateAction action, IDispatcher dispatcher)
         {
-            // TODO: Update transaction in repository.
+            await _transactionRepository.Update(action.Transaction);
         }
     }
 }

@@ -5,6 +5,7 @@ using Reconciler.Application;
 
 namespace Reconciler.Store
 {
+
     public class TransactionsLoadEffect : Effect<TransactionsLoadAction>
     {
         private readonly ITransactionImporter _transactionImporter;
@@ -29,8 +30,13 @@ namespace Reconciler.Store
                 if (alreadyImported) continue;
 
                 transaction.Id = System.Guid.NewGuid();
-                var transactionCreateAction = new TransactionCreateAction(transaction);
-                dispatcher.Dispatch(transactionCreateAction);
+                var importedTransaction = new TransactionCreateAction(transaction);
+                dispatcher.Dispatch(importedTransaction);
+            }
+
+            foreach (var transaction in existingTransactions) {
+                var restoredTransaction = new TransactionRestoreAction(transaction);
+                dispatcher.Dispatch(restoredTransaction);
             }
         }
     }

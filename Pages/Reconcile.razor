@@ -2,10 +2,10 @@
 @using Reconciler.Store
 @using Fluxor
 
+@inherits FluxorComponent
+
 @inject IState<TransactionsState> _state
 @inject IDispatcher _dispatcher
-
-@inherits FluxorComponent
 
 <table>
     <thead>

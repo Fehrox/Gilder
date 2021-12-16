@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using System.Linq;
 
 namespace Reconciler.Store
 {
@@ -8,6 +9,7 @@ namespace Reconciler.Store
         {
             var transactions = state.Transactions;
             transactions.Add(action.Transaction);
+            transactions = transactions.OrderBy(t => t.Date).ToList();
             return new TransactionsState(transactions);
         }
     }

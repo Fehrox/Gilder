@@ -1,16 +1,27 @@
-﻿@using Reconciler.Domain;
+﻿@using Fluxor
+@using Reconciler.Domain
+@using Reconciler.Store
+@using Fluxor.Blazor.Web.Components
 
-@{var dateLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{Transaction.Date:yyyy-M-d}";}
+@inherits FluxorComponent
+
+@{
+    var transactinWindow = Transaction.Date - TimeSpan.FromDays(5);
+    var locationLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{Transaction.Date:yyyy-M-d}";
+    var calendarLink = $"https://calendar.google.com/calendar/u/0/r/custom/7/d/{transactinWindow:yyyy/M/d}";
+}
 
 <tr>
     <td><TransactionGroupSelect Transaction=@Transaction /></td>
+    <td><TransactionNoteInput Transaction=@Transaction /></td>
     <td>
-        <a href=@dateLink> @Transaction.Date.ToShortDateString() </a>
+        <ImageLink Source="icons/location-icon.png" Href=@locationLink />
+        <ImageLink Source="icons/calendar-icon.png" Href=@calendarLink />
+        @Transaction.Date.ToShortDateString()
     </td>
     <td>@Transaction.Charge</td>
     <td>@Transaction.Class</td>
     <td>@Transaction.Details</td>
-    <td><TransactionNoteInput Transaction=@Transaction /></td>
 </tr>
 
 @code {

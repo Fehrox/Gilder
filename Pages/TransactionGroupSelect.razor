@@ -1,6 +1,5 @@
 @using Reconciler.Domain
 @using Reconciler.Application
-@using Reconciler.Application
 @using Reconciler.Store 
 @using Fluxor
 @using Fluxor.Blazor.Web.Components;
@@ -21,9 +20,6 @@
 
     [Parameter]
     public Transaction Transaction { get; set; }
-
-    [Parameter]
-    public Action<Group> OnClassificationChanged { get; set; }
 
     private IEnumerable<Group> _options;
 

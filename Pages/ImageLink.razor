@@ -1,0 +1,10 @@
+<a href=@Href  target="_blank">
+    <img src=@Source width="20" height="20"/>
+</a>
+
+@code {
+    [Parameter]
+    public string Source { get; set; }
+    [Parameter]
+    public string Href { get; set; }
+}

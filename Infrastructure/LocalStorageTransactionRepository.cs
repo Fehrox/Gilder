@@ -1,13 +1,13 @@
-﻿using Blazored.LocalStorage;
-using System.Linq;
-using Reconciler.Application;
-using Reconciler.Domain;
+﻿using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using Application;
+using Blazored.LocalStorage;
+using Domain;
 
-namespace Reconciler.Infrastructure
+namespace Gilder.Infrastructure
 {
     public class LocalStorageTransactionRepository : ITransactionRepository
     {

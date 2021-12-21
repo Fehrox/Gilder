@@ -1,6 +1,4 @@
-using System;
-
-namespace Reconciler.Domain
+namespace Domain
 {
     public class Group
     {

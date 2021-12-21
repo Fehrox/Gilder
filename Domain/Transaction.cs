@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
-
-namespace Reconciler.Domain
+namespace Domain
 {
     public record Transaction
     {

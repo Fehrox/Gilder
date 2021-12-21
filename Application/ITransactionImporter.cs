@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Reconciler.Domain;
+using Domain;
 
-namespace Reconciler.Application
+namespace Application
 {
     public interface ITransactionImporter
     {

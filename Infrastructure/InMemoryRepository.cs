@@ -1,11 +1,11 @@
-﻿using Reconciler.Application;
-using Reconciler.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application;
+using Domain;
 
-namespace Reconciler.Infrastructure
+namespace Gilder.Infrastructure
 {
     public class InMemoryRepository : ITransactionRepository, IGroupRepository
     {

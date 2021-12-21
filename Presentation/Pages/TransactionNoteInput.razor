@@ -1,0 +1,26 @@
+@using Fluxor
+@using Presentation.Store
+@using Fluxor.Blazor.Web.Components
+@using Domain
+
+@inject IDispatcher _dispatcher;
+
+@inherits FluxorComponent;
+
+<input value=@Transaction.Note @onchange=@HandleTextChanged>
+
+@code {
+    [Parameter]
+    public Transaction Transaction { get; set; }
+
+    public void HandleTextChanged(ChangeEventArgs e)
+    {
+
+        var updatedNote = (string)e.Value;
+        var transaction = Transaction with {
+            Note = updatedNote
+        };
+
+        _dispatcher.Dispatch(new TransactionUpdateAction(transaction));
+    }
+}

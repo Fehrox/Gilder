@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Reconciler.Domain
+namespace Domain
 {
     public class Hash
     {

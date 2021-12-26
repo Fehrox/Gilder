@@ -35,11 +35,9 @@
     private void HandleOptionChanged(ChangeEventArgs e)
     {
         var newGroupName = (string)e.Value;
-        var group = _options.First(g => g.Name == newGroupName);
+        var group = _options.FirstOrDefault(g => g.Name == newGroupName);
 
-        var updatedTransaction = Transaction with { 
-            Group = group
-        };
+        var updatedTransaction = Transaction with { Group = group };
         _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
     }
 

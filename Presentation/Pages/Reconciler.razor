@@ -36,11 +36,3 @@
         <td colspan="999"> </td>
     }
 </table>
-
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        _dispatcher.Dispatch(new TransactionsLoadAction());
-    }
-}

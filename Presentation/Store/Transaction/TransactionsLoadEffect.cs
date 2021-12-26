@@ -20,7 +20,9 @@ namespace Presentation.Store
         public override async Task HandleAsync(TransactionsLoadAction action, IDispatcher dispatcher)
         {
             var existingTransactions = await _transactionRepository.ReadTransactions();
-            var importedTransactions = await _transactionImporter.ImportTransactions();
+            
+            var transactionSource = action.CsvText;
+            var importedTransactions = await _transactionImporter.ImportTransactions(transactionSource);
 
             foreach (var transaction in importedTransactions) {
                 var alreadyImported = existingTransactions

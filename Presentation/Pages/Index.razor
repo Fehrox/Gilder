@@ -1,3 +1,16 @@
 @page "/"
+@using Fluxor
+@using Presentation.Store
+@inject IDispatcher _dispatcher
 
-<Reconcile />
+<Importer />
+<Reconciler />
+
+@code
+{
+    protected override Task OnInitializedAsync()
+    {
+        _dispatcher.Dispatch(new TransactionsLoadAction(String.Empty));
+        return base.OnInitializedAsync();
+    }
+}

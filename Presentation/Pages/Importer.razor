@@ -1,0 +1,36 @@
+@using Fluxor
+@using Gilder.Infrastructure
+@using Presentation.Store
+
+@inject IDispatcher _dispatcher
+
+<InputFile OnChange="@LoadFiles" multiple /> 
+<button onclick=@HandleImportClicked> Import </button>
+
+@code {
+    
+    private IReadOnlyList<IBrowserFile> _chosenFiles;
+
+    private void LoadFiles(InputFileChangeEventArgs e)
+    {
+        _chosenFiles = e.GetMultipleFiles();
+    }
+
+    private async Task HandleImportClicked()
+    {
+        if(_chosenFiles == null) return;
+
+        var ms = new MemoryStream();
+        foreach (var chosenFile in _chosenFiles)
+        {
+            await chosenFile.OpenReadStream().CopyToAsync(ms);
+            
+            ms.Position = 0;
+            using var reader = new StreamReader(ms);
+            var csvText = await reader.ReadToEndAsync();
+            _dispatcher.Dispatch(new TransactionsLoadAction(csvText));
+        }
+
+    }
+
+}

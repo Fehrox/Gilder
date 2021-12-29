@@ -1,6 +1,10 @@
 @using Fluxor.Blazor.Web.Components; 
 @using Presentation.Store
 @using Fluxor
+@using System.Transactions
+@using Transaction = Domain.Transaction
+@using System.Text.RegularExpressions
+@using System.Diagnostics
 
 @inherits FluxorComponent
 
@@ -9,17 +13,17 @@
 
 <table>
     <thead>
-        <td></td>
-        <td>Date</td>
-        <td>Charge</td>
-        <td>Class</td>
-        <td>Details</td>
-        <td>Note</td>
+    <td></td>
+    <td>Date</td>
+    <td>Charge</td>
+    <td>Class</td>
+    <td>Details</td>
+    <td>Note</td>
     </thead>
     <tr><td colspan="999"><h1>Unreconsiled</h1></td></tr>
     @foreach (var transaction in _state.Value.Transactions) {
         if(transaction.Charge > 0 || transaction.Group != null) continue;
-        <TransactionRow Transaction="@transaction" />
+        <TransactionRow Transaction=@transaction OnGroupChanged=@HandleGroupChanged />
     }
     <tr><td colspan="999"><h2>Reconsiled</h2></td></tr>
     @foreach (var transactionGroup in _state.Value.Transactions.GroupBy(t => t.Group?.Name)) {
@@ -36,3 +40,131 @@
         <td colspan="999"> </td>
     }
 </table>
+
+@* TODO: Refactor out. *@
+@if (_similarTransactions.Any()) {
+    
+    <style>
+        .modal-popup {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 80%;
+          height: 80%;
+          max-width: 100%;
+          max-height: 100%;
+          background-color: white;
+          border: black 1px solid;
+        }
+        .modal-overlay {       
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,.2);
+        }
+        .modal-guts {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          padding: 20px 50px 20px 20px;
+          overflow: auto;
+        }
+    </style>
+    
+    <div class="modal-overlay">
+        <div class="modal-popup" id="modal">
+            <div class="modal-guts">
+                <button>Apply to All</button>
+                <button @onclick=@(() => _similarTransactions = new List<SimilarTransaction>())>Cancel</button>
+                @foreach (var transaction in _similarTransactions){
+                    <TransactionRow Transaction="@transaction.Transaction"/>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    private IEnumerable<SimilarTransaction> _similarTransactions = new List<SimilarTransaction>();
+
+    private void HandleGroupChanged(Transaction transaction)
+    {
+        var transactionMatcher = new TransactionMatcher(_state);
+        _similarTransactions = transactionMatcher.FindMatches(transaction, .75f);
+    }
+
+    private class TransactionMatcher
+    {
+        private readonly IState<TransactionsState> _state;
+
+        public TransactionMatcher(IState<TransactionsState> state) => _state = state;
+
+        public IEnumerable<SimilarTransaction> FindMatches(Transaction transaction, float cutoff)
+        {
+            var matchList = new List<SimilarTransaction>();
+            foreach (var otherTransaction in _state.Value.Transactions)
+            {
+                if (otherTransaction.Id == transaction.Id) continue;
+                
+                var transactionDetails = Sanitize(transaction.Details);
+                var otherTransactionDetails = Sanitize(otherTransaction.Details);
+                
+                var distance = LevenshteinDistance(transactionDetails, otherTransactionDetails);
+                var distancePercent = 1f - (distance / (float)transaction.Details.Length);
+                if (distancePercent < cutoff) continue;
+
+                matchList.Add(new SimilarTransaction {
+                    Similarity = distancePercent,
+                    Transaction = otherTransaction
+                });
+            }
+
+            return matchList.OrderByDescending(x => x.Similarity);
+        }
+
+        private string Sanitize(string details) => 
+            new(details.Where(c => c != '-' && c is < '0' or > '9').ToArray());
+
+        private static int LevenshteinDistance(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a) && string.IsNullOrEmpty(b))
+                return 0;
+
+            if (string.IsNullOrEmpty(a))
+                return b.Length;
+
+            if (string.IsNullOrEmpty(b))
+                return a.Length;
+
+            var lengthA = a.Length;
+            var lengthB = b.Length;
+            var distances = new int[lengthA + 1, lengthB + 1];
+            for (var i = 0; i <= lengthA; distances[i, 0] = i++) ;
+            for (var j = 0; j <= lengthB; distances[0, j] = j++) ;
+
+            for (var i = 1; i <= lengthA; i++)
+                for (var j = 1; j <= lengthB; j++) {
+                    var cost = b[j - 1] == a[i - 1] ? 0 : 1;
+                    distances[i, j] = Math.Min(
+                        Math.Min(distances[i - 1, j] + 1, distances[i, j - 1] + 1),
+                        distances[i - 1, j - 1] + cost);
+                }
+
+            return distances[lengthA, lengthB];
+        }
+    }
+
+    private record SimilarTransaction
+    {
+        public float Similarity { get; set; }
+        public Transaction Transaction { get; set; }
+    }
+
+}

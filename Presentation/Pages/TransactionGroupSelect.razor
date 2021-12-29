@@ -23,6 +23,9 @@
     [Parameter]
     public Transaction Transaction { get; set; }
 
+    [Parameter]
+    public Action<Transaction> OnGroupChanged { get; set; }
+
     private IEnumerable<Group> _options;
 
     protected override async Task OnInitializedAsync()
@@ -39,6 +42,8 @@
 
         var updatedTransaction = Transaction with { Group = group };
         _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
+        
+        OnGroupChanged?.Invoke(updatedTransaction);
     }
 
 }

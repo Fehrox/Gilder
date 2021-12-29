@@ -12,7 +12,7 @@
 }
 
 <tr>
-    <td><TransactionGroupSelect Transaction=@Transaction /></td>
+    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@OnGroupChanged /></td>
     <td><TransactionNoteInput Transaction=@Transaction /></td>
     <td>
         <ImageLink Source="icons/location-icon.png" Href=@locationLink />
@@ -27,4 +27,7 @@
 @code {
     [Parameter]
     public Transaction Transaction { get; set; }
+
+    [Parameter]
+    public Action<Transaction> OnGroupChanged { get; set; }
 }

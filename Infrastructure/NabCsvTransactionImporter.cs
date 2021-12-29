@@ -15,7 +15,8 @@ namespace Gilder.Infrastructure
         
         public async Task<IEnumerable<Transaction>> ImportTransactions(string transactionCsv)
         {
-            using var reader = new StringReader(transactionCsv);
+            var csvHeaderStr = "Date,Charge,A,B,Classification,Details,Balance\n";
+            using var reader = new StringReader(csvHeaderStr + transactionCsv);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
             var records = csv.GetRecords<CsvTransaction>().ToList();
 
@@ -56,8 +57,12 @@ namespace Gilder.Infrastructure
                 case "ATM DEBIT" : return Transaction.Classification.AtmDebit;
                 case "INTER-BANK CREDIT" : return Transaction.Classification.InterBankCredit;
                 case "TRANSFER DEBIT" : return Transaction.Classification.TransferDebit;
+                case "TRANSFER CREDIT": return Transaction.Classification.TransferCredit;
                 case "FEES": return Transaction.Classification.Fees;
                 case "REVERSAL CREDIT" : return Transaction.Classification.ReversalCredit;
+                case "AUTOMATIC DRAWING" : return Transaction.Classification.AutomaticDrawing;
+                case "INTEREST PAID" : return Transaction.Classification.InterestPaid;
+                case "MISCELLANEOUS CREDIT": return Transaction.Classification.MiscCredit;
                 default: throw new FormatException($"{transaction} is not a know transaction type.");
             }
         }

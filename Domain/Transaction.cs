@@ -18,7 +18,11 @@ namespace Domain
             AtmDebit,
             TransferDebit,
             Fees,
-            ReversalCredit
+            ReversalCredit,
+            AutomaticDrawing,
+            InterestPaid,
+            TransferCredit,
+            MiscCredit
         }
 
         public Hash ToHash()

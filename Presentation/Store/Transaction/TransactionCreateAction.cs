@@ -2,5 +2,5 @@ using Domain;
 
 namespace Presentation.Store
 {
-    public record TransactionCreateAction(Transaction Transaction);
+    public record TransactionCreateAction (IEnumerable<Transaction> Transactions);
 }

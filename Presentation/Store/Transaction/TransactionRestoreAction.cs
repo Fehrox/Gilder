@@ -2,5 +2,5 @@
 
 namespace Presentation.Store
 {
-    public record TransactionRestoreAction(Transaction Transaction);
+    public record TransactionRestoreAction(IEnumerable<Transaction> Transactions);
 }

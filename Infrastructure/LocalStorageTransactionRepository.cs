@@ -1,9 +1,4 @@
-﻿using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
-using Application;
+﻿using Application;
 using Blazored.LocalStorage;
 using Domain;
 
@@ -13,17 +8,20 @@ namespace Gilder.Infrastructure
     {
         private const string KEY = "transactions";
         private readonly ILocalStorageService _localStorage;
-        private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public LocalStorageTransactionRepository(ILocalStorageService localStorage) => 
             _localStorage = localStorage;
 
-        public async Task Create(Transaction transaction)
+        public async Task Create(Transaction transaction) => 
+            await Create(new[] {transaction});
+
+        public async Task Create(IEnumerable<Transaction> transaction)
         {
             await _semaphore.WaitAsync();
 
             var transactions = (await ReadTransactionsFree()).ToList();
-            transactions.Add(transaction);
+            transactions.AddRange(transaction);
 
             await _localStorage.SetItemAsync(KEY, transactions);
             _semaphore.Release();

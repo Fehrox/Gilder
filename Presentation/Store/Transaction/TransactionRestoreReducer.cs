@@ -7,7 +7,7 @@ namespace Presentation.Store
         public override TransactionsState Reduce(TransactionsState state, TransactionRestoreAction action)
         {
             var transactions = state.Transactions;
-            transactions.Add(action.Transaction);
+            transactions.AddRange(action.Transactions);
             transactions = transactions.OrderBy(t => t.Date).ToList();
             return new TransactionsState(transactions);
         }

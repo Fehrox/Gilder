@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application;
+﻿using Application;
 using Domain;
 
 namespace Gilder.Infrastructure
@@ -10,19 +6,25 @@ namespace Gilder.Infrastructure
     public class InMemoryRepository : ITransactionRepository, IGroupRepository
     {
 
-        readonly List<Transaction> _transactions = new List<Transaction>();
-        readonly List<Group> _groups = new List<Group>
+        readonly List<Transaction> _transactions = new();
+        readonly List<Group> _groups = new()
         {
-            new Group { Id = Guid.NewGuid(), Name = "Food" },
-            new Group { Id = Guid.NewGuid(), Name = "Travel" },
-            new Group { Id = Guid.NewGuid(), Name = "Exercise" },
-            new Group { Id = Guid.NewGuid(), Name = "Going Out" },
+            new() { Id = Guid.NewGuid(), Name = "Food" },
+            new() { Id = Guid.NewGuid(), Name = "Travel" },
+            new() { Id = Guid.NewGuid(), Name = "Exercise" },
+            new() { Id = Guid.NewGuid(), Name = "Going Out" },
         };
 
         public Task Create(Transaction transaction)
         {
             _transactions.Add(transaction);
             return Task.CompletedTask;
+        }
+
+        public async Task Create(IEnumerable<Transaction> transactions)
+        {
+            foreach (var transaction in transactions) 
+                await Create(transaction);
         }
 
         public Task Update(Transaction transaction)
@@ -47,10 +49,7 @@ namespace Gilder.Infrastructure
             return Task.FromResult(group);
         }
 
-        Task<IEnumerable<Group>> IGroupRepository.ReadGroups()
-        {
-            return Task.FromResult(_groups.AsEnumerable());
-        }
+        Task<IEnumerable<Group>> IGroupRepository.ReadGroups() => Task.FromResult(_groups.AsEnumerable());
 
         Task<Transaction> ITransactionRepository.ReadTransaction(Guid id)
         {
@@ -58,9 +57,7 @@ namespace Gilder.Infrastructure
             return Task.FromResult(transaction);
         }
 
-        Task<IEnumerable<Transaction>> ITransactionRepository.ReadTransactions()
-        {
-            return Task.FromResult(_transactions.AsEnumerable());
-        }
+        Task<IEnumerable<Transaction>> ITransactionRepository.ReadTransactions() => 
+            Task.FromResult(_transactions.AsEnumerable());
     }
 }

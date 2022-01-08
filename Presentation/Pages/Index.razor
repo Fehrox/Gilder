@@ -3,6 +3,7 @@
 @using Presentation.Store
 @inject IDispatcher _dispatcher
 
+<GroupEditor />
 <Importer />
 <Reconciler />
 
@@ -10,6 +11,7 @@
 {
     protected override Task OnInitializedAsync()
     {
+        _dispatcher.Dispatch(new GroupLoadAction());
         _dispatcher.Dispatch(new TransactionsLoadAction(String.Empty));
         return base.OnInitializedAsync();
     }

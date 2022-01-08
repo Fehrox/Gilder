@@ -71,15 +71,14 @@ namespace Gilder.Infrastructure
 
         private async Task<IEnumerable<Transaction>> ReadTransactionsFree()
         {
-            if (await _localStorage.ContainKeyAsync(KEY))
-            {
-                var transactions = await _localStorage
-                    .GetItemAsync<IEnumerable<Transaction>>(KEY);
+            if (!await _localStorage.ContainKeyAsync(KEY))
+                return new List<Transaction>().AsEnumerable();
+            
+            var transactions = await _localStorage
+                .GetItemAsync<IEnumerable<Transaction>>(KEY);
 
-                return transactions;
-            }
+            return transactions;
 
-            return new List<Transaction>().AsEnumerable();
         }
     }
 }

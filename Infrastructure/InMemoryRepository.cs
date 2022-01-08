@@ -43,10 +43,23 @@ namespace Gilder.Infrastructure
             return Task.CompletedTask;
         }
 
-        Task<Group> IGroupRepository.ReadGroup(Guid id)
+        public async Task Create(IEnumerable<Group> groups)
         {
-            var group = _groups.Find(g => g.Id == id);
-            return Task.FromResult(group);
+            foreach (var group in groups) 
+                await Create(group);
+        }
+
+        public async Task Remove(IEnumerable<Group> groups)
+        {
+            // _groups.RemoveAll(groups);
+            // await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        public Task Create(Group group)
+        {
+            _groups.Add(group);
+            return Task.CompletedTask;
         }
 
         Task<IEnumerable<Group>> IGroupRepository.ReadGroups() => Task.FromResult(_groups.AsEnumerable());

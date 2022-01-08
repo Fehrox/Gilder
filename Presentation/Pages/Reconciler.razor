@@ -79,8 +79,8 @@
     <div class="modal-overlay">
         <div class="modal-popup" id="modal">
             <div class="modal-guts">
-                <button>Apply to All</button>
-                <button @onclick=@(() => _similarTransactions = new List<SimilarTransaction>())>Cancel</button>
+                <button @onclick="@HandleApplyAll" >Apply to All</button>
+                <button @onclick="@HandleCancel">Cancel</button>
                 @foreach (var transaction in _similarTransactions){
                     <TransactionRow Transaction="@transaction.Transaction"/>
                 }
@@ -93,12 +93,26 @@
 @code {
 
     private IEnumerable<SimilarTransaction> _similarTransactions = new List<SimilarTransaction>();
+    Domain.Group? _selectedGroup = null;
 
     private void HandleGroupChanged(Transaction transaction)
     {
         var transactionMatcher = new TransactionMatcher(_state);
         _similarTransactions = transactionMatcher.FindMatches(transaction, .75f);
+        _selectedGroup = transaction.Group;
     }
+
+    private void HandleApplyAll()
+    {
+        foreach (var transaction in _similarTransactions) {
+            var updatedTransaction = transaction.Transaction with { Group = _selectedGroup };
+            _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
+        }
+        
+        HandleCancel();
+    }
+
+    private void HandleCancel() => _similarTransactions = new List<SimilarTransaction>();
 
     private class TransactionMatcher
     {

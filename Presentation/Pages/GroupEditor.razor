@@ -1,0 +1,42 @@
+@using Application
+@using Domain
+@using Fluxor
+@using Presentation.Store
+@using Fluxor.Blazor.Web.Components
+
+@inherits FluxorComponent
+
+@inject IState<GroupState> _groupState;
+@inject IDispatcher _dispatcher;
+
+<div style="display: flex;">
+    @foreach (var group in _groupState.Value.Groups)
+    {
+        <div style="border: 10px">@group.Name</div> <button @onclick="@(() => HandleRemove(group))">X</button>
+    }
+
+    <button @onclick="@HandleAddClicked">Add</button> <input type="text" @bind="@NewGroupName"/>
+</div>
+
+
+@code {
+
+    private string? NewGroupName { get; set; }
+
+    private async Task HandleAddClicked()
+    {
+        var group = new Group {Id = Guid.NewGuid(), Name = NewGroupName};
+        _dispatcher.Dispatch(new GroupCreateAction(new[] {@group}));
+
+        await Task.CompletedTask;
+    }
+
+}
+@code {
+    private void HandleRemove(Group group)
+    {
+        _dispatcher.Dispatch(new GroupRemoveAction(new[] {@group}));
+        NewGroupName = string.Empty;
+    }
+
+}

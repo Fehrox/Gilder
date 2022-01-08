@@ -10,7 +10,7 @@ namespace Presentation
             services.AddSingleton<ITransactionImporter, NabCsvTransactionImporter>();
             // services.AddSingleton<ITransactionRepository, InMemoryRepository>();
             services.AddScoped<ITransactionRepository, LocalStorageTransactionRepository>();
-            services.AddSingleton<IGroupRepository, InMemoryRepository>();
+            services.AddScoped<IGroupRepository, LocalStorageGroupRepository>();
         }
     }
 }

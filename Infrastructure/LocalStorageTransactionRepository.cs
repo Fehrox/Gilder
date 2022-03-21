@@ -2,7 +2,7 @@
 using Blazored.LocalStorage;
 using Domain;
 
-namespace Gilder.Infrastructure
+namespace Infrastructure
 {
     public class LocalStorageTransactionRepository : ITransactionRepository
     {

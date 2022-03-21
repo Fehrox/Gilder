@@ -3,23 +3,39 @@
 @using Fluxor
 @using Presentation.Store
 @using Fluxor.Blazor.Web.Components
+@using Presentation.Store.Group
 
 @inherits FluxorComponent
 
 @inject IState<GroupState> _groupState;
 @inject IDispatcher _dispatcher;
 
-<div style="display: flex;">
-    @foreach (var group in _groupState.Value.Groups)
-    {
-        <div style="border: 10px">@group.Name</div> <button @onclick="@(() => HandleRemove(group))">X</button>
-    }
+<ImageLink
+    OnClick="@(() => SetGroupEditor(true))"
+    Source="icons/group-icon.png"
+    Alt="Edit Transaction Groups" />
 
-    <button @onclick="@HandleAddClicked">Add</button> <input type="text" @bind="@NewGroupName"/>
-</div>
+@if (_showGroupEditor)
+{
+    <Modal>
+        <button @onclick="@(() => SetGroupEditor(false))" >Close</button>
+        <div style="display: flex; flex-direction: column">
+            @foreach (var group in _groupState.Value.Groups)
+            {
+                <div style="border: 10px; display: flex">
+                    @group.Name
+                    <button @onclick="@(() => HandleRemove(group))">X</button>
+                </div>
+            }
 
+            <button @onclick="@HandleAddClicked">Add</button> <input type="text" @bind="@NewGroupName"/>
+        </div>
+    </Modal>
+}
 
 @code {
+
+    private bool _showGroupEditor = false;
 
     private string? NewGroupName { get; set; }
 
@@ -29,6 +45,12 @@
         _dispatcher.Dispatch(new GroupCreateAction(new[] {@group}));
 
         await Task.CompletedTask;
+    }
+
+    private void SetGroupEditor(bool show)
+    {
+        _showGroupEditor = show;
+        StateHasChanged();   
     }
 
 }

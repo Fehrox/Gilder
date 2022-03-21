@@ -1,8 +1,11 @@
 @page "/"
 @using Fluxor
-@using Presentation.Store
+@using Presentation.Store.Group
+@using Presentation.Store.Transaction
 @inject IDispatcher _dispatcher
 
+<FileSaver />
+<FileLoader />
 <GroupEditor />
 <Importer />
 <Reconciler />
@@ -12,7 +15,7 @@
     protected override Task OnInitializedAsync()
     {
         _dispatcher.Dispatch(new GroupLoadAction());
-        _dispatcher.Dispatch(new TransactionsLoadAction(String.Empty));
+        _dispatcher.Dispatch(new TransactionsCsvLoadAction(String.Empty));
         return base.OnInitializedAsync();
     }
 }

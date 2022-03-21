@@ -1,0 +1,30 @@
+@using Fluxor
+@using Presentation.Store.File
+
+@inject IDispatcher _dispatcher
+
+<ImageLink 
+    Source="icons/load-icon.png" 
+    OnClick="@(() => _showLoadDialogue = true )" 
+    Alt="Load Work from Saved File" />
+
+@if (_showLoadDialogue){
+    <Modal>
+        <InputFile OnChange="@LoadSavedFileAsync" accept=".gdb" />
+        <button @onclick="@(() => _showLoadDialogue = false )">Close</button>
+    </Modal>
+}
+
+@code {
+
+    private bool _showLoadDialogue;
+    
+    private void LoadSavedFileAsync(InputFileChangeEventArgs obj)
+    {
+        var chosenFile = obj.File;
+        _dispatcher.Dispatch(new FileLoadAction(chosenFile));
+
+        _showLoadDialogue = false;
+    }
+
+}

@@ -1,5 +1,3 @@
-using Domain;
+namespace Presentation.Store.Group;
 
-namespace Presentation.Store;
-
-public record GroupCreateAction(IEnumerable<Group> Groups);
+public record GroupCreateAction(IEnumerable<Domain.Group> Groups);

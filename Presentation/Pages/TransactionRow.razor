@@ -12,8 +12,6 @@
 }
 
 <tr>
-    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@OnGroupChanged /></td>
-    <td><TransactionNoteInput Transaction=@Transaction /></td>
     <td>
         <ImageLink Source="icons/location-icon.png" Href=@locationLink />
         <ImageLink Source="icons/calendar-icon.png" Href=@calendarLink />
@@ -22,6 +20,8 @@
     <td>@Transaction.Charge</td>
     <td>@Transaction.Class</td>
     <td>@Transaction.Details</td>
+    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@OnGroupChanged /></td>
+    <td><TransactionNoteInput Transaction=@Transaction /></td>
 </tr>
 
 @code {

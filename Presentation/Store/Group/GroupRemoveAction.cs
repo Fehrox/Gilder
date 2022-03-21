@@ -1,5 +1,3 @@
-using Domain;
+namespace Presentation.Store.Group;
 
-namespace Presentation.Store;
-
-public record GroupRemoveAction(IEnumerable<Group> GroupsToRemove);
+public record GroupRemoveAction(IEnumerable<Domain.Group> GroupsToRemove);

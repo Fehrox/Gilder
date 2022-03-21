@@ -1,6 +1,4 @@
-﻿using Domain;
-
-namespace Presentation.Store
+﻿namespace Presentation.Store.Transaction
 {
-    public record TransactionRestoreAction(IEnumerable<Transaction> Transactions);
+    public record TransactionRestoreAction(IEnumerable<Domain.Transaction> Transactions);
 }

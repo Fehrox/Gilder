@@ -1,3 +1,3 @@
-namespace Presentation.Store;
+namespace Presentation.Store.Group;
 
 public record GroupLoadAction;

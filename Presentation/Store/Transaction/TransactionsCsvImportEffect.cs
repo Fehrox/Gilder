@@ -1,16 +1,15 @@
 using Application;
-using Domain;
 using Fluxor;
 
-namespace Presentation.Store
+namespace Presentation.Store.Transaction
 {
 
-    public class TransactionsLoadEffect : Effect<TransactionsLoadAction>
+    public class TransactionsCsvLoadEffect : Effect<TransactionsCsvLoadAction>
     {
         private readonly ITransactionImporter _transactionImporter;
         private readonly ITransactionRepository _transactionRepository;
 
-        public TransactionsLoadEffect(
+        public TransactionsCsvLoadEffect(
             ITransactionImporter transactionImporter, 
             ITransactionRepository transactionRepository) 
         {
@@ -18,7 +17,7 @@ namespace Presentation.Store
             _transactionRepository = transactionRepository;
         }
 
-        public override async Task HandleAsync(TransactionsLoadAction action, IDispatcher dispatcher)
+        public override async Task HandleAsync(TransactionsCsvLoadAction action, IDispatcher dispatcher)
         {
             var existingTransactions = await _transactionRepository.ReadTransactions();
             var existingTransactionsList = existingTransactions.ToArray();
@@ -26,7 +25,7 @@ namespace Presentation.Store
             var transactionSource = action.CsvText;
             var importedTransactions = await _transactionImporter.ImportTransactions(transactionSource);
             
-            var addTransactions = new List<Transaction>();
+            var addTransactions = new List<Domain.Transaction>();
             foreach (var transaction in importedTransactions) {
                 var alreadyImported = existingTransactionsList
                     .Any(t => t.ToHash().ToString() == transaction.ToHash().ToString());

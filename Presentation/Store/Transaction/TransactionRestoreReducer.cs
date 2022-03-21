@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace Presentation.Store
+namespace Presentation.Store.Transaction
 {
     public class TransactionRestoreReducer : Reducer<TransactionsState, TransactionRestoreAction>
     {

@@ -1,11 +1,9 @@
-using Domain;
-
-namespace Presentation.Store;
+namespace Presentation.Store.Group;
 
 public record GroupState
 {
-    public GroupState(IEnumerable<Group> groups) => 
+    public GroupState(IEnumerable<Domain.Group> groups) => 
         Groups = groups.ToList();
 
-    public IEnumerable<Group> Groups { get; set; }
+    public IEnumerable<Domain.Group> Groups { get; set; }
 }

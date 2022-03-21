@@ -5,36 +5,53 @@
 @using Fluxor.Blazor.Web.Components;
 @using Domain
 @using Application
+@using Presentation.Store.Group
+@using Presentation.Store.Transaction
 
 @inject IDispatcher _dispatcher;
 @inject IState<GroupState> _groupState;
 
 @inherits FluxorComponent
 
-<select value="@Transaction?.Group?.Name" @onchange=HandleOptionChanged>
-    <option>Select</option>
-    @foreach (var option in _groupState.Value.Groups) {
-        <option value="@option.Name">@option.Name</option>
-    }
-</select>
+<button @onclick="@HandleShowGroupSelector">@(Transaction?.Group?.Name ?? "Select Group")</button>
+
+
+@if (_showSelector)
+{
+    <Modal>
+        <button @onclick="@HandleHideGroupSelector">Close</button>
+        <div style="width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center">
+            @foreach (var option in _groupState.Value.Groups) {
+                <button @onclick="@(() => HandleOptionChanged(option))">@option.Name</button>
+            }
+        </div>
+    </Modal>
+}
 
 @code {
 
+    private bool _showSelector = false;
+    
     [Parameter]
     public Transaction? Transaction { get; set; }
 
     [Parameter]
     public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
-    
-    private void HandleOptionChanged(ChangeEventArgs e)
-    {
-        var newGroupName = (string)e.Value;
-        var group = _groupState.Value.Groups.FirstOrDefault(g => g.Name == newGroupName);
 
-        var updatedTransaction = Transaction with { Group = group };
+    private void HandleShowGroupSelector() => _showSelector = true;
+    private void HandleHideGroupSelector() => _showSelector = false;
+    
+    private void HandleOptionChanged(Group group)
+    {
+        _showSelector = false;
+
+        if (Transaction == null) return;
+        
+        var updatedTransaction = Transaction with { Group = @group };
         _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
         
         OnGroupChanged?.Invoke(updatedTransaction);
     }
+
 
 }

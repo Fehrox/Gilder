@@ -1,7 +1,7 @@
 using Application;
 using Fluxor;
 
-namespace Presentation.Store;
+namespace Presentation.Store.Group;
 
 public class GroupRemoveEffect : Effect<GroupRemoveAction>
 {

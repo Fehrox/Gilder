@@ -1,0 +1,15 @@
+@using Presentation.Store.File
+@using Fluxor
+
+@inject IDispatcher _dispatcher;
+
+<ImageLink 
+    OnClick="@HandleSaveClicked" 
+    Source="icons/save-icon.png"
+    Alt="Save Work to File" />
+
+@code {
+    
+    private void HandleSaveClicked() => _dispatcher.Dispatch(new FileSaveAction());
+    
+}

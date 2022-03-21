@@ -1,14 +1,12 @@
-using Domain;
-
-namespace Presentation.Store
+namespace Presentation.Store.Transaction
 {
     public class TransactionsState
     {
-        public TransactionsState(IEnumerable<Transaction> transactions)
+        public TransactionsState(IEnumerable<Domain.Transaction> transactions)
         {
             Transactions = transactions.ToList();
         }
 
-        public List<Transaction> Transactions { get; }
+        public List<Domain.Transaction> Transactions { get; }
     }
 }

@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Application;
 using CsvHelper;
 using Domain;
 
-namespace Gilder.Infrastructure
+namespace Infrastructure
 {
     public class NabCsvTransactionImporter : ITransactionImporter
     {

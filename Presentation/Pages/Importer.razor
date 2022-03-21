@@ -1,15 +1,32 @@
 @using Fluxor
-@using Gilder.Infrastructure
 @using Presentation.Store
+@using Presentation.Store.Transaction
 
 @inject IDispatcher _dispatcher
 
-<InputFile OnChange="@LoadFiles" multiple /> 
-<button onclick="@HandleImportClicked"> Import </button>
+<ImageLink 
+    Source="/icons/import-icon.png" 
+    OnClick="@(() => _show = true)"
+    Alt="Import Bank Transaction CSV"
+    />
+
+@if (_show)
+{
+    <Modal>
+        <button @onclick="@(() => _show = false )" >Close</button>
+        <InputFile OnChange="@LoadFiles" multiple accept=".csv"/>
+        @if (_chosenFiles != null)
+        {
+            <button onclick="@HandleImportClicked"> Import </button>
+        }
+    </Modal>
+}
 
 @code {
+
+    private bool _show = false;
     
-    private IReadOnlyList<IBrowserFile> _chosenFiles;
+    private IReadOnlyList<IBrowserFile>? _chosenFiles;
 
     private void LoadFiles(InputFileChangeEventArgs e)
     {
@@ -28,7 +45,7 @@
             ms.Position = 0;
             using var reader = new StreamReader(ms);
             var csvText = await reader.ReadToEndAsync();
-            _dispatcher.Dispatch(new TransactionsLoadAction(csvText));
+            _dispatcher.Dispatch(new TransactionsCsvLoadAction(csvText));
         }
 
     }

@@ -1,6 +1,4 @@
-using Domain;
-
-namespace Presentation.Store
+namespace Presentation.Store.Transaction
 {
-    public record TransactionUpdateAction(Transaction Transaction);
+    public record TransactionUpdateAction(Domain.Transaction Transaction);
 }

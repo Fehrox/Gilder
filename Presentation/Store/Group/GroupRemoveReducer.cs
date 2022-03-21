@@ -1,7 +1,6 @@
-using Domain;
 using Fluxor;
 
-namespace Presentation.Store;
+namespace Presentation.Store.Group;
 
 public class GroupRemoveReducer : Reducer<GroupState, GroupRemoveAction>
 {

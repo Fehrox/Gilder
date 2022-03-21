@@ -1,7 +1,7 @@
 ﻿using Application;
 using Domain;
 
-namespace Gilder.Infrastructure
+namespace Infrastructure
 {
     public class InMemoryRepository : ITransactionRepository, IGroupRepository
     {

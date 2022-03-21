@@ -1,6 +1,6 @@
 using Application;
 
-namespace Gilder.Infrastructure;
+namespace Infrastructure;
 
 public class ConstTransactionSource : ITransactionSource
 {

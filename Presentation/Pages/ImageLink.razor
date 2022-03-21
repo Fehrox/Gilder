@@ -1,10 +1,31 @@
-<a href=@Href  target="_blank">
-    <img src=@Source width="20" height="20"/>
-</a>
+@if (string.IsNullOrEmpty(Href))
+{
+    <a @onclick="@(() => OnClick?.Invoke())"
+       title="@Alt"
+       style="cursor:@(OnClick == null ? "default" : "pointer")"
+       target="_blank">
+        <img src=@Source width="20" height="20"/>
+    </a>
+}
+else
+{
+    <a href=@Href target="_blank" title="@Alt">
+        <img src=@Source width="20" height="20"/>
+    </a>
+}
 
 @code {
+
     [Parameter]
-    public string Source { get; set; }
+    public string Source { get; set; } = "data:,";
+
     [Parameter]
-    public string Href { get; set; }
+    public string Href { get; set; } = String.Empty;
+
+    [Parameter]
+    public Action? OnClick { get; set; } = null;
+
+    [Parameter]
+    public string Alt { get; set; } = String.Empty;
+
 }

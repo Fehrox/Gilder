@@ -1,7 +1,7 @@
 using Application;
 using Fluxor;
 
-namespace Presentation.Store
+namespace Presentation.Store.Transaction
 {
     public class TransactionUpdateEffect : Effect<TransactionUpdateAction>
     {

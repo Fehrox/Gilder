@@ -6,14 +6,14 @@
 
 <ImageLink 
     Source="/icons/import-icon.png" 
-    OnClick="@(() => _show = true)"
+    OnClick="@(() =>SetShow(true))"
     Alt="Import Bank Transaction CSV"
     />
 
 @if (_show)
 {
     <Modal>
-        <button @onclick="@(() => _show = false )" >Close</button>
+        <button @onclick="@(() => SetShow(false) )" >Close</button>
         <InputFile OnChange="@LoadFiles" multiple accept=".csv"/>
         @if (_chosenFiles != null)
         {
@@ -28,10 +28,14 @@
     
     private IReadOnlyList<IBrowserFile>? _chosenFiles;
 
-    private void LoadFiles(InputFileChangeEventArgs e)
+    private void SetShow(bool show)
     {
-        _chosenFiles = e.GetMultipleFiles();
+        _show = show;
+        StateHasChanged();
     }
+
+    private void LoadFiles(InputFileChangeEventArgs e) => 
+        _chosenFiles = e.GetMultipleFiles();
 
     private async Task HandleImportClicked()
     {
@@ -48,6 +52,7 @@
             _dispatcher.Dispatch(new TransactionsCsvLoadAction(csvText));
         }
 
+        SetShow(false);
     }
 
 }

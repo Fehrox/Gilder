@@ -2,32 +2,83 @@
 @using Presentation.Store
 @using Fluxor.Blazor.Web.Components
 @using Domain
+@using System.Text.RegularExpressions
+@using System.Net
 
 @inherits FluxorComponent
-
-@{
-    var transactinWindow = Transaction.Date - TimeSpan.FromDays(5);
-    var locationLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{Transaction.Date:yyyy-M-d}";
-    var calendarLink = $"https://calendar.google.com/calendar/u/0/r/custom/7/d/{transactinWindow:yyyy/M/d}";
-}
-
-<tr>
+<tr style="background-color: @(_selected ? "yellow" : "initial")">
     <td>
-        <ImageLink Source="icons/location-icon.png" Href=@locationLink />
-        <ImageLink Source="icons/calendar-icon.png" Href=@calendarLink />
+        <ImageLink Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
+        <ImageLink Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
         @Transaction.Date.ToShortDateString()
     </td>
     <td>@Transaction.Charge</td>
     <td>@Transaction.Class</td>
-    <td>@Transaction.Details</td>
-    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@OnGroupChanged /></td>
+    <td>
+        <ImageLink Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
+        @Transaction.Details
+    </td>
+    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@( t => HandleGroupChanged(t) ) /></td>
     <td><TransactionNoteInput Transaction=@Transaction /></td>
 </tr>
 
 @code {
-    [Parameter]
-    public Transaction Transaction { get; set; }
+
+    private bool _selected = false;
 
     [Parameter]
-    public Action<Transaction> OnGroupChanged { get; set; }
+    public Transaction Transaction { get; set; } = new();
+
+    [Parameter]
+    public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
+
+    private string EncodeLocationLink()
+    {
+        var locationLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{Transaction.Date:yyyy-M-d}";
+        return locationLink;
+    }
+
+    private string EncodeCalendarLink()
+    {
+        var transactinWindow = Transaction.Date - TimeSpan.FromDays(5);
+        var calendarLink = $"https://calendar.google.com/calendar/u/0/r/custom/7/d/{transactinWindow:yyyy/M/d}";
+        return calendarLink;
+    }
+
+    private string EncodeMapLink()
+    {
+        var transactionDetails = Transaction.Details; 
+        
+        var visaRegex = new Regex("V\\d\\d\\d\\d");
+        if (visaRegex.IsMatch(transactionDetails))
+            transactionDetails = visaRegex.Replace(transactionDetails, "");
+
+        var dateRegex = new Regex("\\d\\d/\\d\\d");
+        if (dateRegex.IsMatch(transactionDetails))
+            transactionDetails = dateRegex.Replace(transactionDetails, "");
+
+        var transactionIdRegex = new Regex("\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d");
+        if (transactionIdRegex.IsMatch(transactionDetails))
+            transactionDetails = transactionIdRegex.Replace(transactionDetails, "");
+
+        transactionDetails = WebUtility.UrlEncode(transactionDetails);
+        
+        var mapLink = $"https://www.google.com.au/maps/search/{transactionDetails}?hl=en&source=opensearch";
+
+        return mapLink;
+    }
+
+    private void Highlight()
+    {
+        _selected = true;
+        StateHasChanged();
+    }
+
+    private void HandleGroupChanged(Transaction transaction)
+    {
+        OnGroupChanged?.Invoke(transaction);
+        _selected = false;
+        StateHasChanged();
+    }
+
 }

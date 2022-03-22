@@ -1,18 +1,11 @@
-@if (string.IsNullOrEmpty(Href))
-{
-    <a @onclick="@(() => OnClick?.Invoke())"
-       title="@Alt"
-       style="cursor:@(OnClick == null ? "default" : "pointer")"
-       target="_blank">
-        <img src=@Source width="20" height="20"/>
-    </a>
-}
-else
-{
-    <a href=@Href target="_blank" title="@Alt">
-        <img src=@Source width="20" height="20"/>
-    </a>
-}
+<a
+    @onclick="@(() => OnClick?.Invoke())"
+    href=@(string.IsNullOrEmpty(Href) ? "" : Href)
+    target=@(string.IsNullOrEmpty(Href) ? "" : "_blank")
+    title="@Alt"
+    style="cursor:@(OnClick == null ? "default" : "pointer")">
+    <img src=@Source width="20" height="20"/>
+</a>
 
 @code {
 

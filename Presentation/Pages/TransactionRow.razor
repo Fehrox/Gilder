@@ -10,7 +10,7 @@
     <td>
         <ImageLink Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
         <ImageLink Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
-        @Transaction.Date.ToShortDateString()
+        @GetPaidDate().ToShortDateString()
     </td>
     <td>@Transaction.Charge</td>
     <td>@Transaction.Class</td>
@@ -32,16 +32,41 @@
     [Parameter]
     public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
 
+    private DateTime GetPaidDate()
+    {
+        var dateRegex = new Regex("(\\d\\d/\\d\\d)");
+        var details = Transaction.Details;
+        var match = dateRegex.Match(details);
+        if (match.Success) {
+            var dateStr = match.Value;
+            var dateStrParts = dateStr.Split("/");
+            var dayStr = dateStrParts.First();
+            var monthStr = dateStrParts.Last();
+            var dayInt = int.Parse(dayStr);
+            var monthInt = int.Parse(monthStr);
+            var yearInt = Transaction.Date.Year;
+            var paidDate = new DateTime(yearInt, monthInt, dayInt);
+            
+            return paidDate;
+        }
+
+        return Transaction.Date;
+    }
+
     private string EncodeLocationLink()
     {
-        var locationLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{Transaction.Date:yyyy-M-d}";
+        var locationLink = $"https://timeline.google.com/maps/timeline?pli=1&pb=!1m2!1m1!1s{GetPaidDate():yyyy-M-d}";
         return locationLink;
     }
 
     private string EncodeCalendarLink()
     {
-        var transactinWindow = Transaction.Date - TimeSpan.FromDays(5);
-        var calendarLink = $"https://calendar.google.com/calendar/u/0/r/custom/7/d/{transactinWindow:yyyy/M/d}";
+        // var transactinWindow = GetPaidDate() - TimeSpan.FromDays(5);
+        // var weekCalendarLink = $"https://calendar.google.com/calendar/u/0/r/custom/7/d/{transactinWindow:yyyy/M/d}";
+        var focusDate = GetPaidDate() - TimeSpan.FromDays(1);
+        var calendarLink = $"https://calendar.google.com/calendar/u/0/r/customday/{focusDate:yyyy/M/d}";
+        // var oneDayCalendarLink = $"https://calendar.google.com/calendar/u/0/r/day/{GetPaidDate():yyyy/M/d}";
+
         return calendarLink;
     }
 

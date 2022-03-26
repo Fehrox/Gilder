@@ -36,7 +36,12 @@
         }
         <tr>
             <td>Total:</td>
-            <td>@transactionGroup.Sum(tg => tg.Charge)</td>
+            @{
+                var sumTransactions = SumTransactionGroup(transactionGroup.AsEnumerable());
+                var periodMonths = GetTransactionPeriod(transactionGroup.AsEnumerable());
+            }
+            <td>$@Math.Round(sumTransactions)</td>
+            <td>$@Math.Round(sumTransactions/periodMonths,2)/Day</td>
         </tr>
         <td colspan="999"> </td>
     }
@@ -160,6 +165,21 @@
             _similarTransactions = copySimilarTransactions; 
         
         StateHasChanged();
+    }
+
+    private double SumTransactionGroup(IEnumerable<Transaction> transactions) => 
+        transactions.Sum(tg => tg.Charge);
+
+    private double GetTransactionPeriod(IEnumerable<Transaction> transactions)
+    {
+        var orderedTransaction = transactions
+            .OrderBy(t => t.Date)
+            .ToArray();
+        var firstTransaction = orderedTransaction.First();
+        var lastTransaction = orderedTransaction.Last();
+        var period = lastTransaction.Date - firstTransaction.Date;
+
+        return period.TotalDays;
     }
 
 }

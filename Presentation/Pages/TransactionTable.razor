@@ -1,0 +1,55 @@
+@using Domain
+
+<h3>@Heading</h3>
+<table>
+    <thead>
+        <td>Date</td>
+        <td>Charge</td>
+        @* <td>Class</td> *@
+        <td>Details</td>
+        <td>Group</td>
+        <td>Note</td>
+    </thead>
+    @foreach (var transaction in Transactions) {
+        <TransactionRow 
+            Transaction=@transaction 
+            OnGroupChanged=@OnGroupChanged/>
+    }
+    <tr>
+        <td>Total:</td>
+        @{
+            var sumTransactions = SumTransactionGroup(Transactions);
+            var periodMonths = GetTransactionPeriod(Transactions);
+        }
+        <td>$@Math.Round(sumTransactions)</td>
+        <td>$@Math.Round(sumTransactions / periodMonths, 2)/Day</td>
+    </tr>
+</table>
+
+@code {
+
+    [Parameter]
+    public string Heading { get; set; } = String.Empty;
+
+    [Parameter]
+    public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+    [Parameter]
+    public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
+
+    private double SumTransactionGroup(IEnumerable<Transaction> transactions) => 
+        transactions.Sum(tg => tg.Charge);
+
+    private double GetTransactionPeriod(IEnumerable<Transaction> transactions)
+    {
+        var orderedTransaction = transactions
+            .OrderBy(t => t.Date)
+            .ToArray();
+        var firstTransaction = orderedTransaction.First();
+        var lastTransaction = orderedTransaction.Last();
+        var period = lastTransaction.Date - firstTransaction.Date;
+
+        return period.TotalDays;
+    }
+    
+}

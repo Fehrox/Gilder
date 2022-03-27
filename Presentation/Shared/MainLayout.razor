@@ -1,12 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
+    
+    <NavMenu />
+    
     <main>
-        <article class="content px-4">
+        <article style="
+            padding-top: 4.1rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: #FAFAFA;
+            border-bottom: 1px solid lightgray;
+        ">
             @Body
         </article>
     </main>

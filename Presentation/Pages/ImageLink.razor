@@ -4,7 +4,7 @@
     target=@(string.IsNullOrEmpty(Href) ? "" : "_blank")
     title="@Alt"
     style="cursor:@(OnClick == null ? "default" : "pointer")">
-    <img src=@Source width="20" height="20"/>
+    <img src=@Source width="@Size" height="@Size"/>
 </a>
 
 @code {
@@ -20,5 +20,13 @@
 
     [Parameter]
     public string Alt { get; set; } = String.Empty;
+
+    [Parameter]
+    public bool Small { get; set; } = true;
+
+    [Parameter]
+    public bool Large { get; set; } = false;
+
+    private int Size => Small && !Large ? 20 : 30;
 
 }

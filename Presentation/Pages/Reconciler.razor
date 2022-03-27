@@ -1,10 +1,6 @@
-@using Fluxor.Blazor.Web.Components; 
-@using Presentation.Store
+@using Fluxor.Blazor.Web.Components
 @using Fluxor
-@using System.Transactions
-@using Transaction = Domain.Transaction
-@using System.Text.RegularExpressions
-@using System.Diagnostics
+@using Domain
 @using Presentation.Store.Transaction
 
 @inherits FluxorComponent
@@ -12,42 +8,12 @@
 @inject IState<TransactionsState> _state
 @inject IDispatcher _dispatcher
 
-<table>
-    <thead>
-    <td>Date</td>
-    <td>Charge</td>
-    <td>Class</td>
-    <td>Details</td>
-    <td>Group</td>
-    <td>Note</td>
-    </thead>
-    <tr><td colspan="999"><h1>Unreconsiled</h1></td></tr>
-    @foreach (var transaction in _state.Value.Transactions) {
-        if(transaction.Charge > 0 || transaction.Group != null) continue;
-        <TransactionRow Transaction=@transaction OnGroupChanged=@HandleGroupChanged />
-    }
-    <tr><td colspan="999"><h2>Reconsiled</h2></td></tr>
-    @foreach (var transactionGroup in _state.Value.Transactions.GroupBy(t => t.Group?.Name)) {
-        if(transactionGroup.Key == null) continue;
-        <tr><td colspan="999"> <h3>@transactionGroup.Key</h3> </td></tr>
-        foreach (var transaction in transactionGroup) {
-            if(transaction.Charge > 0) continue;
-            <TransactionRow Transaction="@transaction" />
-        }
-        <tr>
-            <td>Total:</td>
-            @{
-                var sumTransactions = SumTransactionGroup(transactionGroup.AsEnumerable());
-                var periodMonths = GetTransactionPeriod(transactionGroup.AsEnumerable());
-            }
-            <td>$@Math.Round(sumTransactions)</td>
-            <td>$@Math.Round(sumTransactions/periodMonths,2)/Day</td>
-        </tr>
-        <td colspan="999"> </td>
-    }
-</table>
+<TransactionTable
+    Heading="@GroupName"
+    Transactions="@Transactions"
+    OnGroupChanged="@HandleGroupChanged"
+/>    
 
-@* TODO: Refactor out. *@
 @if (_similarTransactions.Any()) {
     <Modal>
         <button @onclick="@HandleCancel">Cancel</button>
@@ -60,12 +26,17 @@
             }    
             <button @onclick="@HandleApplyAll">Apply to All</button>
         </div>
-        
     </Modal>
 }
 
 
 @code {
+
+    [Parameter]
+    public string GroupName { get; set; } = String.Empty;
+    
+    [Parameter]
+    public IEnumerable<Transaction> Transactions { get; set; } = Array.Empty<Transaction>();
 
     private IEnumerable<SimilarTransaction> _similarTransactions = new List<SimilarTransaction>();
     Domain.Group? _selectedGroup = null;

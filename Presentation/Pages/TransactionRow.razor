@@ -13,8 +13,8 @@
         @GetPaidDate().ToShortDateString()
     </td>
     <td>@Transaction.Charge</td>
-    <td>@Transaction.Class</td>
-    <td>
+    @* <td>@Transaction.Class</td> *@
+    <td style="font-size: x-small;">
         <ImageLink Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
         @Transaction.Details
     </td>

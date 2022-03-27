@@ -13,7 +13,9 @@
 
 @inherits FluxorComponent
 
-<button @onclick="@HandleShowGroupSelector">@(Transaction?.Group?.Name ?? "Select Group")</button>
+<button @onclick="@HandleShowGroupSelector" style="">
+    @(Transaction?.Group?.Name ?? "Select")
+</button>
 
 
 @if (_showSelector)

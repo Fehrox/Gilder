@@ -7,7 +7,7 @@
 
 @inherits FluxorComponent
 <tr style="background-color: @(_selected ? "yellow" : "initial")">
-    <td>
+    <td style="font-size: small;">
         <ImageLink Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
         <ImageLink Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
         @GetPaidDate().ToShortDateString()
@@ -18,8 +18,8 @@
         <ImageLink Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
         @Transaction.Details
     </td>
-    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@( t => HandleGroupChanged(t) ) /></td>
     <td><TransactionNoteInput Transaction=@Transaction /></td>
+    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@( t => HandleGroupChanged(t) ) /></td>
 </tr>
 
 @code {

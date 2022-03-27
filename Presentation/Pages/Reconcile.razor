@@ -1,0 +1,35 @@
+@page "/reconcile"
+@using Fluxor
+@using Presentation.Store.Group
+@using Presentation.Store.Transaction
+@using Fluxor.Blazor.Web.Components
+@using Presentation.Components
+@using Transaction = Domain.Transaction
+
+@inherits FluxorComponent
+
+@inject IDispatcher _dispatcher
+@inject IState<TransactionsState> _transactionState;
+
+<div style="display: flex; flex-direction: column; justify-content: center;">
+    @foreach (var transactionGroup in TransactionGroups) {
+        <div style="max-width: 935px; background-color: white; border: 1px solid lightgray; margin-top: 25px; justify-content: center">
+            <Reconciler
+                GroupName="@transactionGroup.Key"
+                Transactions="transactionGroup.AsEnumerable()" />
+        </div>
+    }
+</div>
+
+@code{
+
+    private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions
+        .GroupBy(g => g.Group?.Name??"Unreconciled");
+    
+    protected override Task OnInitializedAsync()
+    {
+        _dispatcher.Dispatch(new GroupLoadAction());
+        _dispatcher.Dispatch(new TransactionsCsvLoadAction(String.Empty));
+        return base.OnInitializedAsync();
+    }
+}

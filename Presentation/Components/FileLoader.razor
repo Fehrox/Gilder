@@ -6,13 +6,13 @@
 <ImageLink
     Large
     Source="icons/load-icon.png" 
-    OnClick="@(() => Show() )" 
+    OnClick="@(() => Show())" 
     Alt="Load Work from Saved File" />
 
 @if (_show){
     <Modal>
         <InputFile OnChange="@LoadSavedFileAsync" accept=".gdb" />
-        <button @onclick="@(() => Hide() )">Close</button>
+        <button @onclick="@Hide">Close</button>
     </Modal>
 }
 
@@ -20,8 +20,16 @@
 
     private bool _show;
 
-    private bool Show() => _show = true;
-    private bool Hide() => _show = false;
+    private void Show() {
+        _show = true;
+        StateHasChanged();
+    }
+
+    private void Hide()
+    {
+        _show = false;
+        StateHasChanged();
+    }
 
     private void LoadSavedFileAsync(InputFileChangeEventArgs obj)
     {

@@ -1,0 +1,44 @@
+@using Domain
+
+<div style="display: flex; flex-direction: column">
+    @Month.ToString("MMMM") @Month.ToString("yyyy")
+    @{ double totalTransactions = 0;}
+    @foreach (var x in GetMonthTransactions())
+    {
+        <div> @x.Name (@Math.Round(x.Cost, 2) in @x.Count) </div>
+        totalTransactions += x.Cost;
+    }
+
+    Total: @Math.Round(totalTransactions, 2)
+</div>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<Transaction> MonthsTransactions { get; set; }
+
+    [Parameter]
+    public DateTime Month { get; set; }
+
+    private IEnumerable<MonthTransactionBar> GetMonthTransactions()
+    {
+        var transactions = MonthsTransactions.AsEnumerable();
+        var transactionsByGroup = transactions
+            .GroupBy(t => t.Group?.Name ?? "Unresolved")
+            .Select(g => new MonthTransactionBar {
+                Name = g.Key,
+                Count = g.Count(),
+                Cost = g.Sum(t => t.Charge)
+            }).OrderBy(t => t.Cost);
+
+        return transactionsByGroup;
+    }
+
+    private class MonthTransactionBar
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
+        public double Cost { get; set; }
+    }
+
+}

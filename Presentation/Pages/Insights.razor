@@ -1,0 +1,26 @@
+@page "/insights"
+
+@using Fluxor
+@using Presentation.Store.Transaction
+@using Domain
+@using System.Linq
+@using Fluxor.Blazor.Web.Components
+@using Presentation.Components
+
+@inherits FluxorComponent
+
+@inject IState<TransactionsState> _transactionState
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 100px">
+    @foreach (var month in TransactionMonths) {
+        <MonthCard Month="@month.Key" MonthsTransactions="@month.AsEnumerable()" />
+    }
+</div>  
+
+@code {
+
+    private IEnumerable<IGrouping<DateTime, Transaction>> TransactionMonths =>
+        _transactionState.Value.Transactions
+            .GroupBy(g => new DateTime(g.Date.Year, g.Date.Month, 1));
+
+}

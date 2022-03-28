@@ -1,7 +1,7 @@
 <a
     @onclick="@(() => OnClick?.Invoke())"
     href=@(string.IsNullOrEmpty(Href) ? "javascript:void(0);" : Href)
-    target=@(string.IsNullOrEmpty(Href) ? "" : "_blank")
+    target=@(string.IsNullOrEmpty(Href) ? "" : NewTab? "_blank" : "")
     title="@Alt"
     style="cursor:@(OnClick == null ? "default" : "pointer")">
     <img src=@Source width="@Size" height="@Size"/>
@@ -21,6 +21,9 @@
     [Parameter]
     public string Alt { get; set; } = String.Empty;
 
+    [Parameter]
+    public bool NewTab { get; set; } = false;
+    
     [Parameter]
     public bool Small { get; set; } = true;
 

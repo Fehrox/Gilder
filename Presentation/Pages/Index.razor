@@ -1,5 +1,19 @@
 @page "/"
 
+@using Fluxor
+@using Presentation.Store.Group
+@using Presentation.Store.Transaction
+
+@inject IDispatcher _dispatcher
+
 Hello World
 
-@code { }
+@code {
+
+    protected override Task OnInitializedAsync() {
+        _dispatcher.Dispatch(new GroupLoadAction());
+        _dispatcher.Dispatch(new TransactionsCsvLoadAction(String.Empty));
+        return base.OnInitializedAsync();
+    }
+
+}

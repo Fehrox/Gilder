@@ -1,6 +1,5 @@
 @page "/reconcile"
 @using Fluxor
-@using Presentation.Store.Group
 @using Presentation.Store.Transaction
 @using Fluxor.Blazor.Web.Components
 @using Presentation.Components
@@ -25,11 +24,4 @@
 
     private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions
         .GroupBy(g => g.Group?.Name??"Unreconciled");
-    
-    protected override Task OnInitializedAsync()
-    {
-        _dispatcher.Dispatch(new GroupLoadAction());
-        _dispatcher.Dispatch(new TransactionsCsvLoadAction(String.Empty));
-        return base.OnInitializedAsync();
-    }
 }

@@ -2,25 +2,43 @@
 
 @using Fluxor
 @using Presentation.Store.Transaction
-@using Domain
 @using System.Linq
 @using Fluxor.Blazor.Web.Components
 @using Presentation.Components
+@using Presentation.Store.Insights
 
 @inherits FluxorComponent
 
-@inject IState<TransactionsState> _transactionState
+@inject IDispatcher _dispatcher
+@inject IState<InsightsState> _transactionState
 
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 100px">
-    @foreach (var month in TransactionMonths) {
-        <MonthCard Month="@month.Key" MonthsTransactions="@month.AsEnumerable()" />
+<div style="
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 50px; 
+    margin-top: 50px; 
+    margin-bottom: 50px">
+    @foreach (var month in InsightMonths) {
+        <MonthCard 
+            Month="@month.Month"
+            Net="@month.Net"
+            Spent="@month.Spent"
+            Earned="@month.Earned"
+            MaxMonthNet="@MaxMonth"
+            MonthGroups="@month.GroupStats" />
     }
 </div>  
 
 @code {
 
-    private IEnumerable<IGrouping<DateTime, Transaction>> TransactionMonths =>
-        _transactionState.Value.Transactions
-            .GroupBy(g => new DateTime(g.Date.Year, g.Date.Month, 1));
+    private IEnumerable<InsightMonth> InsightMonths => _transactionState.Value.MonthInsights;
+
+    private double MaxMonth => _transactionState.Value.MaxMonthNet;
+    
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _dispatcher.Dispatch(new InsightsCollateCommand());
+    }
 
 }

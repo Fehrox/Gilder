@@ -1,44 +1,40 @@
 @using Domain
+@using Presentation.Store.Insights
+@using System.Reflection.Metadata
 
-<div style="display: flex; flex-direction: column">
-    @Month.ToString("MMMM") @Month.ToString("yyyy")
-    @{ double totalTransactions = 0;}
-    @foreach (var x in GetMonthTransactions())
-    {
-        <div> @x.Name (@Math.Round(x.Cost, 2) in @x.Count) </div>
-        totalTransactions += x.Cost;
-    }
-
-    Total: @Math.Round(totalTransactions, 2)
+<div style="background-color: white; border: solid 1px lightgrey">
+    <div style="display: flex; flex-direction: column">
+        @Month.ToString("MMMM") @Month.ToString("yyyy")
+        
+        @foreach (var month in MonthGroups) {
+            var delta = month.Delta;
+            <div> @month.GroupName (@Math.Round(delta, 2) in @month.TransactionCount) </div>
+        }
+        
+        Spent: @Math.Round(Spent, 2) <br/>
+        Earned: @Math.Round(Earned, 2) <br/>
+        Net: @Math.Round(Net, 2)
+    </div>
 </div>
 
 @code {
 
     [Parameter]
-    public IEnumerable<Transaction> MonthsTransactions { get; set; }
-
-    [Parameter]
     public DateTime Month { get; set; }
 
-    private IEnumerable<MonthTransactionBar> GetMonthTransactions()
-    {
-        var transactions = MonthsTransactions.AsEnumerable();
-        var transactionsByGroup = transactions
-            .GroupBy(t => t.Group?.Name ?? "Unresolved")
-            .Select(g => new MonthTransactionBar {
-                Name = g.Key,
-                Count = g.Count(),
-                Cost = g.Sum(t => t.Charge)
-            }).OrderBy(t => t.Cost);
+    [Parameter]
+    public double Spent { get; set; }
 
-        return transactionsByGroup;
-    }
+    [Parameter]
+    public double Earned { get; set; }
+    
+    [Parameter]
+    public double Net { get; set; }
 
-    private class MonthTransactionBar
-    {
-        public string Name { get; set; }
-        public int Count { get; set; }
-        public double Cost { get; set; }
-    }
+    [Parameter]
+    public IEnumerable<InsightMonthGroup> MonthGroups { get; set; } = Array.Empty<InsightMonthGroup>();
+
+    [Parameter]
+    public double MaxMonthNet { get; set; }
 
 }

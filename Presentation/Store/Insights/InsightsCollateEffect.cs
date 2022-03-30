@@ -38,29 +38,33 @@ public class InsightsCollateEffect : Effect<InsightsCollateCommand>
                 }).OrderBy(t => t.Delta)
                 .ToArray();
             
-            double net = 0, earned = 0, spent = 0;
+            double net = 0, income = 0, spent = 0, maxDelta = 0;
             foreach (var monthTransactionBar in groupStats){
                 var delta = monthTransactionBar.Delta;
                 if (delta > 0)
-                    earned += delta;
+                    income += delta;
                 else
                     spent += delta;
+
+                var absDelta = Math.Abs(delta);
+                if (absDelta > maxDelta)
+                    maxDelta = absDelta;
             
                 net += delta;
             }
 
-            if (net > maxMonthNet)
-                maxMonthNet = net;
+            if (maxDelta > maxMonthNet)
+                maxMonthNet = maxDelta;
 
             monthStats.Add(new InsightMonth {
                 Month = monthTransactions.Key,
                 Net = net,
-                Earned = earned,
+                Income = income,
                 Spent = spent,
                 GroupStats = groupStats
             });
         }
-
+        
         return new Insights {
             MaxMonthNet = maxMonthNet,
             InsightMonthStats = monthStats,

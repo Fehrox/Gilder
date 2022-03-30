@@ -11,7 +11,7 @@ public class InsightMonth
     public DateTime Month { get; set; }
     public double Spent { get; set; }
     public double Net { get; set; }
-    public double Earned { get; set; }
+    public double Income { get; set; }
     public IEnumerable<InsightMonthGroup> GroupStats { get; set; }
 }
 

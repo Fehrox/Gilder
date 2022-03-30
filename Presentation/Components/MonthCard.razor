@@ -3,17 +3,20 @@
 @using System.Reflection.Metadata
 
 <div style="background-color: white; border: solid 1px lightgrey">
-    <div style="display: flex; flex-direction: column">
-        @Month.ToString("MMMM") @Month.ToString("yyyy")
-        
-        @foreach (var month in MonthGroups) {
-            var delta = month.Delta;
-            <div> @month.GroupName (@Math.Round(delta, 2) in @month.TransactionCount) </div>
-        }
-        
-        Spent: @Math.Round(Spent, 2) <br/>
-        Earned: @Math.Round(Earned, 2) <br/>
-        Net: @Math.Round(Net, 2)
+    <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; margin: 5px; padding: 10px">
+        <div style="font-size: larger; text-decoration: underline;" >
+            @Month.ToString("MMMM") @Month.ToString("yyyy")    
+        </div>
+
+        <HorizontalBarChart
+            BarValues="@MonthRows"
+            MaxBarValue="@MaxMonthNet"/>
+
+        <div style="font-size: large; font-weight: bold; text-align: right">
+            <div style="display: flex; justify-content: flex-end">Spent: <div style="color: #FF576A">@Math.Round(Spent, 2)</div></div>
+            <div style="display: flex; justify-content: flex-end">Income: <div style="color: #CCD888">@Math.Round(Income, 2)</div></div>
+            <div style="display: flex; justify-content: flex-end">Net: <div style="color: @(Net > 0 ? "#CCD888" : "#FF576A")" >@Math.Round(Net, 2)</div></div>
+        </div>
     </div>
 </div>
 
@@ -26,15 +29,21 @@
     public double Spent { get; set; }
 
     [Parameter]
-    public double Earned { get; set; }
+    public double Income { get; set; }
     
     [Parameter]
     public double Net { get; set; }
 
     [Parameter]
     public IEnumerable<InsightMonthGroup> MonthGroups { get; set; } = Array.Empty<InsightMonthGroup>();
-
+    
     [Parameter]
     public double MaxMonthNet { get; set; }
+
+    private IEnumerable<HorizontalBarChart.HorizontalBarRow> MonthRows =>
+        MonthGroups.Select(m => new HorizontalBarChart.HorizontalBarRow() {
+            Text = $"{m.GroupName} ({Math.Round(m.Delta, 2)} in {m.TransactionCount})",
+            Value = m.Delta
+        });
 
 }

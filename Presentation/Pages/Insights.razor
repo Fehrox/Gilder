@@ -1,8 +1,6 @@
 @page "/insights"
 
 @using Fluxor
-@using Presentation.Store.Transaction
-@using System.Linq
 @using Fluxor.Blazor.Web.Components
 @using Presentation.Components
 @using Presentation.Store.Insights
@@ -11,34 +9,83 @@
 
 @inject IDispatcher _dispatcher
 @inject IState<InsightsState> _transactionState
+@inject IJSRuntime _jsRuntime
 
-<div style="
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 50px; 
-    margin-top: 50px; 
-    margin-bottom: 50px">
-    @foreach (var month in InsightMonths) {
-        <MonthCard 
-            Month="@month.Month"
-            Net="@month.Net"
-            Spent="@month.Spent"
-            Income="@month.Income"
-            MaxMonthNet="@MaxMonth"
-            MonthGroups="@month.GroupStats" />
-    }
-</div>  
+<div style="display: flex; flex-direction: column">
+
+    <div style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
+        <MonthNetSummary 
+                OnMonthClicked="@HandleMonthSummaryClicked" />
+    </div>
+
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 50px; 
+        margin-top: 50px; 
+        margin-bottom: 50px"
+    >
+        @foreach (var month in InsightMonths) {
+            var monthId = MontToId(month.Month);
+            <section id="@monthId">
+                <MonthCard 
+                    Month="@month.Month"
+                    Net="@month.Net"
+                    Spent="@month.Spent"
+                    Income="@month.Income"
+                    MaxMonthNet="@MaxMonth"
+                    MonthGroups="@month.GroupStats"
+                    OnMonthGroupClicked="@HandleMonthGroupClicked"
+                />
+            </section>
+        }
+    </div>  
+    
+</div>
+
+@if (_selectedMonthGroup != null) {
+    var startOfMonth = _selectedMonthGroup.Month;
+    var endOfMonth = _selectedMonthGroup.Month.AddMonths(1);
+    var group = _selectedMonthGroup.Group;
+    
+    <TransactionsViewier 
+         FilterFrom="@startOfMonth"
+         FilterTo="@endOfMonth"
+         FilterGroup="@group"
+         OnCloseClicked="@HandleMonthCleared" />
+}
 
 @code {
 
     private IEnumerable<InsightMonth> InsightMonths => _transactionState.Value.MonthInsights;
 
     private double MaxMonth => _transactionState.Value.MaxMonthNet;
-    
+
+    private InsightMonthGroup? _selectedMonthGroup = null;
+
+    private void HandleMonthCleared() {
+        _selectedMonthGroup = null;
+        StateHasChanged();
+    }
+
+    private void HandleMonthGroupClicked(InsightMonthGroup monthGroup) {
+        _selectedMonthGroup = monthGroup;
+        StateHasChanged();
+    }
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         _dispatcher.Dispatch(new InsightsCollateCommand());
     }
+
+    private void HandleMonthSummaryClicked(DateTime month)
+    {
+        var monthId = MontToId(month);
+        Console.WriteLine(nameof(HandleMonthSummaryClicked) + " " + monthId);
+        _jsRuntime.InvokeAsync<bool>("scrollToElement", monthId);
+    }
+
+    private string MontToId(DateTime month) => month.Year + "_" + month.Month;
 
 }

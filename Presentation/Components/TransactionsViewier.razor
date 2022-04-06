@@ -1,0 +1,41 @@
+@using Domain
+@using Fluxor
+@using Presentation.Store.Transaction
+@using Fluxor.Blazor.Web.Components
+
+@inherits FluxorComponent
+
+@inject IState<TransactionsState> _transactionState
+
+<Modal>
+    <div style="height: 100%; overflow-y: scroll">
+        <button @onclick="@OnCloseClicked">Close</button>
+        @foreach (var transaction in Transactions) {
+            if(transaction.Date < FilterFrom) continue;
+            if(transaction.Date > FilterTo) continue;
+            if(transaction.Group?.Name != FilterGroup?.Name) continue;
+            <TransactionRow
+                Transaction="@transaction"/>
+        }
+    </div>
+</Modal>
+
+@code {
+
+    [Parameter]
+    public DateTime FilterFrom { get; set; }
+
+    [Parameter]
+    public DateTime FilterTo { get; set; }
+    
+    [Parameter]
+    public Group? FilterGroup { get; set; }
+    
+    [Parameter]
+    public Action OnCloseClicked { get; set; } = () => { };
+
+    private IEnumerable<Transaction> Transactions
+        => _transactionState.Value.Transactions
+            .OrderBy(t => t.Date);
+
+}

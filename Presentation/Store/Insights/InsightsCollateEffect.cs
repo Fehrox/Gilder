@@ -30,16 +30,17 @@ public class InsightsCollateEffect : Effect<InsightsCollateCommand>
         foreach (var monthTransactions in transactionsByMonth)
         {
             var groupStats = monthTransactions
-                .GroupBy(t => t.Group?.Name ?? "Unresolved")
+                .GroupBy(t => t.Group?.Name??string.Empty)
                 .Select(g => new InsightMonthGroup {
-                    GroupName = g.Key,
+                    Group = g.First()?.Group,
                     TransactionCount = g.Count(),
-                    Delta = g.Sum(t => t.Charge)
+                    Delta = g.Sum(t => t.Charge),
+                    Month = monthTransactions.Key
                 }).OrderBy(t => t.Delta)
                 .ToArray();
             
             double net = 0, income = 0, spent = 0, maxDelta = 0;
-            foreach (var monthTransactionBar in groupStats){
+            foreach (var monthTransactionBar in groupStats) {
                 var delta = monthTransactionBar.Delta;
                 if (delta > 0)
                     income += delta;

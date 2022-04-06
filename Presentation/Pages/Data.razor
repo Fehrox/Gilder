@@ -2,10 +2,18 @@
 
 @page "/data"
 
-<FileSaver/>
-<FileLoader/>
-<GroupEditor/>
-<TransactionImporter/>
+<div style="display: flex; flex-direction: column">
+    <div>
+        <DataSummary />
+    </div>
+    
+    <div>
+        <FileSaver/>
+        <FileLoader/>
+        <GroupEditor/>
+        <TransactionImporter/>
+    </div>
+</div>
 
 @code {
     

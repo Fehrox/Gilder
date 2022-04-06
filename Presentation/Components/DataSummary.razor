@@ -1,0 +1,22 @@
+@using Presentation.Store.Transaction
+@using Fluxor
+@using Presentation.Store.Group
+
+@inject IState<TransactionsState> _transactionState
+@inject IState<GroupState> _groupState
+
+<div style="display: flex; flex-direction: column">
+    <div>Total Transactions: @TotalTransactions</div>
+    <div>Total Groups: @TotalGroups</div>
+    <div>Total Outgoing: @Math.Round(TotalOutgoing, 2)</div>
+    <div>Total Incoming: @Math.Round(TotalIncoming, 2)</div>
+</div>
+
+@code {
+    private int TotalTransactions => _transactionState.Value.Transactions.Count();
+    private int TotalGroups => _groupState.Value.Groups.Count();
+    private double TotalOutgoing => _transactionState.Value.Transactions
+        .Sum(t => t.Charge < 0 ? t.Charge : 0);
+    private double TotalIncoming => _transactionState.Value.Transactions
+        .Sum(t => t.Charge > 0 ? t.Charge : 0);
+}

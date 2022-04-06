@@ -1,0 +1,68 @@
+@using Fluxor
+@using Presentation.Store.Insights
+@using Presentation.Store.Transaction
+
+@inject IState<InsightsState> _transactionState
+
+<div style="display: flex; justify-content: center; height: 200px">
+    @foreach (var month in MonthInsights) {
+        var height = Math.Abs(month.Net) / MaxHeight * 4;
+        var posHeight = month.Net > 0 ? height : 0;
+        var negHeight = month.Net < 0 ? height : 0;
+        var posColor = month.Net > 0 ? "#CCD888" : "transparent";
+        var negColor = month.Net < 0 ? "#FF576A" : "transparent";
+        var monthDate = month.Month;
+        
+        <div
+            @onclick="@(() => OnMonthClicked?.Invoke(monthDate))"
+            style="
+                display:flex; 
+                flex-direction: column; 
+                height: 100%;
+                cursor: pointer;
+        ">   
+            <div style="
+                height: @((1 - posHeight) * 50)%;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                white-space: nowrap;
+                text-align: end;
+            ">
+                @Math.Round(month.Net, 2)
+            </div>
+            <div style="
+                width: 25px;
+                background-color: @posColor;
+                height: @(posHeight * 50)%;
+            ">
+            </div>
+            <div style="
+                width: 25px;
+                background-color: @negColor;
+                height: @(negHeight * 50)%;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                white-space: nowrap;
+                text-align: start;
+            ">
+                @monthDate.ToString("MMMM")
+                @monthDate.ToString("yyyy")
+            </div>
+            <div style="
+                height: @((1 - negHeight) * 50)%; 
+            ">
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    
+    private IEnumerable<InsightMonth> MonthInsights => _transactionState.Value.MonthInsights;
+    
+    private double MaxHeight => _transactionState.Value.MaxMonthNet;
+
+    [Parameter]
+    public Action<DateTime> OnMonthClicked { get; set; } = _ => { };
+
+}

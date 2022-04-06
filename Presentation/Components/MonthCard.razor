@@ -35,6 +35,9 @@
     public double Net { get; set; }
 
     [Parameter]
+    public Action<InsightMonthGroup> OnMonthGroupClicked { get; set; } = _ => { }; 
+
+    [Parameter]
     public IEnumerable<InsightMonthGroup> MonthGroups { get; set; } = Array.Empty<InsightMonthGroup>();
     
     [Parameter]
@@ -42,8 +45,9 @@
 
     private IEnumerable<HorizontalBarChart.HorizontalBarRow> MonthRows =>
         MonthGroups.Select(m => new HorizontalBarChart.HorizontalBarRow() {
-            Text = $"{m.GroupName} ({Math.Round(m.Delta, 2)} in {m.TransactionCount})",
-            Value = m.Delta
+            Text = $"{m.Group?.Name??"Unresolved"} ({Math.Round(m.Delta, 2)} in {m.TransactionCount})",
+            Value = m.Delta,
+            OnBarClicked = () => OnMonthGroupClicked?.Invoke(m)
         });
 
 }

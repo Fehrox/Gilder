@@ -32,7 +32,10 @@
     public IEnumerable<HorizontalBarRow> BarValues { get; set; } = Array.Empty<HorizontalBarRow>();
 
     [Parameter]
-    public double MaxBarValue { get; set; }
+    public double? MaxBarValue { get; set; } = null;
+
+    protected override void OnParametersSet() 
+        => MaxBarValue ??= BarValues.Max(bv => bv.Value);
 
     private IEnumerable<HorizontalBarRow> OrderedBarValues
         => BarValues.OrderByDescending(b => Math.Abs(b.Value));

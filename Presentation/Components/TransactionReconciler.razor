@@ -8,8 +8,9 @@
 @inject IState<TransactionsState> _state
 @inject IDispatcher _dispatcher
 
+@{ var heading = GroupName + " (" + Transactions.Count() + ")";}
 <TransactionTable
-    Heading="@GroupName"
+    Heading="@heading"
     Transactions="@Transactions"
     OnGroupChanged="@HandleGroupChanged"
 />    
@@ -20,7 +21,7 @@
         <div>
             @foreach (var transaction in _similarTransactions){
                 <div style="display: flex; justify-content: space-between">
-                    <TransactionRow Transaction="@transaction.Transaction"/>
+                    <TransactionRow OnGroupChanged="@(_ => StateHasChanged())"  Transaction="@transaction.Transaction"/>
                     <button @onclick="@(() => HandleExcludeClicked(transaction))">Exclude</button>
                 </div>
             }    

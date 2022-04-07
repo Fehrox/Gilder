@@ -1,22 +1,115 @@
 @using Presentation.Store.Transaction
 @using Fluxor
 @using Presentation.Store.Group
+@using Domain
 
 @inject IState<TransactionsState> _transactionState
 @inject IState<GroupState> _groupState
 
 <div style="display: flex; flex-direction: column">
-    <div>Total Transactions: @TotalTransactions</div>
-    <div>Total Groups: @TotalGroups</div>
-    <div>Total Outgoing: @Math.Round(TotalOutgoing, 2)</div>
-    <div>Total Incoming: @Math.Round(TotalIncoming, 2)</div>
+    <ContentPanel>
+        <div>First Transaction: @FirstTransaction?.Date.ToShortDateString()</div>
+        <div>Last Transaction: @LastTransaction?.Date.ToShortDateString()</div>
+        <div>@DurationStr</div>
+    </ContentPanel>
+
+    <ContentPanel>
+        <div>Total Groups: @TotalGroups</div>
+        <div style="display: flex; flex-direction: row">
+                    
+            <div>
+                <div>Group</div>
+                <HorizontalBarChart BarValues="@GroupBars"/>
+            </div>
+            
+            <table>
+                <tr>
+                    <th>Incoming</th>
+                    <th>Outgoing</th>
+                    <th>Net</th>
+                    <th>/Day</th>
+                </tr>
+                <tbody>
+                @foreach (var transaction in TransactionGroups)
+                {
+                    <tr>
+                        <td>@Math.Round(transaction.Where(c => c.Charge > 0).Sum(t => t.Charge),2)</td>
+                        <td>@Math.Round(transaction.Where(c => c.Charge < 0).Sum(t => t.Charge),2)</td>
+                        @{ var net = transaction.Sum(t => t.Charge); }
+                        <td>@Math.Round(net,2)</td>
+                        @{
+                            var duration = FirstTransaction == null || LastTransaction == null
+                                ? TimeSpan.Zero
+                                : LastTransaction.Date - FirstTransaction.Date;
+                        }
+                        <td>@Math.Round(net/duration.Days,2)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </ContentPanel>
+
+    <ContentPanel>
+        <div>Total Transactions: @TotalTransactions</div>
+        <div style="display: flex; flex-direction: row">
+            <HorizontalBarChart BarValues="@TotalBars"/>
+        </div>
+        <div>Net position: @Math.Round(NetPosition,2)</div>
+    </ContentPanel>
 </div>
 
 @code {
     private int TotalTransactions => _transactionState.Value.Transactions.Count();
-    private int TotalGroups => _groupState.Value.Groups.Count();
+    
     private double TotalOutgoing => _transactionState.Value.Transactions
         .Sum(t => t.Charge < 0 ? t.Charge : 0);
     private double TotalIncoming => _transactionState.Value.Transactions
         .Sum(t => t.Charge > 0 ? t.Charge : 0);
+    private double NetPosition => _transactionState.Value.Transactions
+        .Sum(t => t.Charge);
+    private IEnumerable<HorizontalBarChart.HorizontalBarRow> TotalBars =>
+        new []{ new HorizontalBarChart.HorizontalBarRow{
+            Text = $"Total Outgoing ({Math.Round(TotalOutgoing,2)})",
+            Value = TotalOutgoing
+        }, new HorizontalBarChart.HorizontalBarRow{
+            Text = $"Total Incoming ({Math.Round(TotalIncoming,2)})",
+            Value = TotalIncoming
+        }};
+
+    private Transaction? FirstTransaction => _transactionState.Value.Transactions
+        .OrderBy(t => t.Date).FirstOrDefault();
+    private Transaction? LastTransaction => _transactionState.Value.Transactions
+        .OrderBy(t => t.Date).LastOrDefault();
+    private string DurationStr {
+        get {
+            var first = FirstTransaction;
+            var last = LastTransaction;
+            if (first == null || last == null)
+                return "Load Transactions";
+            
+            var duration = last.Date - first.Date;
+            // https://stackoverflow.com/a/1925560/783724
+            var years = (int)(duration.Days/365.2425);
+            var months = (int)(duration.Days/30.436875) - (years * 12);
+            return $"{years} years, {months} months.";
+        }
+    }
+
+    private int TotalGroups => _groupState.Value.Groups.Count();
+    private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions
+        .GroupBy(g => g.Group?.Name ?? "Unreconciled")
+        .OrderByDescending(g => Math.Abs(g.Sum(g => g.Charge)));
+    private IEnumerable<HorizontalBarChart.HorizontalBarRow> GroupBars =>
+        TransactionGroups.Select(tg => new HorizontalBarChart.HorizontalBarRow {
+            Text = tg.Key,
+            Value = tg.Sum( t => t.Charge),
+            OnBarClicked = () => HandleGroupClicked(tg)
+        });
+
+    private void HandleGroupClicked(IGrouping<string, Transaction> transactions)
+    {
+        
+    }
+
 }

@@ -1,0 +1,10 @@
+<div style="background-color: white; border: solid 1px lightgrey; padding: 10px; margin: 10px">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

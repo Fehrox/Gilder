@@ -8,14 +8,14 @@
 @inherits FluxorComponent
 <tr style="background-color: @(_selected ? "yellow" : "initial")">
     <td style="font-size: small;">
-        <ImageLink Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
-        <ImageLink Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
+        <ImageLink NewTab Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
+        <ImageLink NewTab Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
         @GetPaidDate().ToShortDateString()
     </td>
     <td>@Transaction.Charge</td>
     @* <td>@Transaction.Class</td> *@
     <td style="font-size: x-small;">
-        <ImageLink Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
+        <ImageLink NewTab Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
         @Transaction.Details
     </td>
     <td><TransactionNoteInput Transaction=@Transaction /></td>

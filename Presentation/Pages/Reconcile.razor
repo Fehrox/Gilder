@@ -3,24 +3,67 @@
 @using Presentation.Store.Transaction
 @using Fluxor.Blazor.Web.Components
 @using Presentation.Components
+@using Presentation.Store.Group
 @using Transaction = Domain.Transaction
+@using Domain
 
 @inherits FluxorComponent
 
 @inject IDispatcher _dispatcher
-@inject IState<TransactionsState> _transactionState;
+@inject IState<TransactionsState> _transactionState
+@inject IState<GroupState> _groupState
+
+@{ var transactionGroups = TransactionGroups.ToArray(); }
 
 <div style="display: flex; flex-direction: column; justify-content: center;">
-    @foreach (var transactionGroup in TransactionGroups) {
+
+    <div style="
+        position:sticky; 
+        top: 66px; 
+        display: flex; 
+        flex-direction: row; 
+        overflow-x: scroll; 
+        gap: 10px; 
+        max-width: 935px;
+        background-color: white; 
+        border: 1px solid lightgray; 
+        margin-top: 25px;
+        justify-content: center
+    ">
+        @foreach (var group in transactionGroups) {
+            var selected = _selectedGroupName == group.Key;
+            <div
+                style="
+                    text-wrap: none;
+                    color: @(selected ? "yellow" : "black"); 
+                    filter: @(selected ? "drop-shadow(0px 0px 2px black)" : "")"
+                @onclick="@(() => {
+                _selectedGroupName = group.Key; 
+                StateHasChanged();  
+            })"> @group.Key </div>
+        }
+    </div>
+    
+    @foreach (var transactionGroup in transactionGroups) {
+        if(_selectedGroupName != transactionGroup.Key) continue;
+        var transactions = transactionGroup.OrderBy(t => t.Date).AsEnumerable();
         <div style="max-width: 935px; background-color: white; border: 1px solid lightgray; margin-top: 25px; justify-content: center">
-            <Reconciler
+            <TransactionReconciler
                 GroupName="@transactionGroup.Key"
-                Transactions="transactionGroup.AsEnumerable()" />
+                Transactions="@transactions" />
         </div>
     }
 </div>
 
 @code{
+    
+    private string _selectedGroupName = null;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _selectedGroupName = _groupState.Value.Groups.First()?.Name ?? "Unreconciled";
+    }
 
     private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions
         .GroupBy(g => g.Group?.Name??"Unreconciled");

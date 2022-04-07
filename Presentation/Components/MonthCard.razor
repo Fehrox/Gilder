@@ -2,7 +2,7 @@
 @using Presentation.Store.Insights
 @using System.Reflection.Metadata
 
-<div style="background-color: white; border: solid 1px lightgrey">
+<ContentPanel>
     <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; margin: 5px; padding: 10px">
         <div style="font-size: larger; text-decoration: underline;" >
             @Month.ToString("MMMM") @Month.ToString("yyyy")    
@@ -18,7 +18,7 @@
             <div style="display: flex; justify-content: flex-end">Net: <div style="color: @(Net > 0 ? "#CCD888" : "#FF576A")" >@Math.Round(Net, 2)</div></div>
         </div>
     </div>
-</div>
+</ContentPanel>
 
 @code {
 
@@ -44,10 +44,16 @@
     public double MaxMonthNet { get; set; }
 
     private IEnumerable<HorizontalBarChart.HorizontalBarRow> MonthRows =>
-        MonthGroups.Select(m => new HorizontalBarChart.HorizontalBarRow() {
-            Text = $"{m.Group?.Name??"Unresolved"} ({Math.Round(m.Delta, 2)} in {m.TransactionCount})",
-            Value = m.Delta,
-            OnBarClicked = () => OnMonthGroupClicked?.Invoke(m)
+        MonthGroups.Select(m => {
+            var costPerDay = System.Math.Round(m.Delta / DateTime.DaysInMonth(m.Month.Year, m.Month.Month), 2);
+            var netCost = Math.Round(m.Delta, 2);
+            var groupName = m.Group?.Name ?? "Unresolved";
+            var argTransactionCount = m.TransactionCount;
+            return new HorizontalBarChart.HorizontalBarRow(){
+                Text = $"{groupName} ({netCost} in {argTransactionCount}, {costPerDay}/d)",
+                Value = m.Delta,
+                OnBarClicked = () => OnMonthGroupClicked?.Invoke(m)
+            };
         });
 
 }

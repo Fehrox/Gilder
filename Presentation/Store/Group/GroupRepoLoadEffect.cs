@@ -13,6 +13,6 @@ public class GroupRepoLoadEffect : Effect<GroupRepoLoadAction>
     public override async Task HandleAsync(GroupRepoLoadAction loadAction, IDispatcher dispatcher)
     {
         var groups = await _groupRepository.Read();
-        dispatcher.Dispatch(new GroupRestoreAction(groups));
+        dispatcher.Dispatch(new GroupCreateAction(groups));
     }
 }

@@ -57,7 +57,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _selectedGroupName = _groupState.Value.Groups.First()?.Name ?? "Unreconciled";
+        _selectedGroupName = _groupState.Value.Groups.FirstOrDefault()?.Name ?? "Unreconciled";
     }
 
     private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions

@@ -21,11 +21,12 @@ public class FileLoadEffect : Effect<FileLoadAction>
         
         var gilderData = JsonSerializer.Deserialize<LoadedGilderData>(jsonText);
         if (gilderData != null) {
-            Console.WriteLine(nameof(HandleAsync)); 
             dispatcher.Dispatch(new TransactionClearAction());
-            dispatcher.Dispatch(new TransactionCreateAction(gilderData.Transactions));   
+            dispatcher.Dispatch(new TransactionCreateAction(gilderData.Transactions));
+            dispatcher.Dispatch(new TransactionRepoCreateAction(gilderData.Transactions));   
             
             dispatcher.Dispatch(new GroupClearAction());
+            dispatcher.Dispatch(new GroupCreateAction(gilderData.Groups));
             dispatcher.Dispatch(new GroupRepoCreateAction(gilderData.Groups));
         }
     }

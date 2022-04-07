@@ -2,6 +2,9 @@
 @using Fluxor
 @using Presentation.Store.Group
 @using Domain
+@using Fluxor.Blazor.Web.Components
+
+@inherits FluxorComponent
 
 @inject IState<TransactionState> _transactionState
 @inject IState<GroupState> _groupState
@@ -30,8 +33,7 @@
                     <th>/Day</th>
                 </tr>
                 <tbody>
-                @foreach (var transaction in TransactionGroups)
-                {
+                @foreach (var transaction in TransactionGroups) {
                     <tr>
                         <td>@Math.Round(transaction.Where(c => c.Charge > 0).Sum(t => t.Charge),2)</td>
                         <td>@Math.Round(transaction.Where(c => c.Charge < 0).Sum(t => t.Charge),2)</td>

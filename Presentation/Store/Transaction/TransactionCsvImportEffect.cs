@@ -37,6 +37,9 @@ namespace Presentation.Store.Transaction
             
             var importedTransaction = new TransactionCreateAction(addTransactions);
             dispatcher.Dispatch(importedTransaction);
+
+            var repoLoadAction = new TransactionRepoCreateAction(addTransactions);
+            dispatcher.Dispatch(repoLoadAction);
         }
     }
 }

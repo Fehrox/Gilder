@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using Fluxor
+@using Presentation.Store.Group
+@using Presentation.Store.Transaction
+@inherits LayoutComponentBase
+
+@inject IDispatcher _dispatcher
 
 <div class="page">
     
@@ -17,3 +22,13 @@
         </article>
     </main>
 </div>
+
+@code {
+    
+    protected override Task OnInitializedAsync() {
+        _dispatcher.Dispatch(new GroupRepoLoadAction());
+        _dispatcher.Dispatch(new TransactionRepoLoadAction());
+        return base.OnInitializedAsync();
+    }
+
+}

@@ -1,6 +1,3 @@
 namespace Presentation.Store.Transaction;
 
-public class TransactionRepoCreateAction
-{
-    public IEnumerable<Domain.Transaction> Transactions { get; set; }
-}
+public record TransactionRepoCreateAction(IEnumerable<Domain.Transaction> Transactions);

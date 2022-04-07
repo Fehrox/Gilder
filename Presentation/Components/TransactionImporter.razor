@@ -47,7 +47,7 @@
             ms.Position = 0;
             using var reader = new StreamReader(ms);
             var csvText = await reader.ReadToEndAsync();
-            _dispatcher.Dispatch(new TransactionsCsvLoadAction(csvText));
+            _dispatcher.Dispatch(new TransactionCsvLoadAction(csvText));
         }
 
         SetShow(false);

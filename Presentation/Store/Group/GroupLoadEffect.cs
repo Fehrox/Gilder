@@ -5,14 +5,14 @@ namespace Presentation.Store.Group;
 
 public class GroupLoadEffect : Effect<GroupLoadAction>
 {
-    private readonly IGroupRepository _groupRepository;
+    private readonly IRepo<Domain.Group> _groupRepository;
 
-    public GroupLoadEffect(IGroupRepository groupRepository) =>
+    public GroupLoadEffect(IRepo<Domain.Group> groupRepository) =>
         _groupRepository = groupRepository;
 
     public override async Task HandleAsync(GroupLoadAction action, IDispatcher dispatcher)
     {
-        var groups = await _groupRepository.ReadGroups();
+        var groups = await _groupRepository.Read();
         dispatcher.Dispatch(new GroupRestoreAction(groups));
     }
 }

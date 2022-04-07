@@ -12,7 +12,7 @@ Hello World
 
     protected override Task OnInitializedAsync() {
         _dispatcher.Dispatch(new GroupLoadAction());
-        _dispatcher.Dispatch(new TransactionsCsvLoadAction(String.Empty));
+        _dispatcher.Dispatch(new TransactionCsvLoadAction(String.Empty));
         return base.OnInitializedAsync();
     }
 

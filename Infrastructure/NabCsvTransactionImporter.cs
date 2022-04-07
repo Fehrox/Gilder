@@ -35,15 +35,6 @@ namespace Infrastructure
             return transactions.AsEnumerable();
         }
 
-        // public async Task<Transaction> GetTransactionByHash(Hash transactionHash)
-        // {
-        //     var transactions = await ImportTransactions();
-        //     var transactionForHash = transactions
-        //         .FirstOrDefault(t => t.ToHash().ToString() == transactionHash.ToString());
-        //
-        //     return transactionForHash;
-        // }
-
         private Transaction.Classification ParseClassification(string transaction)
         {
             switch (transaction) {

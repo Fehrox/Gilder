@@ -2,9 +2,9 @@ using Fluxor;
 
 namespace Presentation.Store.Transaction
 {
-    public class TransactionUpdateReducer : Reducer<TransactionsState, TransactionUpdateAction>
+    public class TransactionUpdateReducer : Reducer<TransactionState, TransactionUpdateAction>
     {
-        public override TransactionsState Reduce(TransactionsState state, TransactionUpdateAction action)
+        public override TransactionState Reduce(TransactionState state, TransactionUpdateAction action)
         {
             var updatedTransactions = new List<Domain.Transaction>();
             var transactions = state.Transactions;
@@ -16,7 +16,7 @@ namespace Presentation.Store.Transaction
                 }
             }
             
-            return new TransactionsState(updatedTransactions);
+            return new TransactionState(updatedTransactions);
         }
     }
 }

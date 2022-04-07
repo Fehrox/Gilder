@@ -1,8 +1,8 @@
 namespace Presentation.Store.Transaction
 {
-    public class TransactionsState
+    public class TransactionState
     {
-        public TransactionsState(IEnumerable<Domain.Transaction> transactions)
+        public TransactionState(IEnumerable<Domain.Transaction> transactions)
         {
             Transactions = transactions.ToList();
         }

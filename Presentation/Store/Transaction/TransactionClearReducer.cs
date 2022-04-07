@@ -2,10 +2,10 @@ using Fluxor;
 
 namespace Presentation.Store.Transaction;
 
-public class TransactionClearReducer : Reducer<TransactionsState, TransactionClearAction>
+public class TransactionClearReducer : Reducer<TransactionState, TransactionClearAction>
 {
-    public override TransactionsState Reduce(TransactionsState state, TransactionClearAction action)
+    public override TransactionState Reduce(TransactionState state, TransactionClearAction action)
     {
-        return new TransactionsState(new List<Domain.Transaction>());
+        return new TransactionState(new List<Domain.Transaction>());
     }
 }

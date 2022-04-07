@@ -5,9 +5,9 @@ namespace Presentation.Store.Group;
 
 public class GroupRemoveEffect : Effect<GroupRemoveAction>
 {
-    private readonly IGroupRepository _groupRepository;
+    private readonly IRepo<Domain.Group> _groupRepository;
 
-    public GroupRemoveEffect(IGroupRepository groupRepository) => _groupRepository = groupRepository;
+    public GroupRemoveEffect(IRepo<Domain.Group> groupRepository) => _groupRepository = groupRepository;
 
     public override async Task HandleAsync(GroupRemoveAction action, IDispatcher dispatcher)
     {

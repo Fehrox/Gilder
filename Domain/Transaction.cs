@@ -1,6 +1,6 @@
 namespace Domain
 {
-    public record Transaction
+    public record Transaction : IEntity
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }

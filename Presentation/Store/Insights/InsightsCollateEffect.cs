@@ -5,9 +5,9 @@ namespace Presentation.Store.Insights;
 
 public class InsightsCollateEffect : Effect<InsightsCollateCommand>
 {
-    private readonly IState<TransactionsState> _transactionState;
+    private readonly IState<TransactionState> _transactionState;
 
-    public InsightsCollateEffect(IState<TransactionsState> transactionState) 
+    public InsightsCollateEffect(IState<TransactionState> transactionState) 
         => _transactionState = transactionState;
 
     public override Task HandleAsync(InsightsCollateCommand action, IDispatcher dispatcher)

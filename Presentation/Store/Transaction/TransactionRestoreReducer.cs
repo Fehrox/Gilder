@@ -2,14 +2,14 @@
 
 namespace Presentation.Store.Transaction
 {
-    public class TransactionRestoreReducer : Reducer<TransactionsState, TransactionRestoreAction>
+    public class TransactionRestoreReducer : Reducer<TransactionState, TransactionRestoreAction>
     {
-        public override TransactionsState Reduce(TransactionsState state, TransactionRestoreAction action)
+        public override TransactionState Reduce(TransactionState state, TransactionRestoreAction action)
         {
             var transactions = state.Transactions;
             transactions.AddRange(action.Transactions);
             transactions = transactions.OrderBy(t => t.Date).ToList();
-            return new TransactionsState(transactions);
+            return new TransactionState(transactions);
         }
     }
 }

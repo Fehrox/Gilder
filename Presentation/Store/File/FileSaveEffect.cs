@@ -9,13 +9,13 @@ namespace Presentation.Store.File;
 
 public class FileSaveEffect : Effect<FileSaveAction>
 {
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly IGroupRepository _groupRepository;
+    private readonly IRepo<Domain.Transaction> _transactionRepository;
+    private readonly IRepo<Domain.Group> _groupRepository;
     private readonly IJSRuntime _jsRuntime;
 
     public FileSaveEffect(
-        ITransactionRepository transactionRepository,
-        IGroupRepository groupRepository,
+        IRepo<Domain.Transaction> transactionRepository,
+        IRepo<Domain.Group> groupRepository,
         IJSRuntime jsRuntime)
     {
         _transactionRepository = transactionRepository;
@@ -25,8 +25,8 @@ public class FileSaveEffect : Effect<FileSaveAction>
     
     public override async Task HandleAsync(FileSaveAction action, IDispatcher dispatcher)
     {
-        var transactions = await _transactionRepository.ReadTransactions();
-        var groups = await _groupRepository.ReadGroups();
+        var transactions = await _transactionRepository.Read();
+        var groups = await _groupRepository.Read();
         
         var gilderData = new DataToSave {
             Groups = groups,

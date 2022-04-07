@@ -4,22 +4,22 @@ using Fluxor;
 namespace Presentation.Store.Transaction
 {
 
-    public class TransactionsCsvLoadEffect : Effect<TransactionsCsvLoadAction>
+    public class TransactionsCsvLoadEffect : Effect<TransactionCsvLoadAction>
     {
         private readonly ITransactionImporter _transactionImporter;
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly IRepo<Domain.Transaction> _transactionRepository;
 
         public TransactionsCsvLoadEffect(
             ITransactionImporter transactionImporter, 
-            ITransactionRepository transactionRepository) 
+            IRepo<Domain.Transaction> transactionRepository) 
         {
             _transactionImporter = transactionImporter;
             _transactionRepository = transactionRepository;
         }
 
-        public override async Task HandleAsync(TransactionsCsvLoadAction action, IDispatcher dispatcher)
+        public override async Task HandleAsync(TransactionCsvLoadAction action, IDispatcher dispatcher)
         {
-            var existingTransactions = await _transactionRepository.ReadTransactions();
+            var existingTransactions = await _transactionRepository.Read();
             var existingTransactionsList = existingTransactions.ToArray();
 
             var transactionSource = action.CsvText;

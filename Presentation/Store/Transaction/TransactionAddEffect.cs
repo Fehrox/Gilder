@@ -5,9 +5,9 @@ namespace Presentation.Store.Transaction
 {
     public class TransactionCreateEffect : Effect<TransactionCreateAction>
     {
-        private readonly ITransactionRepository _transactionRepo;
+        private readonly IRepo<Domain.Transaction> _transactionRepo;
 
-        public TransactionCreateEffect(ITransactionRepository localStorage) =>
+        public TransactionCreateEffect(IRepo<Domain.Transaction> localStorage) =>
             _transactionRepo = localStorage;
 
         public override async Task HandleAsync(TransactionCreateAction action, IDispatcher dispatcher) =>

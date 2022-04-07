@@ -5,9 +5,9 @@ namespace Presentation.Store.Transaction
 {
     public class TransactionUpdateEffect : Effect<TransactionUpdateAction>
     {
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly IRepo<Domain.Transaction> _transactionRepository;
 
-        public TransactionUpdateEffect(ITransactionRepository transactionRepository)
+        public TransactionUpdateEffect(IRepo<Domain.Transaction> transactionRepository)
         {
             _transactionRepository = transactionRepository;
         }

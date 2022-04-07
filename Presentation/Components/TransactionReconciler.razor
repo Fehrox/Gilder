@@ -5,7 +5,7 @@
 
 @inherits FluxorComponent
 
-@inject IState<TransactionsState> _state
+@inject IState<TransactionState> _state
 @inject IDispatcher _dispatcher
 
 @{ var heading = GroupName + " (" + Transactions.Count() + ")";}
@@ -63,9 +63,9 @@
 
     private class TransactionMatcher
     {
-        private readonly IState<TransactionsState> _state;
+        private readonly IState<TransactionState> _state;
 
-        public TransactionMatcher(IState<TransactionsState> state) => _state = state;
+        public TransactionMatcher(IState<TransactionState> state) => _state = state;
 
         public IEnumerable<SimilarTransaction> FindMatches(Transaction transaction, float cutoff)
         {

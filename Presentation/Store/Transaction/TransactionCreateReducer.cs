@@ -2,14 +2,14 @@ using Fluxor;
 
 namespace Presentation.Store.Transaction
 {
-    public class TransactionCreateReducer : Reducer<TransactionsState, TransactionCreateAction>
+    public class TransactionCreateReducer : Reducer<TransactionState, TransactionCreateAction>
     {
-        public override TransactionsState Reduce(TransactionsState state, TransactionCreateAction action)
+        public override TransactionState Reduce(TransactionState state, TransactionCreateAction action)
         {
             var transactions = state.Transactions;
             transactions.AddRange(action.Transactions);
             transactions = transactions.OrderBy(t => t.Date).ToList();
-            return new TransactionsState(transactions);
+            return new TransactionState(transactions);
         }
     }
 }

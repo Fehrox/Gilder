@@ -26,7 +26,7 @@ public class FileLoadEffect : Effect<FileLoadAction>
             dispatcher.Dispatch(new TransactionCreateAction(gilderData.Transactions));   
             
             dispatcher.Dispatch(new GroupClearAction());
-            dispatcher.Dispatch(new GroupCreateAction(gilderData.Groups));
+            dispatcher.Dispatch(new GroupRepoCreateAction(gilderData.Groups));
         }
     }
     

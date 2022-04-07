@@ -3,14 +3,14 @@ using Fluxor;
 
 namespace Presentation.Store.Group;
 
-public class GroupLoadEffect : Effect<GroupLoadAction>
+public class GroupRepoLoadEffect : Effect<GroupRepoLoadAction>
 {
     private readonly IRepo<Domain.Group> _groupRepository;
 
-    public GroupLoadEffect(IRepo<Domain.Group> groupRepository) =>
+    public GroupRepoLoadEffect(IRepo<Domain.Group> groupRepository) =>
         _groupRepository = groupRepository;
 
-    public override async Task HandleAsync(GroupLoadAction action, IDispatcher dispatcher)
+    public override async Task HandleAsync(GroupRepoLoadAction loadAction, IDispatcher dispatcher)
     {
         var groups = await _groupRepository.Read();
         dispatcher.Dispatch(new GroupRestoreAction(groups));

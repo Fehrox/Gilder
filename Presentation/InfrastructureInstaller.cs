@@ -1,4 +1,5 @@
 using Application;
+using Domain;
 using Infrastructure;
 
 namespace Presentation
@@ -8,9 +9,8 @@ namespace Presentation
         public static void InstallInfrastructure(this IServiceCollection services)
         {
             services.AddSingleton<ITransactionImporter, NabCsvTransactionImporter>();
-            // services.AddSingleton<ITransactionRepository, InMemoryRepository>();
-            services.AddScoped<ITransactionRepository, LocalStorageTransactionRepository>();
-            services.AddScoped<IGroupRepository, LocalStorageGroupRepository>();
+            services.AddScoped<IRepo<Transaction>, LocalStorageTransactionRepo>();
+            services.AddScoped<IRepo<Group>, LocalStorageGroupRepository>();
         }
     }
 }

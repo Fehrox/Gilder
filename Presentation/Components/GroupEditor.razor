@@ -42,8 +42,8 @@
 
     private async Task HandleAddClicked()
     {
-        var group = new Group {Id = Guid.NewGuid(), Name = NewGroupName};
-        _dispatcher.Dispatch(new GroupCreateAction(new[] {@group}));
+        var group = new Group { Id = Guid.NewGuid(), Name = NewGroupName };
+        _dispatcher.Dispatch(new GroupRepoCreateAction(new[] {@group}));
 
         await Task.CompletedTask;
     }
@@ -61,5 +61,4 @@
         _dispatcher.Dispatch(new GroupRemoveAction(new[] {@group}));
         NewGroupName = string.Empty;
     }
-
 }

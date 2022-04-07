@@ -35,7 +35,7 @@
     public double? MaxBarValue { get; set; } = null;
 
     protected override void OnParametersSet() 
-        => MaxBarValue ??= BarValues.Max(bv => bv.Value);
+        => MaxBarValue ??= BarValues.Any() ? BarValues.Max(bv => bv.Value) : 0;
 
     private IEnumerable<HorizontalBarRow> OrderedBarValues
         => BarValues.OrderByDescending(b => Math.Abs(b.Value));

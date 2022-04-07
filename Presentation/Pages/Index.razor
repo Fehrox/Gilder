@@ -11,8 +11,8 @@ Hello World
 @code {
 
     protected override Task OnInitializedAsync() {
-        _dispatcher.Dispatch(new GroupLoadAction());
-        _dispatcher.Dispatch(new TransactionCsvLoadAction(String.Empty));
+        _dispatcher.Dispatch(new GroupRepoLoadAction());
+        _dispatcher.Dispatch(new TransactionRepoLoadAction());
         return base.OnInitializedAsync();
     }
 

@@ -37,9 +37,6 @@ namespace Presentation.Store.Transaction
             
             var importedTransaction = new TransactionCreateAction(addTransactions);
             dispatcher.Dispatch(importedTransaction);
-
-            var restoredTransaction = new TransactionRestoreAction(existingTransactionsList);
-            dispatcher.Dispatch(restoredTransaction);
         }
     }
 }

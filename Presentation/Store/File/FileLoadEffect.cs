@@ -1,6 +1,7 @@
 using Fluxor;
 
 using System.Text.Json;
+using Presentation.Store.Budget;
 using Presentation.Store.Group;
 using Presentation.Store.Transaction;
 
@@ -28,6 +29,10 @@ public class FileLoadEffect : Effect<FileLoadAction>
             dispatcher.Dispatch(new GroupClearAction());
             dispatcher.Dispatch(new GroupCreateAction(gilderData.Groups));
             dispatcher.Dispatch(new GroupRepoCreateAction(gilderData.Groups));
+            
+            dispatcher.Dispatch(new BudgetClearAction());
+            dispatcher.Dispatch(new BudgetCreateAction(gilderData.Budgets));
+            dispatcher.Dispatch(new BudgetRepoCreateAction(gilderData.Budgets));
         }
     }
     
@@ -35,5 +40,6 @@ public class FileLoadEffect : Effect<FileLoadAction>
     {
         public IEnumerable<Domain.Group> Groups { get; set; } = new List<Domain.Group>();
         public IEnumerable<Domain.Transaction> Transactions { get; set; } = new List<Domain.Transaction>();
+        public IEnumerable<Domain.Budget> Budgets { get; set; } = new List<Domain.Budget>();
     }
 }

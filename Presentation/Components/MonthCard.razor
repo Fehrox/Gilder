@@ -8,7 +8,7 @@
             @Month.ToString("MMMM") @Month.ToString("yyyy")    
         </div>
 
-        <HorizontalBarChart
+        <BarChartHorizontal
             BarValues="@MonthRows"
             MaxBarValue="@MaxMonthNet"/>
 
@@ -43,13 +43,13 @@
     [Parameter]
     public double MaxMonthNet { get; set; }
 
-    private IEnumerable<HorizontalBarChart.HorizontalBarRow> MonthRows =>
+    private IEnumerable<BarChartHorizontal.Bar> MonthRows =>
         MonthGroups.Select(m => {
             var costPerDay = System.Math.Round(m.Delta / DateTime.DaysInMonth(m.Month.Year, m.Month.Month), 2);
             var netCost = Math.Round(m.Delta, 2);
             var groupName = m.Group?.Name ?? "Unresolved";
             var argTransactionCount = m.TransactionCount;
-            return new HorizontalBarChart.HorizontalBarRow(){
+            return new BarChartHorizontal.Bar(){
                 Text = $"{groupName} ({netCost} in {argTransactionCount}, {costPerDay}/d)",
                 Value = m.Delta,
                 OnBarClicked = () => OnMonthGroupClicked?.Invoke(m)

@@ -1,20 +1,14 @@
-@using Fluxor
-@using Presentation.Store.Spending
-@using Presentation.Store.Transaction
-
-@inject IState<SpendingState> _transactionState
 
 <div style="display: flex; justify-content: center; height: 200px">
-    @foreach (var month in SpendingMonths) {
-        var height = Math.Abs(month.Net) / MaxHeight * 4;
-        var posHeight = month.Net > 0 ? height : 0;
-        var negHeight = month.Net < 0 ? height : 0;
-        var posColor = month.Net > 0 ? "#CCD888" : "transparent";
-        var negColor = month.Net < 0 ? "#FF576A" : "transparent";
-        var monthDate = month.Month;
-        
+    @foreach (var bar in Bars) {
+        var height = Math.Abs(bar.Value) / MaxHeight * 4;
+        var posHeight = bar.Value > 0 ? height : 0;
+        var negHeight = bar.Value < 0 ? height : 0;
+        var posColor = bar.Value > 0 ? "#CCD888" : "transparent";
+        var negColor = bar.Value < 0 ? "#FF576A" : "transparent";
+
         <div
-            @onclick="@(() => OnMonthClicked?.Invoke(monthDate))"
+            @onclick="@(() => OnMonthClicked?.Invoke(bar))"
             style="
                 display:flex; 
                 flex-direction: column; 
@@ -28,7 +22,7 @@
                 white-space: nowrap;
                 text-align: end;
             ">
-                @Math.Round(month.Net, 2)
+                @Math.Round(bar.Value, 2)
             </div>
             <div style="
                 width: 25px;
@@ -45,8 +39,7 @@
                 white-space: nowrap;
                 text-align: start;
             ">
-                @monthDate.ToString("MMMM")
-                @monthDate.ToString("yyyy")
+                @bar.Text
             </div>
             <div style="
                 height: @((1 - negHeight) * 50)%; 
@@ -57,12 +50,20 @@
 </div>
 
 @code {
-    
-    private IEnumerable<SpendingMonth> SpendingMonths => _transactionState.Value.SpendingMonths;
-    
-    private double MaxHeight => _transactionState.Value.MaxMonthNet;
 
     [Parameter]
-    public Action<DateTime> OnMonthClicked { get; set; } = _ => { };
+    public IEnumerable<Bar> Bars { get; set; } = Array.Empty<Bar>();
 
+    [Parameter]
+    public Action<Bar> OnMonthClicked { get; set; } = _ => { };
+
+    [Parameter]
+    public double MaxHeight { get; set; } 
+
+    public struct Bar {
+        public double Value { get; set; }
+        public string Text { get; set; }
+        public Action OnBarClicked { get; set; }
+    }
+    
 }

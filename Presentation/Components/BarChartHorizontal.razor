@@ -29,7 +29,7 @@
 @code {
 
     [Parameter]
-    public IEnumerable<HorizontalBarRow> BarValues { get; set; } = Array.Empty<HorizontalBarRow>();
+    public IEnumerable<Bar> BarValues { get; set; } = Array.Empty<Bar>();
 
     [Parameter]
     public double? MaxBarValue { get; set; } = null;
@@ -37,10 +37,10 @@
     protected override void OnParametersSet() 
         => MaxBarValue ??= BarValues.Any() ? BarValues.Max(bv => bv.Value) : 0;
 
-    private IEnumerable<HorizontalBarRow> OrderedBarValues
+    private IEnumerable<Bar> OrderedBarValues
         => BarValues.OrderByDescending(b => Math.Abs(b.Value));
     
-    public class HorizontalBarRow {
+    public class Bar {
         public string Text { get; set; } = String.Empty;
         public double Value { get; set; }
         public Action OnBarClicked { get; set; } = () => { };

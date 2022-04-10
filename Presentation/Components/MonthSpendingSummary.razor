@@ -1,0 +1,28 @@
+@using Fluxor
+@using Presentation.Store.Spending
+@using Presentation.Store.Transaction
+
+@inject IState<SpendingState> _transactionState
+
+<BarChartVertical
+    MaxHeight="@MaxHeight"
+    Bars="@MonthBars"
+/>
+
+@code {
+    
+    [Parameter]
+    public Action<DateTime> OnMonthClicked { get; set; } = _ => { };
+    
+    private IEnumerable<SpendingMonth> SpendingMonths => _transactionState.Value.SpendingMonths;
+    
+    private double MaxHeight => _transactionState.Value.MaxMonthNet;
+
+    private IEnumerable<BarChartVertical.Bar> MonthBars => _transactionState.Value.SpendingMonths
+        .Select(sm => new BarChartVertical.Bar {
+            Text = sm.Month.ToString("MMMM") + " " + sm.Month.ToString("yyyy"),
+            Value = sm.Net,
+            OnBarClicked = () => OnMonthClicked?.Invoke(sm.Month)
+        });
+
+}

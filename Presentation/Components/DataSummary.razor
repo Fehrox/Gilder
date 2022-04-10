@@ -22,7 +22,7 @@
                     
             <div>
                 <div>Group</div>
-                <HorizontalBarChart BarValues="@GroupBars"/>
+                <BarChartHorizontal BarValues="@GroupBars"/>
             </div>
             
             <table>
@@ -70,11 +70,11 @@
         .Sum(t => t.Charge > 0 ? t.Charge : 0);
     private double NetPosition => _transactionState.Value.Transactions
         .Sum(t => t.Charge);
-    private IEnumerable<HorizontalBarChart.HorizontalBarRow> TotalBars =>
-        new []{ new HorizontalBarChart.HorizontalBarRow{
+    private IEnumerable<BarChartHorizontal.Bar> TotalBars =>
+        new []{ new BarChartHorizontal.Bar{
             Text = $"Total Outgoing ({Math.Round(TotalOutgoing,2)})",
             Value = TotalOutgoing
-        }, new HorizontalBarChart.HorizontalBarRow{
+        }, new BarChartHorizontal.Bar{
             Text = $"Total Incoming ({Math.Round(TotalIncoming,2)})",
             Value = TotalIncoming
         }};
@@ -102,8 +102,8 @@
     private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions
         .GroupBy(g => g.Group?.Name ?? "Unreconciled")
         .OrderByDescending(g => Math.Abs(g.Sum(g => g.Charge)));
-    private IEnumerable<HorizontalBarChart.HorizontalBarRow> GroupBars =>
-        TransactionGroups.Select(tg => new HorizontalBarChart.HorizontalBarRow {
+    private IEnumerable<BarChartHorizontal.Bar> GroupBars =>
+        TransactionGroups.Select(tg => new BarChartHorizontal.Bar {
             Text = tg.Key,
             Value = tg.Sum( t => t.Charge),
             OnBarClicked = () => HandleGroupClicked(tg)

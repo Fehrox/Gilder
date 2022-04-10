@@ -85,9 +85,6 @@
         StateHasChanged();
     }
 
-    private void HandleDoneClicked()
-    {
-        OnActionEditComplete?.Invoke(Budget);
-    }
+    private void HandleDoneClicked() => OnActionEditComplete?.Invoke(Budget);
 
 }

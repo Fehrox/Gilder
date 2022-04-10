@@ -1,28 +1,28 @@
 using Fluxor;
 using Presentation.Store.Transaction;
 
-namespace Presentation.Store.Insights;
+namespace Presentation.Store.Spending;
 
-public class InsightsCollateEffect : Effect<InsightsCollateCommand>
+public class SpendingCollateEffect : Effect<SpendingCollateCommand>
 {
     private readonly IState<TransactionState> _transactionState;
 
-    public InsightsCollateEffect(IState<TransactionState> transactionState) 
+    public SpendingCollateEffect(IState<TransactionState> transactionState) 
         => _transactionState = transactionState;
 
-    public override Task HandleAsync(InsightsCollateCommand action, IDispatcher dispatcher)
+    public override Task HandleAsync(SpendingCollateCommand action, IDispatcher dispatcher)
     {
-        var insights = GetMonthInsights();
-        var maxMonthNet = insights.MaxMonthNet;
-        var monthInsights = insights.InsightMonthStats;
-        dispatcher.Dispatch(new InsightsSetCommand(maxMonthNet, monthInsights));
+        var spendings = GetMonthSpendings();
+        var maxMonthNet = spendings.MaxMonthNet;
+        var monthSpendings = spendings.InsightMonthStats;
+        dispatcher.Dispatch(new SpendingSetCommand(maxMonthNet, monthSpendings));
         
         return Task.CompletedTask;
     }
     
-    private Insights GetMonthInsights()
+    private Spendings GetMonthSpendings()
     {
-        var monthStats = new List<InsightMonth>();
+        var monthStats = new List<SpendingMonth>();
         double maxMonthNet = 0D;
         
         var transactionsByMonth = _transactionState.Value.Transactions
@@ -31,7 +31,7 @@ public class InsightsCollateEffect : Effect<InsightsCollateCommand>
         {
             var groupStats = monthTransactions
                 .GroupBy(t => t.Group?.Name??string.Empty)
-                .Select(g => new InsightMonthGroup {
+                .Select(g => new SpendingMonthGroup {
                     Group = g.First()?.Group,
                     TransactionCount = g.Count(),
                     Delta = g.Sum(t => t.Charge),
@@ -57,7 +57,7 @@ public class InsightsCollateEffect : Effect<InsightsCollateCommand>
             if (maxDelta > maxMonthNet)
                 maxMonthNet = maxDelta;
 
-            monthStats.Add(new InsightMonth {
+            monthStats.Add(new SpendingMonth {
                 Month = monthTransactions.Key,
                 Net = net,
                 Income = income,
@@ -66,15 +66,15 @@ public class InsightsCollateEffect : Effect<InsightsCollateCommand>
             });
         }
         
-        return new Insights {
+        return new Spendings {
             MaxMonthNet = maxMonthNet,
             InsightMonthStats = monthStats,
         };
     }
 
-    private class Insights
+    private class Spendings
     {
         public double MaxMonthNet { get; set; } = 0;
-        public IEnumerable<InsightMonth> InsightMonthStats { get; set; } = Array.Empty<InsightMonth>();
+        public IEnumerable<SpendingMonth> InsightMonthStats { get; set; } = Array.Empty<SpendingMonth>();
     }
 }

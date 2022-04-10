@@ -3,12 +3,12 @@
 @using Fluxor
 @using Fluxor.Blazor.Web.Components
 @using Presentation.Components
-@using Presentation.Store.Insights
+@using Presentation.Store.Spending
 
 @inherits FluxorComponent
 
 @inject IDispatcher _dispatcher
-@inject IState<InsightsState> _transactionState
+@inject IState<SpendingState> _transactionState
 @inject IJSRuntime _jsRuntime
 
 <div style="display: flex; flex-direction: column">
@@ -51,19 +51,19 @@
 
 @code {
 
-    private IEnumerable<InsightMonth> InsightMonths => _transactionState.Value.MonthInsights
+    private IEnumerable<SpendingMonth> InsightMonths => _transactionState.Value.SpendingMonths
         .OrderBy(m => m.Month);
 
     private double MaxMonth => _transactionState.Value.MaxMonthNet;
 
-    private InsightMonthGroup? _selectedMonthGroup = null;
+    private SpendingMonthGroup? _selectedMonthGroup = null;
 
     private void HandleMonthCleared() {
         _selectedMonthGroup = null;
         StateHasChanged();
     }
 
-    private void HandleMonthGroupClicked(InsightMonthGroup monthGroup) {
+    private void HandleMonthGroupClicked(SpendingMonthGroup monthGroup) {
         _selectedMonthGroup = monthGroup;
         StateHasChanged();
     }
@@ -71,7 +71,7 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        _dispatcher.Dispatch(new InsightsCollateCommand());
+        _dispatcher.Dispatch(new SpendingCollateCommand());
     }
 
     private void HandleMonthSummaryClicked(DateTime month)

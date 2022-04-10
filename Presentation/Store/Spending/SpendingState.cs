@@ -1,21 +1,21 @@
-namespace Presentation.Store.Insights;
+namespace Presentation.Store.Spending;
 
-public record InsightsState
+public record SpendingState
 {
-    public IEnumerable<InsightMonth> MonthInsights { get; set; } = Array.Empty<InsightMonth>();
+    public IEnumerable<SpendingMonth> SpendingMonths { get; set; } = Array.Empty<SpendingMonth>();
     public double MaxMonthNet { get; set; } = 0;
 }
 
-public class InsightMonth
+public class SpendingMonth
 {
     public DateTime Month { get; set; }
     public double Spent { get; set; }
     public double Net { get; set; }
     public double Income { get; set; }
-    public IEnumerable<InsightMonthGroup> GroupStats { get; set; } = Array.Empty<InsightMonthGroup>();
+    public IEnumerable<SpendingMonthGroup> GroupStats { get; set; } = Array.Empty<SpendingMonthGroup>();
 }
 
-public class InsightMonthGroup
+public class SpendingMonthGroup
 {
     public DateTime Month { get; set; }
     public Domain.Group Group { get; set; }

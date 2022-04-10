@@ -1,11 +1,11 @@
 @using Fluxor
-@using Presentation.Store.Insights
+@using Presentation.Store.Spending
 @using Presentation.Store.Transaction
 
-@inject IState<InsightsState> _transactionState
+@inject IState<SpendingState> _transactionState
 
 <div style="display: flex; justify-content: center; height: 200px">
-    @foreach (var month in MonthInsights) {
+    @foreach (var month in SpendingMonths) {
         var height = Math.Abs(month.Net) / MaxHeight * 4;
         var posHeight = month.Net > 0 ? height : 0;
         var negHeight = month.Net < 0 ? height : 0;
@@ -58,7 +58,7 @@
 
 @code {
     
-    private IEnumerable<InsightMonth> MonthInsights => _transactionState.Value.MonthInsights;
+    private IEnumerable<SpendingMonth> SpendingMonths => _transactionState.Value.SpendingMonths;
     
     private double MaxHeight => _transactionState.Value.MaxMonthNet;
 

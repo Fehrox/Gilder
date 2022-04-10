@@ -1,6 +1,6 @@
 @using Domain
-@using Presentation.Store.Insights
 @using System.Reflection.Metadata
+@using Presentation.Store.Spending
 
 <ContentPanel>
     <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; margin: 5px; padding: 10px">
@@ -35,10 +35,10 @@
     public double Net { get; set; }
 
     [Parameter]
-    public Action<InsightMonthGroup> OnMonthGroupClicked { get; set; } = _ => { }; 
+    public Action<SpendingMonthGroup> OnMonthGroupClicked { get; set; } = _ => { }; 
 
     [Parameter]
-    public IEnumerable<InsightMonthGroup> MonthGroups { get; set; } = Array.Empty<InsightMonthGroup>();
+    public IEnumerable<SpendingMonthGroup> MonthGroups { get; set; } = Array.Empty<SpendingMonthGroup>();
     
     [Parameter]
     public double MaxMonthNet { get; set; }

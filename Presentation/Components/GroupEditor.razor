@@ -18,8 +18,7 @@
 
 @if (_showGroupEditor)
 {
-    <Modal>
-        <button @onclick="@(() => SetGroupEditor(false))" >Close</button>
+    <Modal OnClose="@(() => SetGroupEditor(false))">
         <div style="display: flex; flex-direction: column">
             @foreach (var group in _groupState.Value.Groups)
             {

@@ -1,0 +1,42 @@
+@using Domain
+@using Fluxor
+@using Fluxor.Blazor.Web.Components
+@using Presentation.Store.Group
+
+@inject IDispatcher _dispatcher;
+@inject IState<GroupState> _groupState;
+
+@inherits FluxorComponent
+
+@if (_showSelector) {
+    <Modal OnClose="@HandleHideGroupSelector">
+        <div style="width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center">
+            @foreach (var option in _groupState.Value.Groups) {
+                <button
+                    style="background-color: @(option.Id == CurrentlySelectedGroup?.Id ? "yellow" : "unset")"
+                    @onclick="@(() => HandleGroupSelected(option))">@option.Name</button>
+            }
+        </div>
+    </Modal>
+}
+
+@code {
+
+    private bool _showSelector = true;
+
+    [Parameter]
+    public Action<Group?> OnGroupSelected { get; set; } = _ => { };
+
+    [Parameter]
+    public Group? CurrentlySelectedGroup { get; set; } = null;
+    
+    private void HandleHideGroupSelector() => HandleGroupSelected(CurrentlySelectedGroup);
+
+    private void HandleGroupSelected(Group? selectedGroup)
+    {
+        OnGroupSelected?.Invoke(selectedGroup);
+        _showSelector = false;
+        StateHasChanged();
+    }
+
+}

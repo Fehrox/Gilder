@@ -1,0 +1,15 @@
+<div style="
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 50px; 
+        margin-top: 50px; 
+        margin-bottom: 50px">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

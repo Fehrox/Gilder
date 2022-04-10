@@ -11,8 +11,7 @@
     Alt="Import Bank Transaction CSV" />
 
 @if (_show) {
-    <Modal>
-        <button @onclick="@(() => SetShow(false) )" >Close</button>
+    <Modal OnClose="@(() => SetShow(false))">
         <InputFile OnChange="@LoadFiles" multiple accept=".csv"/>
         @if (_chosenFiles != null) {
             <button onclick="@HandleImportClicked"> Import </button>

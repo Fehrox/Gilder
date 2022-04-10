@@ -10,9 +10,8 @@
     Alt="Load Work from Saved File" />
 
 @if (_show){
-    <Modal>
+    <Modal OnClose="@Hide">
         <InputFile OnChange="@LoadSavedFileAsync" accept=".gdb" />
-        <button @onclick="@Hide">Close</button>
     </Modal>
 }
 

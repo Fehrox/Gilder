@@ -1,7 +1,60 @@
 @page "/budget"
 
-<h3>Budget</h3>
+@using Presentation.Store.Budget
+@using Presentation.Components
+@using Fluxor
+@using Fluxor.Blazor.Web.Components
+@using Domain
+
+@inherits FluxorComponent
+
+@inject IState<BudgetState> _budgetState
+@inject IDispatcher _dispatcher
+
+<ContentGrid>
+    @foreach (var budget in Budgets)
+    {
+        <BudgetCard Budget=@budget />
+    }
+
+    <ContentPanel>
+        <div style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            cursor: pointer"
+             @onclick="@HandleCreateNewBudgetClicked">
+            <h1>+</h1>
+        </div>
+    </ContentPanel>
+</ContentGrid>
+
+@if (_showCreateNewBudget)
+{
+    <BudgetEditor
+        Budget="@(new Domain.Budget() {Intervals = new[] {new BudgetInterval {From = DateTime.Now.Date}}})"
+        OnActionEditComplete="@HandleBudgetCreated"/>
+}
 
 @code {
-    
+
+    private IEnumerable<Domain.Budget> Budgets =>
+        _budgetState.Value.Budgets;
+
+    private bool _showCreateNewBudget = false;
+
+    private void HandleCreateNewBudgetClicked()
+    {
+        _showCreateNewBudget = true;
+        StateHasChanged();
+    }
+
+    private void HandleBudgetCreated(Domain.Budget budget)
+    {
+        _dispatcher.Dispatch(new BudgetCreateAction(new[] {budget}));
+        _showCreateNewBudget = false;
+        StateHasChanged();
+    }
+
 }

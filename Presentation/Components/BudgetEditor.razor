@@ -1,0 +1,93 @@
+@using Presentation.Store.Budget
+@using Fluxor
+@using Domain
+@using Fluxor.Blazor.Web.Components;
+
+@inherits FluxorComponent
+
+@inject IState<BudgetState> _budgetState
+@inject IDispatcher _dispatcher
+
+<Modal OnClose="@HandleDoneClicked">
+    <div>
+        <div>Description</div>
+        <input type="text" @onchange="@HandleDescriptionChanged" value="@Budget.Description"/>
+    </div>
+
+    <div style="display: flex">
+        <div>Group</div>
+        <button @onclick="HandleShowGroupSelect"> @(Budget.Group == null ? "Select Group" : Budget.Group.Name) </button>
+    </div>
+    @if (_showGroupSelect)
+    {
+        <GroupSelector OnGroupSelected="@HandleGroupChanged"/>
+    }
+
+    <div>
+        @foreach (var interval in Budget.Intervals) {
+            <div style="display: flex">
+                <BudgetIntervalEditor BudgetInterval="@interval" />
+                <button @onclick="@(() => HandleRemoveIntervalClicked(interval))"> Remove Interval </button>
+            </div>
+        }
+        <button @onclick="@HandleAddIntervalClicked"> Add Interval </button>
+    </div>
+
+</Modal>
+
+@code {
+
+    [Parameter]
+    public Action<Budget> OnActionEditComplete { get; set; } = _ => { }; 
+
+    [Parameter]
+    public Budget Budget { get; set; } = new();
+
+    private bool _showGroupSelect = false;
+
+    private void HandleShowGroupSelect()
+    {
+        _showGroupSelect = true;
+        StateHasChanged();
+    }
+
+    private void HandleGroupChanged(Group selectedGroup)
+    {
+        Budget.Group = selectedGroup;
+        _showGroupSelect = false;
+        StateHasChanged();
+    }
+
+    private void HandleAddIntervalClicked()
+    {
+        var lastInterval = Budget.Intervals
+            .OrderBy(i => i.From + i.Interval)
+            .LastOrDefault();
+        var lastIntervalEnd = lastInterval?.From + lastInterval?.Interval;
+        
+        Budget.Intervals = Budget.Intervals.Concat(new[] {new BudgetInterval {
+            From = lastIntervalEnd ?? DateTime.Now.Date
+        }});
+        StateHasChanged();
+    }
+
+    private void HandleRemoveIntervalClicked(BudgetInterval budgetInterval)
+    {
+        Budget.Intervals = Budget.Intervals.Except(new[] {budgetInterval});
+        StateHasChanged();
+    }
+
+    private void HandleDescriptionChanged(ChangeEventArgs obj)
+    {
+        var updatedText = (string) obj.Value!;
+        Budget.Description = updatedText;
+
+        StateHasChanged();
+    }
+
+    private void HandleDoneClicked()
+    {
+        OnActionEditComplete?.Invoke(Budget);
+    }
+
+}

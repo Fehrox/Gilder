@@ -2,8 +2,8 @@ using Fluxor;
 
 namespace Presentation.Store.Group;
 
-public class GroupCreateReducer : Reducer<GroupState, GroupRepoCreateAction>
+public class GroupCreateReducer : Reducer<GroupState, GroupCreateAction>
 {
-    public override GroupState Reduce(GroupState state, GroupRepoCreateAction action) 
+    public override GroupState Reduce(GroupState state, GroupCreateAction action) 
         => new(state.Groups.Concat(action.Groups));
 }

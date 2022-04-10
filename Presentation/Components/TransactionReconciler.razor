@@ -16,8 +16,7 @@
 />    
 
 @if (_similarTransactions.Any()) {
-    <Modal>
-        <button @onclick="@HandleCancel">Cancel</button>
+    <Modal OnClose="@HandleCancel">
         <div>
             @foreach (var transaction in _similarTransactions){
                 <div style="display: flex; justify-content: space-between">

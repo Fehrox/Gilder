@@ -19,7 +19,7 @@
         @Transaction.Details
     </td>
     <td><TransactionNoteInput Transaction=@Transaction /></td>
-    <td><TransactionGroupSelect Transaction=@Transaction OnGroupChanged=@( t => HandleGroupChanged(t) ) /></td>
+    <td><TransactionGroupSelect Transaction=@Transaction OnTransactionGroupChanged=@( t => HandleGroupChanged(t) ) /></td>
 </tr>
 
 @code {

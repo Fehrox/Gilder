@@ -1,4 +1,5 @@
 ﻿@using Fluxor
+@using Presentation.Store.Budget
 @using Presentation.Store.Group
 @using Presentation.Store.Transaction
 @inherits LayoutComponentBase
@@ -28,6 +29,7 @@
     protected override Task OnInitializedAsync() {
         _dispatcher.Dispatch(new GroupRepoLoadAction());
         _dispatcher.Dispatch(new TransactionRepoLoadAction());
+        _dispatcher.Dispatch(new BudgetMockLoadAction());
         return base.OnInitializedAsync();
     }
 

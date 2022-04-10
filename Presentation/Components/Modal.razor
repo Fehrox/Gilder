@@ -32,8 +32,8 @@
       }
 </style>
 
-<div class="modal-overlay">
-    <div class="modal-popup" id="modal">
+<div class="modal-overlay" @onclick="@OnClose">
+    <div class="modal-popup" id="modal" @onclick:stopPropagation="true">
         <div class="modal-guts">
             @ChildContent
         </div>
@@ -44,5 +44,8 @@
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public Action OnClose { get; set; } = () => { };
 
 }

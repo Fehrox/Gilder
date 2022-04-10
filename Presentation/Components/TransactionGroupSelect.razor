@@ -17,17 +17,10 @@
     @(Transaction?.Group?.Name ?? "Select")
 </button>
 
-
-@if (_showSelector)
-{
-    <Modal>
-        <button @onclick="@HandleHideGroupSelector">Close</button>
-        <div style="width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center">
-            @foreach (var option in _groupState.Value.Groups) {
-                <button @onclick="@(() => HandleOptionChanged(option))">@option.Name</button>
-            }
-        </div>
-    </Modal>
+@if (_showSelector) {
+    <GroupSelector 
+        OnGroupSelected="@HandleOptionChanged" 
+        CurrentlySelectedGroup="@Transaction?.Group" />
 }
 
 @code {
@@ -38,7 +31,7 @@
     public Transaction? Transaction { get; set; }
 
     [Parameter]
-    public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
+    public Action<Transaction> OnTransactionGroupChanged { get; set; } = _ => { };
 
     private void HandleShowGroupSelector() => _showSelector = true;
     private void HandleHideGroupSelector() => _showSelector = false;
@@ -52,7 +45,7 @@
         var updatedTransaction = Transaction with { Group = @group };
         _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
         
-        OnGroupChanged?.Invoke(updatedTransaction);
+        OnTransactionGroupChanged?.Invoke(updatedTransaction);
     }
     
 }

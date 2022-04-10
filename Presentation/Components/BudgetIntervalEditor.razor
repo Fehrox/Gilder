@@ -1,0 +1,54 @@
+@using Domain
+@using System.Globalization
+
+<div style="display: flex">
+    <div style="display: flex">
+        <div>@(BudgetInterval.Interval != null ? "Starts" : "Paid")</div>
+        <input type="date" @onchange="@HandleDateInputChanged" value="@BudgetInterval.From.ToString("yyyy-MM-dd")"/>
+    </div>
+    <div style="display: flex">
+        <div>Delta</div>
+        <input type="number" @onchange="@HandleDeltaChanged" value="@BudgetInterval.Delta.ToString(CultureInfo.InvariantCulture)"/>
+    </div>
+    <div style="display: flex">
+        <div>Recurring</div>
+        <input for="Repeats" type="checkbox" @bind="@IsChecked"/>
+        @if (BudgetInterval.Interval != null)
+        {
+            var nextDate = BudgetInterval.From + BudgetInterval.Interval.Value;
+            <input type="date" value="@nextDate.ToString("yyyy-MM-dd")"/>
+        }
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public BudgetInterval BudgetInterval { get; set; } = new();
+
+    private bool IsChecked
+    {
+        get => BudgetInterval.Interval != null;
+        set => BudgetInterval.Interval = value ? new TimeSpan(7, 0, 0, 0) : null;
+    }
+
+    private void HandleDateInputChanged(ChangeEventArgs fromDateInputStr)
+    {
+        var fromDateStr = (string) fromDateInputStr.Value!;
+        var fromDate = DateTime.Parse(fromDateStr);
+
+        BudgetInterval.From = fromDate;
+        StateHasChanged();
+    }
+
+    private void HandleDeltaChanged(ChangeEventArgs obj)
+    {
+        var updateDeltaStr = (string) obj.Value!;
+        var updatedDelta = double.Parse(updateDeltaStr);
+
+        BudgetInterval.Delta = updatedDelta;
+        StateHasChanged();
+    }
+
+}

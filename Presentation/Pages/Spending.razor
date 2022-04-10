@@ -1,4 +1,4 @@
-@page "/insights"
+@page "/spending"
 
 @using Fluxor
 @using Fluxor.Blazor.Web.Components
@@ -18,13 +18,7 @@
                 OnMonthClicked="@HandleMonthSummaryClicked" />
     </div>
 
-    <div style="
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 50px; 
-        margin-top: 50px; 
-        margin-bottom: 50px"
-    >
+    <ContentGrid>
         @foreach (var month in InsightMonths) {
             var monthId = MontToId(month.Month);
             <section id="@monthId">
@@ -39,7 +33,7 @@
                 />
             </section>
         }
-    </div>  
+    </ContentGrid>
     
 </div>
 
@@ -57,7 +51,8 @@
 
 @code {
 
-    private IEnumerable<InsightMonth> InsightMonths => _transactionState.Value.MonthInsights;
+    private IEnumerable<InsightMonth> InsightMonths => _transactionState.Value.MonthInsights
+        .OrderBy(m => m.Month);
 
     private double MaxMonth => _transactionState.Value.MaxMonthNet;
 

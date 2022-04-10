@@ -1,0 +1,69 @@
+@using Domain
+@using Fluxor
+@using Presentation.Store.Budget
+@using Presentation.Store.Insights
+
+@inject IDispatcher _dispatcher;
+
+<ContentPanel>
+    <div @onclick="@HandleShowEditorClicked">
+        <h2>@Budget.Description</h2>
+        <h3>@(Budget.Group?.Name ?? "Unresolved")</h3>
+        @foreach (var budgetInterval in Budget.Intervals)
+        {
+            <div>
+                Budget: @budgetInterval.Delta
+            </div>
+            @if (budgetInterval.Interval != null) {
+                <div>
+                    Frequency: Every @budgetInterval.Interval?.Days Days
+                </div>
+                <div>
+                    Beginning: @budgetInterval.From.ToShortDateString()
+                </div>
+            } else {
+                <div>
+                    On: @budgetInterval.From.ToShortDateString()
+                </div>
+            }
+
+        }
+        
+        <button @onclick="@HandleBudgetDeleteClicked" @onclick:stopPropagation="true">Delete</button>
+    </div>
+</ContentPanel>
+
+@if (_showEditor) {
+    <BudgetEditor Budget="@Budget" OnActionEditComplete="@HandleUpdateEditor" />
+}
+
+@code {
+
+    [Parameter]
+    public Budget Budget { get; set; } = new();
+
+    private bool _showEditor = false;
+
+    private void HandleShowEditorClicked() {
+        _showEditor = true;
+        StateHasChanged();
+    }
+
+    private void HandleUpdateEditor(Budget update)
+    {
+        Budget = Budget with {
+            Description = update.Description,
+            Group = update.Group,
+            Intervals = update.Intervals,
+        };
+
+        _showEditor = false;
+        StateHasChanged();
+    }
+
+    private void HandleBudgetDeleteClicked()
+    {
+        _dispatcher.Dispatch(new BudgetDeleteAction(Budget));
+    }
+
+}

@@ -1,7 +1,6 @@
 @using Domain
 @using Fluxor
 @using Presentation.Store.Budget
-@using Presentation.Store.Insights
 
 @inject IDispatcher _dispatcher;
 
@@ -21,6 +20,11 @@
                 <div>
                     Beginning: @budgetInterval.From.ToShortDateString()
                 </div>
+                @if (budgetInterval.To != null){
+                    <div>
+                        Ending: @budgetInterval.To.Value.ToShortDateString()
+                    </div>
+                }
             } else {
                 <div>
                     On: @budgetInterval.From.ToShortDateString()

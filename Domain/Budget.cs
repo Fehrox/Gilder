@@ -11,6 +11,7 @@ public record Budget : IEntity
 public class BudgetInterval
 {
     public DateTime From { get; set; }
+    public DateTime? To { get; set; }
     public TimeSpan? Interval { get; set; }
     public double Delta { get; set; }
 }

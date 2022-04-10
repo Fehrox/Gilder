@@ -53,6 +53,7 @@
     private void HandleBudgetCreated(Domain.Budget budget)
     {
         _dispatcher.Dispatch(new BudgetCreateAction(new[] {budget}));
+        _dispatcher.Dispatch(new BudgetRepoCreateAction(new[] {budget}));
         _showCreateNewBudget = false;
         StateHasChanged();
     }

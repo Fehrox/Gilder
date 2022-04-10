@@ -29,7 +29,7 @@
     protected override Task OnInitializedAsync() {
         _dispatcher.Dispatch(new GroupRepoLoadAction());
         _dispatcher.Dispatch(new TransactionRepoLoadAction());
-        _dispatcher.Dispatch(new BudgetMockLoadAction());
+        _dispatcher.Dispatch(new BudgetRepoLoadAction());
         return base.OnInitializedAsync();
     }
 

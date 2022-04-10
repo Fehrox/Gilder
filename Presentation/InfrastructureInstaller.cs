@@ -11,6 +11,7 @@ namespace Presentation
             services.AddSingleton<ITransactionImporter, NabCsvTransactionImporter>();
             services.AddScoped<IRepo<Transaction>, LocalStorageTransactionRepo>();
             services.AddScoped<IRepo<Group>, LocalStorageGroupRepository>();
+            services.AddScoped<IRepo<Budget>, LocalStorageBudgetRepository>();
         }
     }
 }

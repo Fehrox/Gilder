@@ -1,3 +1,3 @@
 namespace Presentation.Store.Budget;
 
-public record BudgetMockLoadAction { }
+public record BudgetRepoLoadAction { }

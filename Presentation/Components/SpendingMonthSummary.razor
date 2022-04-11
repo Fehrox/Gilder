@@ -16,11 +16,14 @@
     
     private IEnumerable<SpendingMonth> SpendingMonths => _transactionState.Value.SpendingMonths;
     
-    private double MaxHeight => _transactionState.Value.MaxMonthNet;
+    private double MaxHeight => _transactionState.Value.SpendingMonths.Any() 
+        ? _transactionState.Value.SpendingMonths.Max(m => m.Net)
+        : 0;
 
     private IEnumerable<BarChartVertical.Bar> MonthBars => _transactionState.Value.SpendingMonths
+        .OrderBy(m => m.Month)
         .Select(sm => new BarChartVertical.Bar {
-            Text = sm.Month.ToString("MMMM") + " " + sm.Month.ToString("yyyy"),
+            Text = sm.Month.ToString("MMM-yy"),
             Value = sm.Net,
             OnBarClicked = () => OnMonthClicked?.Invoke(sm.Month)
         });

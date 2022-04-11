@@ -1,69 +1,71 @@
-
-<div style="display: flex; justify-content: center; height: 200px">
-    @foreach (var bar in Bars) {
-        var height = Math.Abs(bar.Value) / MaxHeight * 4;
-        var posHeight = bar.Value > 0 ? height : 0;
-        var negHeight = bar.Value < 0 ? height : 0;
-        var posColor = bar.Value > 0 ? "#CCD888" : "transparent";
-        var negColor = bar.Value < 0 ? "#FF576A" : "transparent";
-
-        <div
-            @onclick="@(() => OnMonthClicked?.Invoke(bar))"
-            style="
-                display:flex; 
-                flex-direction: column; 
-                height: 100%;
-                cursor: pointer;
-        ">   
-            <div style="
-                height: @((1 - posHeight) * 50)%;
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                white-space: nowrap;
-                text-align: end;
-            ">
-                @Math.Round(bar.Value, 2)
-            </div>
-            <div style="
-                width: 25px;
-                background-color: @posColor;
-                height: @(posHeight * 50)%;
-            ">
-            </div>
-            <div style="
-                width: 25px;
-                background-color: @negColor;
-                height: @(negHeight * 50)%;
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                white-space: nowrap;
-                text-align: start;
-            ">
-                @bar.Text
-            </div>
-            <div style="
-                height: @((1 - negHeight) * 50)%; 
-            ">
-            </div>
+<div style="height:80%">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; min-height: 200px; overflow: hidden">
+        @{
+            var maxHeight = MaxHeight ?? (Bars.Any() ? Bars.Max(b => b.Value) : 0);
+            var minHeight = MinHeight ?? (Bars.Any() ? Bars.Min(b => b.Value) : 0);
+            minHeight = Math.Min(minHeight, 0);
+            maxHeight = Math.Max(maxHeight, 0);
+            var barRange = maxHeight - minHeight;
+        }
+        <div hidden>Meeee! @maxHeight @minHeight @barRange</div>
+        @* Positive Row *@
+        <div style="width: 100%; height: @(maxHeight/barRange*100)%; display: flex; flex-direction: row;">
+            @foreach (var bar in Bars) {
+                var barPosValue = bar.Value > 0 ? bar.Value : 0;
+                var posValue = barPosValue / maxHeight * 100;
+                <div
+                    @onclick="@(() => bar.OnBarClicked?.Invoke())"
+                    style="width:25px; height: 100%">
+                    <div style="width:25px; height: @(100-posValue)%; background-color: transparent"></div>
+                    <div style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #CCD888">
+                        @if(bar.Value > 0){
+                            @Math.Round(bar.Value, 2)
+                        }
+                    </div>
+                </div>
+            }    
         </div>
-    }
+        @* Negative Row *@
+        <div style="width: 100%; height: @(Math.Abs(minHeight)/barRange*100)%; display: flex; flex-direction: row;">
+            @foreach (var bar in Bars) {
+                var barPosValue = bar.Value < 0 ? Math.Abs(bar.Value) : 0;
+                var posValue = barPosValue / Math.Abs(minHeight) * 100;
+                <div
+                    @onclick="@(() => bar.OnBarClicked?.Invoke())"
+                    style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #FF576A">
+                    @if (bar.Value < 0) {
+                        @Math.Round(bar.Value, 2)
+                    }
+                </div>
+            }    
+        </div>
+    </div>
+    @* Titles *@
+    <div
+        style="height: 50px; display: flex; flex-direction: row;">
+        @foreach (var bar in Bars) {
+            <div
+                @onclick="@(() => bar.OnBarClicked?.Invoke())"
+                style="width:25px; writing-mode: vertical-rl; white-space: nowrap; height: 50px">@bar.Text</div>
+        }    
+    </div>
 </div>
-
 @code {
 
     [Parameter]
     public IEnumerable<Bar> Bars { get; set; } = Array.Empty<Bar>();
 
     [Parameter]
-    public Action<Bar> OnMonthClicked { get; set; } = _ => { };
+    public double? MaxHeight { get; set; } = null;
 
     [Parameter]
-    public double MaxHeight { get; set; } 
-
-    public struct Bar {
+    public double? MinHeight { get; set; } = null;
+    
+    public struct Bar
+    {
         public double Value { get; set; }
         public string Text { get; set; }
         public Action OnBarClicked { get; set; }
     }
-    
+
 }

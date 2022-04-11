@@ -1,0 +1,30 @@
+@page "/forecast"
+@using Fluxor
+@using Presentation.Store.Forecast
+@using Presentation.Components
+@using Fluxor.Blazor.Web.Components
+
+@inject IDispatcher _dispatcher
+@inject IState<ForecastState> _forecastState;
+
+@inherits FluxorComponent
+
+<div style="height: 400px">
+    <BarChartVertical Bars="@ForecastBars"/>
+</div>
+
+@code {
+
+    private IEnumerable<BarChartVertical.Bar> ForecastBars => _forecastState.Value.MonthForecasts
+        .Select(f => new BarChartVertical.Bar {
+            Text = f.Month.ToString("MMM-yy"),
+            Value = f.NetPosition
+        });
+        
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _dispatcher.Dispatch(new ForecastCollateCommand());
+    }
+
+}

@@ -63,8 +63,6 @@ public class ForecastCollateEffect : Effect<ForecastCollateCommand>
                 Month = monthTransactions.Key,
                 NetPosition = lastMonthNet += thisMonthNet
             });
-            
-            Console.WriteLine(lastMonthNet);
         }
 
         dispatcher.Dispatch(new ForecastSetCommand(forecast));

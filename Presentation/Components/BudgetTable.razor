@@ -1,0 +1,42 @@
+@using Presentation.Store.Budget
+@using Fluxor
+@using Fluxor.Blazor.Web.Components
+@using Domain
+
+@inherits FluxorComponent
+
+@inject IState<BudgetState> _budgetState
+
+<div style="display: grid; grid-template-columns: repeat(6, 1fr)">
+    <div style="text-decoration: underline">Description</div>
+    <div style="text-decoration: underline">Group</div>
+    <div style="text-decoration: underline">Charge</div>
+    <div style="text-decoration: underline">Interval</div>
+    <div style="text-decoration: underline">Starts</div>
+    <div style="text-decoration: underline">Till</div>
+    @foreach (var budget in Budgets) {
+        <div>@budget.Description</div>
+        <div>@(budget.Group?.Name??"Unresolved")</div>
+        var firstRowDone = false;
+        foreach (var interval in budget.Intervals) {
+            if (firstRowDone){
+                <div></div>
+                <div></div>
+            }
+            <div>@interval.Delta</div>
+            <div>
+                @(interval.Interval.HasValue
+                    ? "Every " + interval.Interval.Value.Days + " Days"
+                    : "Once Off")
+            </div>
+            <div>@interval.From.ToShortDateString()</div>
+            <div>@(interval.To?.ToShortDateString()??"Ongoing")</div>
+            firstRowDone = true;
+        }
+    }
+</div>
+
+@code {
+    private IEnumerable<Budget> Budgets => _budgetState.Value.Budgets
+        .OrderByDescending(g => Math.Abs(g.Intervals.First().Delta) );
+}

@@ -2,7 +2,7 @@ namespace Domain;
 
 public record Budget : IEntity
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public Group? Group { get; set; }
     public string Description { get; set; }
     public IEnumerable<BudgetInterval> Intervals { get; set; } = Array.Empty<BudgetInterval>();

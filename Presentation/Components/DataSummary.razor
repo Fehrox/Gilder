@@ -31,6 +31,8 @@
                     <th>Outgoing</th>
                     <th>Net</th>
                     <th>/Day</th>
+                    <th>/Wk</th>
+                    <th>/Mth</th>
                 </tr>
                 <tbody>
                 @foreach (var transaction in TransactionGroups) {
@@ -45,6 +47,10 @@
                                 : LastTransaction.Date - FirstTransaction.Date;
                         }
                         <td>@Math.Round(net/duration.Days,2)</td>
+                        @{ const double DAYS_IN_WEEK = 7; }
+                        <td>@Math.Round(net/duration.Days*DAYS_IN_WEEK,2)</td>
+                        @{ const double DAYS_IN_MONTH = 30.4368499; }
+                        <td>@Math.Round(net/ duration.Days*DAYS_IN_MONTH,2)</td>
                     </tr>
                 }
                 </tbody>

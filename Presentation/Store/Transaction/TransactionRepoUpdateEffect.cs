@@ -3,11 +3,11 @@ using Fluxor;
 
 namespace Presentation.Store.Transaction
 {
-    public class TransactionUpdateEffect : Effect<TransactionUpdateAction>
+    public class TransactionRepoUpdateEffect : Effect<TransactionUpdateAction>
     {
         private readonly IRepo<Domain.Transaction> _transactionRepository;
 
-        public TransactionUpdateEffect(IRepo<Domain.Transaction> transactionRepository)
+        public TransactionRepoUpdateEffect(IRepo<Domain.Transaction> transactionRepository)
         {
             _transactionRepository = transactionRepository;
         }

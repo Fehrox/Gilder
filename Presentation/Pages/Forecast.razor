@@ -4,21 +4,28 @@
 @using Presentation.Components
 @using Fluxor.Blazor.Web.Components
 
-@inject IDispatcher _dispatcher
-@inject IState<ForecastState> _forecastState;
-
 @inherits FluxorComponent
 
-<div style="height: 400px">
-    <BarChartVertical Bars="@ForecastBars"/>
-</div>
+@inject IDispatcher _dispatcher
+@inject IState<ForecastState> _forecastState
 
+<div style="display: flex; flex-direction: column">
+    <ContentPanel>
+        <div style="height: 35vh">
+            <BarChartVertical Bars="@ForecastBars"/>
+        </div>
+    </ContentPanel>
+    <ContentPanel>
+        <BudgetTable />
+    </ContentPanel>
+</div>
 @code {
 
     private IEnumerable<BarChartVertical.Bar> ForecastBars => _forecastState.Value.MonthForecasts
         .Select(f => new BarChartVertical.Bar {
             Text = f.Month.ToString("MMM-yy"),
-            Value = f.NetPosition
+            Value = f.NetPosition,
+            RenderValue = BarChartVertical.RenderValue.Thousands
         });
         
     protected override void OnParametersSet()

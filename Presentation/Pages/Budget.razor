@@ -33,7 +33,9 @@
 @if (_showCreateNewBudget)
 {
     <BudgetEditor
-        Budget="@(new Domain.Budget() {Intervals = new[] {new BudgetInterval {From = DateTime.Now.Date}}})"
+        Budget="@(new Domain.Budget() {
+                    Id = Guid.NewGuid(),
+                    Intervals = new[] {new BudgetInterval {From = DateTime.Now.Date}}})"
         OnActionEditComplete="@HandleBudgetCreated"/>
 }
 

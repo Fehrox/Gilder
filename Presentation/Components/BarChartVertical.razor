@@ -7,7 +7,6 @@
             maxHeight = Math.Max(maxHeight, 0);
             var barRange = maxHeight - minHeight;
         }
-        <div hidden>Meeee! @maxHeight @minHeight @barRange</div>
         @* Positive Row *@
         <div style="width: 100%; height: @(maxHeight/barRange*100)%; display: flex; flex-direction: row;">
             @foreach (var bar in Bars) {
@@ -19,7 +18,7 @@
                     <div style="width:25px; height: @(100-posValue)%; background-color: transparent"></div>
                     <div style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #CCD888">
                         @if(bar.Value > 0){
-                            @Math.Round(bar.Value, 2)
+                            @RenderValueString(bar)
                         }
                     </div>
                 </div>
@@ -34,7 +33,7 @@
                     @onclick="@(() => bar.OnBarClicked?.Invoke())"
                     style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #FF576A">
                     @if (bar.Value < 0) {
-                        @Math.Round(bar.Value, 2)
+                        @RenderValueString(bar)
                     }
                 </div>
             }    
@@ -66,6 +65,38 @@
         public double Value { get; set; }
         public string Text { get; set; }
         public Action OnBarClicked { get; set; }
+        public RenderValue RenderValue { get; set; }
+
+        public Bar() {
+            RenderValue = RenderValue.Default;
+            OnBarClicked = () => { };
+            Value = 0;
+            Text = String.Empty;
+        }
+    }
+    
+    public enum RenderValue
+    {
+        Default,
+        Thousands,
+        Verbose
+    }
+
+    private string RenderValueString(Bar bar)
+    {
+        switch (bar.RenderValue) {
+            case RenderValue.Default:
+                return Math.Round(bar.Value, 2).ToString();
+                break;
+            case RenderValue.Verbose:
+                return bar.Value.ToString();
+                break;
+            case RenderValue.Thousands:
+                return Math.Round(bar.Value / 1000) + "k";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
 }

@@ -16,7 +16,9 @@
         @if (BudgetInterval.Interval != null)
         {
             var nextDate = BudgetInterval.From + BudgetInterval.Interval.Value;
-            <input type="date" value="@nextDate.ToString("yyyy-MM-dd")"/>
+            <input type="date"
+                   @onchange="@HandleIntervalChanged"
+                   value="@nextDate.ToString("yyyy-MM-dd")"/>
         }
     </div>
     @if (IsRepeatsChecked)
@@ -28,7 +30,8 @@
             {
                 <input type="date"
                        min="@BudgetInterval.From.ToString("yyyy-MM-dd")"
-                       @onchange="@HandleToInputChanged" value="@BudgetInterval.To.Value.ToString("yyyy-MM-dd")"/>
+                       @onchange="@HandleToInputChanged"
+                       value="@BudgetInterval.To.Value.ToString("yyyy-MM-dd")"/>
                 @:After @((BudgetInterval.To - BudgetInterval.From).Value.Days) Days
             }
         </div>
@@ -77,6 +80,16 @@
         var updatedDelta = double.Parse(updateDeltaStr);
 
         BudgetInterval.Delta = updatedDelta;
+        StateHasChanged();
+    }
+
+    private void HandleIntervalChanged(ChangeEventArgs intervalDateInput)
+    {
+        var intervalDateStr = (string) intervalDateInput.Value!;
+        var intervalDate = DateTime.Parse(intervalDateStr);
+        var intervalSpan = intervalDate - BudgetInterval.From;
+
+        BudgetInterval.Interval = intervalSpan;
         StateHasChanged();
     }
 

@@ -11,13 +11,13 @@
 
 <div style="display: table; width: 100%">
     <div style="display: table-row;">
+        <div style="display: table-cell;">👁</div>
         <div style="display: table-cell; text-decoration: underline">Description</div>
         <div style="display: table-cell; text-decoration: underline">Group</div>
         <div style="display: table-cell; text-decoration: underline">Charge</div>
         <div style="display: table-cell; text-decoration: underline">Interval</div>
-        <div style="display: table-cell; text-decoration: underline">Starts</div>
+        <div style="display: table-cell; text-decoration: underline">Paid/Starts</div>
         <div style="display: table-cell; text-decoration: underline">Till</div>
-        <div style="display: table-cell; text-decoration: underline">Suppress</div>
     </div>
     @foreach (var budget in Budgets){
         bool isFirstInterval = true;
@@ -25,10 +25,21 @@
             <div
                 @onclick="@(() => HandleBudgetSelected(budget))"
                 style="display: table-row; border-radius: 5px; border: solid 1px grey; cursor: pointer; padding: 2px">
-                @if (isFirstInterval) {
+                <div style="display: flex; justify-content: center; align-items: center;"
+                     @onclick:stopPropagation="true">
+                    <input
+                        type="checkbox"
+                        @bind="@interval.Suppress"
+                        @onclick="@( () => HandleIntervalSuppressToggleClicked(budget, interval) )"
+                    />
+                </div>
+                @if (isFirstInterval)
+                {
                     <div style="display: table-cell;">@budget.Description</div>
                     <div style="display: table-cell;">@(budget.Group?.Name ?? "Unresolved")</div>
-                } else {
+                }
+                else
+                {
                     <div style="display: table-cell;"> </div>
                     <div style="display: table-cell;"> </div>
                 }
@@ -39,14 +50,9 @@
                         : "Once Off")
                 </div>
                 <div style="display: table-cell;">@interval.From.ToShortDateString()</div>
-                <div style="display: table-cell;">@(interval.To?.ToShortDateString() ?? "Ongoing")</div>
-                <div style="display: flex; justify-content: center; align-items: center;"
-                     @onclick:stopPropagation="true">
-                    <input
-                        type="checkbox"
-                        @bind="@interval.Suppress"
-                        @onclick="@( () => HandleIntervalSuppressToggleClicked(budget, interval) )"
-                    />
+                <div style="display: table-cell;">@(
+                    interval.To?.ToShortDateString() ??
+                    (interval.Interval.HasValue ? "Ongoing" : String.Empty))
                 </div>
             </div>
             isFirstInterval = false;

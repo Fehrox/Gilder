@@ -45,17 +45,6 @@ public class ForecastCollateEffect : Effect<ForecastCollateCommand>
             }   
         }
 
-        // var forecasts = transactions
-        //     .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1))
-        //     .Select(fg => new MonthForecast {
-        //         Month = fg.Key,
-        //         NetPosition = fg.Sum(g => g.Charge)
-        //     }).ToList();
-        // var accumulatedForecasts = Enumerable.Range(1, forecasts.Count - 1)
-        //     .Select(i => new MonthForecast {
-        //         Month = forecasts[i].Month,
-        //         NetPosition = forecasts[i].NetPosition + forecasts[i - 1].NetPosition
-        //     });
         var forecast = new List<MonthForecast>();
         var transactionsByMonth = transactions
             .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1));

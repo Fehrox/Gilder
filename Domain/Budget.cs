@@ -14,4 +14,5 @@ public class BudgetInterval
     public DateTime? To { get; set; }
     public TimeSpan? Interval { get; set; }
     public double Delta { get; set; }
+    public bool Suppress { get; set; }
 }

@@ -61,7 +61,6 @@
             Intervals = update.Intervals,
         };
 
-        Console.WriteLine(Budget.Id + " " + Budget.Description);
         _dispatcher.Dispatch(new BudgetRepoUpdateAction(Budget));
         
         _showEditor = false;

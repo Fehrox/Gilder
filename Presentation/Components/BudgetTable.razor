@@ -2,41 +2,89 @@
 @using Fluxor
 @using Fluxor.Blazor.Web.Components
 @using Domain
+@using Presentation.Store.Forecast
 
 @inherits FluxorComponent
 
+@inject IDispatcher _dispatcher
 @inject IState<BudgetState> _budgetState
 
-<div style="display: grid; grid-template-columns: repeat(6, 1fr)">
-    <div style="text-decoration: underline">Description</div>
-    <div style="text-decoration: underline">Group</div>
-    <div style="text-decoration: underline">Charge</div>
-    <div style="text-decoration: underline">Interval</div>
-    <div style="text-decoration: underline">Starts</div>
-    <div style="text-decoration: underline">Till</div>
-    @foreach (var budget in Budgets) {
-        <div>@budget.Description</div>
-        <div>@(budget.Group?.Name??"Unresolved")</div>
-        var firstRowDone = false;
+<div style="display: table; width: 100%">
+    <div style="display: table-row;">
+        <div style="display: table-cell; text-decoration: underline">Description</div>
+        <div style="display: table-cell; text-decoration: underline">Group</div>
+        <div style="display: table-cell; text-decoration: underline">Charge</div>
+        <div style="display: table-cell; text-decoration: underline">Interval</div>
+        <div style="display: table-cell; text-decoration: underline">Starts</div>
+        <div style="display: table-cell; text-decoration: underline">Till</div>
+        <div style="display: table-cell; text-decoration: underline">Suppress</div>
+    </div>
+    @foreach (var budget in Budgets){
+        bool isFirstInterval = true;
         foreach (var interval in budget.Intervals) {
-            if (firstRowDone){
-                <div></div>
-                <div></div>
-            }
-            <div>@interval.Delta</div>
-            <div>
-                @(interval.Interval.HasValue
-                    ? "Every " + interval.Interval.Value.Days + " Days"
-                    : "Once Off")
+            <div
+                @onclick="@(() => HandleBudgetSelected(budget))"
+                style="display: table-row; border-radius: 5px; border: solid 1px grey; cursor: pointer; padding: 2px">
+                @if (isFirstInterval) {
+                    <div style="display: table-cell;">@budget.Description</div>
+                    <div style="display: table-cell;">@(budget.Group?.Name ?? "Unresolved")</div>
+                } else {
+                    <div style="display: table-cell;"> </div>
+                    <div style="display: table-cell;"> </div>
+                }
+                <div style="display: table-cell;">@interval.Delta</div>
+                <div style="display: table-cell;">
+                    @(interval.Interval.HasValue
+                        ? "Every " + interval.Interval.Value.Days + " Days"
+                        : "Once Off")
+                </div>
+                <div style="display: table-cell;">@interval.From.ToShortDateString()</div>
+                <div style="display: table-cell;">@(interval.To?.ToShortDateString() ?? "Ongoing")</div>
+                <div style="display: flex; justify-content: center; align-items: center;"
+                     @onclick:stopPropagation="true">
+                    <input
+                        type="checkbox"
+                        @bind="@interval.Suppress"
+                        @onclick="@( () => HandleIntervalSuppressToggleClicked(budget, interval) )"
+                    />
+                </div>
             </div>
-            <div>@interval.From.ToShortDateString()</div>
-            <div>@(interval.To?.ToShortDateString()??"Ongoing")</div>
-            firstRowDone = true;
+            isFirstInterval = false;
         }
     }
+    
+    @if (_selectedBudget != null) {
+        <BudgetEditor
+            Budget="@_selectedBudget"
+            OnActionEditComplete="@HandleBudgetEditComplete"
+        />
+    }
+    
 </div>
 
 @code {
+
+    private Budget? _selectedBudget = null;
+    
     private IEnumerable<Budget> Budgets => _budgetState.Value.Budgets
         .OrderByDescending(g => Math.Abs(g.Intervals.First().Delta) );
+
+    private void HandleBudgetSelected(Budget budget) => _selectedBudget = budget;
+    
+    private void HandleBudgetEditComplete(Budget budget)
+    {
+        _dispatcher.Dispatch(new BudgetRepoUpdateAction(budget));
+        _selectedBudget = null;
+        StateHasChanged();
+
+        _dispatcher.Dispatch(new ForecastCollateCommand());
+    }
+
+    private void HandleIntervalSuppressToggleClicked(Budget budget, BudgetInterval interval)
+    {
+        interval.Suppress = !interval.Suppress;
+        _dispatcher.Dispatch(new BudgetRepoUpdateAction(budget));
+        _dispatcher.Dispatch(new ForecastCollateCommand());
+    }
+
 }

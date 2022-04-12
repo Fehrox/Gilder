@@ -19,6 +19,9 @@ public class ForecastCollateEffect : Effect<ForecastCollateCommand>
         var budgets = _budgetState.Value.Budgets;
         foreach (var budget in budgets) {
             foreach (var interval in budget.Intervals) {
+                if(interval.Suppress)
+                    continue;
+                
                 if (interval.Interval == null) {
                     var forecastTransaction = new ForecastTransaction {
                         Charge = interval.Delta,

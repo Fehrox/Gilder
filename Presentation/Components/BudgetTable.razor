@@ -35,22 +35,22 @@
                 </div>
                 @if (isFirstInterval)
                 {
-                    <div style="display: table-cell;">@budget.Description</div>
-                    <div style="display: table-cell;">@(budget.Group?.Name ?? "Unresolved")</div>
+                    <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@budget.Description</div>
+                    <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@(budget.Group?.Name ?? "Unresolved")</div>
                 }
                 else
                 {
-                    <div style="display: table-cell;"> </div>
-                    <div style="display: table-cell;"> </div>
+                    <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");"> </div>
+                    <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");"> </div>
                 }
-                <div style="display: table-cell;">@interval.Delta</div>
-                <div style="display: table-cell;">
+                <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@interval.Delta</div>
+                <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">
                     @(interval.Interval.HasValue
                         ? "Every " + interval.Interval.Value.Days + " Days"
                         : "Once Off")
                 </div>
-                <div style="display: table-cell;">@interval.From.ToShortDateString()</div>
-                <div style="display: table-cell;">@(
+                <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@interval.From.ToShortDateString()</div>
+                <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@(
                     interval.To?.ToShortDateString() ??
                     (interval.Interval.HasValue ? "Ongoing" : String.Empty))
                 </div>

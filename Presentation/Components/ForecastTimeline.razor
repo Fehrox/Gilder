@@ -1,0 +1,35 @@
+@using Presentation.Store.Forecast
+@using Fluxor
+@using Fluxor.Blazor.Web.Components
+
+@inherits FluxorComponent
+
+@inject IState<ForecastState> _forecastState
+@inject IDispatcher _dispatcher
+
+<div style="display: flex; flex-direction: row; width: 100%; height: 30px">
+    <div style="flex-grow: 0">
+        @DateTime.Now.ToShortDateString()
+    </div>
+    <div style="height: 1px; border-top: solid 1px lightgray; align-self: center; flex-grow: 1"></div>
+    <div style="flex-grow: 0">
+        @Math.Round((ForecastTillDate - DateTime.Now).Days/365.242199, 1) yrs
+        <input type="date"
+               @onchange="@HandleForecastTillChanged"
+               value="@ForecastTillDate.ToString("yyyy-MM-dd")"/>
+    </div>
+</div>
+
+@code {
+    private DateTime ForecastTillDate => _forecastState.Value.Till.Date;
+
+    private void HandleForecastTillChanged(ChangeEventArgs forecastTillArgs)
+    {
+        var forecastTillDateString = (string) forecastTillArgs.Value!;
+        var forecastTillDate = DateTime.Parse(forecastTillDateString);
+
+        _dispatcher.Dispatch(new ForecastSetTillCommand(forecastTillDate));
+        _dispatcher.Dispatch(new ForecastCollateCommand());
+    }
+
+}

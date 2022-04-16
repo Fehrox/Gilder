@@ -19,6 +19,7 @@
             <input type="date"
                    @onchange="@HandleIntervalChanged"
                    value="@nextDate.ToString("yyyy-MM-dd")"/>
+            @: Every @(BudgetInterval.Interval.Value.Days) days,&nbsp
         }
     </div>
     @if (IsRepeatsChecked)
@@ -32,7 +33,10 @@
                        min="@BudgetInterval.From.ToString("yyyy-MM-dd")"
                        @onchange="@HandleToInputChanged"
                        value="@BudgetInterval.To.Value.ToString("yyyy-MM-dd")"/>
-                @:After @((BudgetInterval.To - BudgetInterval.From).Value.Days) Days
+                var duration = (BudgetInterval.To - BudgetInterval.From);                                                                              
+                @:After @(duration.Value.Days) Days, 
+                var intervals = duration.Value / BudgetInterval.Interval;
+                @(Math.Round(intervals ?? 0) * BudgetInterval.Delta)
             }
         </div>
     }

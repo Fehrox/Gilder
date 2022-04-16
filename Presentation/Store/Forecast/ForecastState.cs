@@ -2,7 +2,8 @@ namespace Presentation.Store.Forecast;
 
 public record ForecastState
 {
-    public IEnumerable<ForecastTransaction> ForecastTransactions { get; set; } = Array.Empty<ForecastTransaction>();
+    public DateTime Till { get; set; }
+    public IEnumerable<ForecastTransaction> Transactions { get; set; } = Array.Empty<ForecastTransaction>();
 }
 
 public class ForecastTransaction

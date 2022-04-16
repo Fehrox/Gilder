@@ -5,17 +5,22 @@ namespace Presentation.Store.Forecast;
 
 public class ForecastCollateEffect : Effect<ForecastCollateCommand>
 {
-    private const double DAYS_IN_YEAR = 365.242199;
-    private const double FORECAST_DAYS = 3 * DAYS_IN_YEAR;
+    private readonly IState<ForecastState> _forecastState;
     private readonly IState<BudgetState> _budgetState;
 
-    public ForecastCollateEffect(IState<BudgetState> budgetState) => _budgetState = budgetState;
+    public ForecastCollateEffect(
+        IState<ForecastState> forecastState,
+        IState<BudgetState> budgetState)
+    {
+        _forecastState = forecastState;
+        _budgetState = budgetState;
+    }
 
     public override Task HandleAsync(ForecastCollateCommand action, IDispatcher dispatcher)
     {
         var transactions = new List<ForecastTransaction>();
 
-        var forecastEnd = DateTime.Now + TimeSpan.FromDays(FORECAST_DAYS);
+        var forecastEnd = _forecastState.Value.Till;
         var budgets = _budgetState.Value.Budgets;
         foreach (var budget in budgets) {
             foreach (var interval in budget.Intervals) {
@@ -45,45 +50,11 @@ public class ForecastCollateEffect : Effect<ForecastCollateCommand>
             }   
         }
 
-        // var forecast = new List<MonthForecast>();
-        // var transactionsByMonth = transactions
-        //     .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1));
-        // double lastMonthNet = 0;
-        // foreach (var monthTransactions in transactionsByMonth) {
-        //     var thisMonthNet = monthTransactions.Sum(t => t.Charge);
-        //     forecast.Add( new MonthForecast {
-        //         Month = monthTransactions.Key,
-        //         NetPosition = lastMonthNet += thisMonthNet
-        //     });
-        // }
 
-        dispatcher.Dispatch(new ForecastSetCommand(transactions));
+
+        dispatcher.Dispatch(new ForecastSetTransactionsCommand(transactions));
 
         return Task.CompletedTask;
     }
-
-
-
-
+    
 }
-//
-// public static class EnumExtensions {
-//     public static IEnumerable<TResult> SelectWithPrevious<TSource, TResult>(
-//         this IEnumerable<TSource> source, 
-//         Func<TSource, TSource, TResult> projection)
-//     {
-//         using (var iterator = source.GetEnumerator())
-//         {
-//             if (!iterator.MoveNext())
-//             {
-//                 yield break;
-//             }
-//             TSource previous = iterator.Current;
-//             while (iterator.MoveNext())
-//             {
-//                 yield return projection(previous, iterator.Current);
-//                 previous = iterator.Current;
-//             }
-//         }
-//     }
-// }

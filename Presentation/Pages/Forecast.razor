@@ -11,13 +11,40 @@
 
 <div style="display: flex; flex-direction: column">
     <ContentPanel>
-        <div style="height: 35vh">
+        <ForecastTimeline />
+        <div style="height: 38vh; max-width: 935px; overflow-x: scroll; overflow-y: hidden">
             <BarChartVertical Bars="@ForecastBars"/>
         </div>
     </ContentPanel>
-    <ContentPanel>
-        <BudgetTable />
-    </ContentPanel>
+    <div style="display: flex; flex-direction: row">
+        <div style="flex-grow: 5">
+            <ContentPanel>
+                <BudgetTable/>
+            </ContentPanel>
+        </div>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center">
+            <ContentPanel>
+                <div style="text-decoration: underline">Forecast Totals</div>
+
+                @{
+                    var budgetBars = GetBudgetBars().ToList();
+                    var maxBudgetBar = budgetBars.Any() ? budgetBars.Max(b => Math.Abs(b.Value)) : 0;
+                }
+                <BarChartHorizontal Bars="@budgetBars" MaxBarValue="@maxBudgetBar"/>
+
+                @{
+                    var spent = _forecastState.Value.Transactions
+                        .Where(t => t.Charge < 0)
+                        .Sum(t => t.Charge);
+                    var income = _forecastState.Value.Transactions
+                        .Where(t => t.Charge > 0)
+                        .Sum(t => t.Charge);
+                    var net = income + spent;
+                }
+                <TransactionSummary Spent="@spent" Income="@income" Net="@net"/>
+            </ContentPanel>
+        </div>
+    </div>
 </div>
 @code {
 
@@ -30,10 +57,11 @@
 
     private IEnumerable<MonthForecast> GetMonthForecast()
     {
-        var transactions = _forecastState.Value.ForecastTransactions;
+        var transactions = _forecastState.Value.Transactions;
         var forecast = new List<MonthForecast>();
         var transactionsByMonth = transactions
-            .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1));
+            .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1))
+            .OrderBy(t => t.Key);
         double lastMonthNet = 0;
         foreach (var monthTransactions in transactionsByMonth) {
             var thisMonthNet = monthTransactions.Sum(t => t.Charge);
@@ -46,6 +74,23 @@
         return forecast.AsEnumerable();
     }
 
+    private IEnumerable<BarChartHorizontal.Bar> GetBudgetBars()
+    {
+        var transactions = _forecastState.Value.Transactions;
+        var transactionsByGroup = transactions
+            .GroupBy(t => t.Group?.Name??"Unresolved");
+        var transactionGroupBars = transactionsByGroup
+            .Select(t => {
+                 var totalGroupCharges = t.Sum(t => t.Charge);
+                 var totalGroupChargesRounded = Math.Round(totalGroupCharges);
+                 return new BarChartHorizontal.Bar {
+                     Value = totalGroupCharges,
+                     Text = t.Key + " (" + totalGroupChargesRounded + ")"
+                 };
+            });
+        
+        return transactionGroupBars;
+    }
 
     protected override void OnParametersSet()
     {

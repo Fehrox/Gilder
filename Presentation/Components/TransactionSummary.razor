@@ -1,0 +1,16 @@
+<div style="font-size: large; font-weight: bold; text-align: right">
+    <div style="display: flex; justify-content: flex-end">Spent: <div style="color: #FF576A">@Math.Round(Spent, 2)</div></div>
+    <div style="display: flex; justify-content: flex-end">Income: <div style="color: #CCD888">@Math.Round(Income, 2)</div></div>
+    <div style="display: flex; justify-content: flex-end">Net: <div style="color: @(Net > 0 ? "#CCD888" : "#FF576A")" >@Math.Round(Net, 2)</div></div>
+</div>
+
+@code {
+    [Parameter]
+    public double Spent { get; set; }
+
+    [Parameter]
+    public double Income { get; set; }
+    
+    [Parameter]
+    public double Net { get; set; }
+}

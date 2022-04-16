@@ -1,5 +1,5 @@
-<div style="height:80%">
-    <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; min-height: 200px; overflow: hidden">
+<div style="height:100%; display: flex; flex-direction: column">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 80%; min-height: 200px;">
         @{
             var maxHeight = MaxHeight ?? (Bars.Any() ? Bars.Max(b => b.Value) : 0);
             var minHeight = MinHeight ?? (Bars.Any() ? Bars.Min(b => b.Value) : 0);
@@ -8,13 +8,13 @@
             var barRange = maxHeight - minHeight;
         }
         @* Positive Row *@
-        <div style="width: 100%; height: @(maxHeight/barRange*100)%; display: flex; flex-direction: row;">
+        <div style="height: @(maxHeight/barRange*100)%; display: flex; flex-direction: row;">
             @foreach (var bar in Bars) {
                 var barPosValue = bar.Value > 0 ? bar.Value : 0;
                 var posValue = barPosValue / maxHeight * 100;
                 <div
                     @onclick="@(() => bar.OnBarClicked?.Invoke())"
-                    style="width:25px; height: 100%">
+                    style="min-width:25px; height: 100%">
                     <div style="width:25px; height: @(100-posValue)%; background-color: transparent"></div>
                     <div style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #CCD888">
                         @if(bar.Value > 0){
@@ -25,28 +25,30 @@
             }    
         </div>
         @* Negative Row *@
-        <div style="width: 100%; height: @(Math.Abs(minHeight)/barRange*100)%; display: flex; flex-direction: row;">
+        <div style="height: @(Math.Abs(minHeight)/barRange*100)%; display: flex; flex-direction: row;">
             @foreach (var bar in Bars) {
                 var barPosValue = bar.Value < 0 ? Math.Abs(bar.Value) : 0;
                 var posValue = barPosValue / Math.Abs(minHeight) * 100;
                 <div
                     @onclick="@(() => bar.OnBarClicked?.Invoke())"
-                    style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #FF576A">
+                    style="min-width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #FF576A">
                     @if (bar.Value < 0) {
                         @RenderValueString(bar)
                     }
                 </div>
-            }    
+            }
         </div>
     </div>
     @* Titles *@
     <div
-        style="height: 50px; display: flex; flex-direction: row;">
-        @foreach (var bar in Bars) {
+        style="height: 20%; display: flex; flex-direction: row; width: 100%">
+        @foreach (var bar in Bars){
             <div
                 @onclick="@(() => bar.OnBarClicked?.Invoke())"
-                style="width:25px; writing-mode: vertical-rl; white-space: nowrap; height: 50px">@bar.Text</div>
-        }    
+                style="min-width:25px; writing-mode: vertical-rl; white-space: nowrap; height: 50px">
+                @bar.Text
+            </div>
+        }
     </div>
 </div>
 @code {

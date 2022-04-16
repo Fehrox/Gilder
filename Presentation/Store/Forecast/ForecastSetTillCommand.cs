@@ -1,6 +1,3 @@
 namespace Presentation.Store.Forecast;
 
-public class ForecastSetTillCommand
-{
-    
-}
+public record ForecastSetTillCommand(DateTime Till);

@@ -29,16 +29,16 @@
 @code {
 
     [Parameter]
-    public IEnumerable<Bar> BarValues { get; set; } = Array.Empty<Bar>();
+    public IEnumerable<Bar> Bars { get; set; } = Array.Empty<Bar>();
 
     [Parameter]
     public double? MaxBarValue { get; set; } = null;
 
     protected override void OnParametersSet() 
-        => MaxBarValue ??= BarValues.Any() ? BarValues.Max(bv => bv.Value) : 0;
+        => MaxBarValue ??= Bars.Any() ? Bars.Max(bv => bv.Value) : 0;
 
     private IEnumerable<Bar> OrderedBarValues
-        => BarValues.OrderByDescending(b => Math.Abs(b.Value));
+        => Bars.OrderByDescending(b => Math.Abs(b.Value));
     
     public class Bar {
         public string Text { get; set; } = String.Empty;

@@ -2,11 +2,13 @@ namespace Presentation.Store.Forecast;
 
 public record ForecastState
 {
-    public IEnumerable<MonthForecast> MonthForecasts { get; set; } = Array.Empty<MonthForecast>();
+    public IEnumerable<ForecastTransaction> ForecastTransactions { get; set; } = Array.Empty<ForecastTransaction>();
 }
 
-public record MonthForecast
+public class ForecastTransaction
 {
-    public DateTime Month { get; set; }
-    public double NetPosition { get; set; }
+    public string Details { get; set; }
+    public Domain.Group? Group { get; set; }
+    public DateTime Date { get; set; }
+    public double Charge { get; set; }
 }

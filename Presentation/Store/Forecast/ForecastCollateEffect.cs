@@ -45,32 +45,26 @@ public class ForecastCollateEffect : Effect<ForecastCollateCommand>
             }   
         }
 
-        var forecast = new List<MonthForecast>();
-        var transactionsByMonth = transactions
-            .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1));
-        double lastMonthNet = 0;
-        foreach (var monthTransactions in transactionsByMonth) {
-            var thisMonthNet = monthTransactions.Sum(t => t.Charge);
-            forecast.Add( new MonthForecast {
-                Month = monthTransactions.Key,
-                NetPosition = lastMonthNet += thisMonthNet
-            });
-        }
+        // var forecast = new List<MonthForecast>();
+        // var transactionsByMonth = transactions
+        //     .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1));
+        // double lastMonthNet = 0;
+        // foreach (var monthTransactions in transactionsByMonth) {
+        //     var thisMonthNet = monthTransactions.Sum(t => t.Charge);
+        //     forecast.Add( new MonthForecast {
+        //         Month = monthTransactions.Key,
+        //         NetPosition = lastMonthNet += thisMonthNet
+        //     });
+        // }
 
-        dispatcher.Dispatch(new ForecastSetCommand(forecast));
+        dispatcher.Dispatch(new ForecastSetCommand(transactions));
 
         return Task.CompletedTask;
     }
 
 
 
-    private class ForecastTransaction
-    {
-        public string Details { get; set; }
-        public Domain.Group? Group { get; set; }
-        public DateTime Date { get; set; }
-        public double Charge { get; set; }
-    }
+
 }
 //
 // public static class EnumExtensions {

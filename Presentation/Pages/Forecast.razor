@@ -21,17 +21,41 @@
 </div>
 @code {
 
-    private IEnumerable<BarChartVertical.Bar> ForecastBars => _forecastState.Value.MonthForecasts
+    private IEnumerable<BarChartVertical.Bar> ForecastBars => GetMonthForecast()
         .Select(f => new BarChartVertical.Bar {
             Text = f.Month.ToString("MMM-yy"),
             Value = f.NetPosition,
             RenderValue = BarChartVertical.RenderValue.Thousands
         });
-        
+
+    private IEnumerable<MonthForecast> GetMonthForecast()
+    {
+        var transactions = _forecastState.Value.ForecastTransactions;
+        var forecast = new List<MonthForecast>();
+        var transactionsByMonth = transactions
+            .GroupBy(t => new DateTime(t.Date.Year, t.Date.Month, 1));
+        double lastMonthNet = 0;
+        foreach (var monthTransactions in transactionsByMonth) {
+            var thisMonthNet = monthTransactions.Sum(t => t.Charge);
+            forecast.Add( new MonthForecast {
+                Month = monthTransactions.Key,
+                NetPosition = lastMonthNet += thisMonthNet
+            });
+        }
+
+        return forecast.AsEnumerable();
+    }
+
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         _dispatcher.Dispatch(new ForecastCollateCommand());
     }
-
+    
+    public record MonthForecast
+    {
+        public DateTime Month { get; set; }
+        public double NetPosition { get; set; }
+    }
 }

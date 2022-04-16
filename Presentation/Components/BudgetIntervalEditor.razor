@@ -27,14 +27,15 @@
         <div style="display: flex">
             <div>Ends</div>
             <input type="checkbox" @bind="@IsEndsChecked"/>
-            @if (BudgetInterval.To != null)
-            {
+            @if (BudgetInterval.To != null) {
                 <input type="date"
                        min="@BudgetInterval.From.ToString("yyyy-MM-dd")"
                        @onchange="@HandleToInputChanged"
                        value="@BudgetInterval.To.Value.ToString("yyyy-MM-dd")"/>
-                var duration = (BudgetInterval.To - BudgetInterval.From);                                                                              
-                @:After @(duration.Value.Days) Days, 
+                var duration = (BudgetInterval.To - BudgetInterval.From);
+                const double DAYS_IN_YEAR = 365.242199;
+                var yearsLong = duration.Value.Days > DAYS_IN_YEAR;
+                @:After @(yearsLong ? Math.Round(duration.Value.Days/DAYS_IN_YEAR,1) : duration.Value.Days) @(yearsLong ? "Years" : "Days"), 
                 var intervals = duration.Value / BudgetInterval.Interval;
                 @(Math.Round(intervals ?? 0) * BudgetInterval.Delta)
             }

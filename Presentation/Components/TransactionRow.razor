@@ -12,7 +12,7 @@
         <ImageLink NewTab Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
         @GetPaidDate().ToShortDateString()
     </td>
-    <td>@Transaction.Charge</td>
+    <td>@Transaction.Charge.ToCurrencyString()</td>
     @* <td>@Transaction.Class</td> *@
     <td style="font-size: x-small;">
         <ImageLink NewTab Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>

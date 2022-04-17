@@ -11,7 +11,7 @@
         @foreach (var budgetInterval in Budget.Intervals)
         {
             <div>
-                Budget: @budgetInterval.Delta
+                Budget: @budgetInterval.Delta.ToCurrencyString()
             </div>
             @if (budgetInterval.Interval != null) {
                 <div>

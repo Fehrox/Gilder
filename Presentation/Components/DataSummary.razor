@@ -37,20 +37,20 @@
                 <tbody>
                 @foreach (var transaction in TransactionGroups) {
                     <tr>
-                        <td>@Math.Round(transaction.Where(c => c.Charge > 0).Sum(t => t.Charge),2)</td>
-                        <td>@Math.Round(transaction.Where(c => c.Charge < 0).Sum(t => t.Charge),2)</td>
+                        <td>@Math.Round(transaction.Where(c => c.Charge > 0).Sum(t => t.Charge),2).ToCurrencyString()</td>
+                        <td>@Math.Round(transaction.Where(c => c.Charge < 0).Sum(t => t.Charge),2).ToCurrencyString()</td>
                         @{ var net = transaction.Sum(t => t.Charge); }
-                        <td>@Math.Round(net,2)</td>
+                        <td>@Math.Round(net,2).ToCurrencyString()</td>
                         @{
                             var duration = FirstTransaction == null || LastTransaction == null
                                 ? TimeSpan.Zero
                                 : LastTransaction.Date - FirstTransaction.Date;
                         }
-                        <td>@Math.Round(net/duration.Days,2)</td>
+                        <td>@Math.Round(net/duration.Days,2).ToCurrencyString()</td>
                         @{ const double DAYS_IN_WEEK = 7; }
-                        <td>@Math.Round(net/duration.Days*DAYS_IN_WEEK,2)</td>
+                        <td>@Math.Round(net/duration.Days*DAYS_IN_WEEK,2).ToCurrencyString()</td>
                         @{ const double DAYS_IN_MONTH = 30.4368499; }
-                        <td>@Math.Round(net/ duration.Days*DAYS_IN_MONTH,2)</td>
+                        <td>@Math.Round(net/ duration.Days*DAYS_IN_MONTH,2).ToCurrencyString()</td>
                     </tr>
                 }
                 </tbody>
@@ -63,7 +63,7 @@
         <div style="display: flex; flex-direction: row">
             <HorizontalBarChart BarValues="@TotalBars"/>
         </div>
-        <div>Net position: @Math.Round(NetPosition,2)</div>
+        <div>Net position: @Math.Round(NetPosition,2).ToCurrencyString()</div>
     </ContentPanel>
 </div>
 
@@ -78,10 +78,10 @@
         .Sum(t => t.Charge);
     private IEnumerable<BarChartHorizontal.Bar> TotalBars =>
         new []{ new BarChartHorizontal.Bar{
-            Text = $"Total Outgoing ({Math.Round(TotalOutgoing,2)})",
+            Text = $"Total Outgoing ({Math.Round(TotalOutgoing,2).ToCurrencyString()})",
             Value = TotalOutgoing
         }, new BarChartHorizontal.Bar{
-            Text = $"Total Incoming ({Math.Round(TotalIncoming,2)})",
+            Text = $"Total Incoming ({Math.Round(TotalIncoming,2).ToCurrencyString()})",
             Value = TotalIncoming
         }};
 

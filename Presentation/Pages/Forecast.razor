@@ -3,6 +3,7 @@
 @using Presentation.Store.Forecast
 @using Presentation.Components
 @using Fluxor.Blazor.Web.Components
+@using Domain
 
 @inherits FluxorComponent
 
@@ -85,7 +86,7 @@
                  var totalGroupChargesRounded = Math.Round(totalGroupCharges);
                  return new BarChartHorizontal.Bar {
                      Value = totalGroupCharges,
-                     Text = t.Key + " (" + totalGroupChargesRounded + ")"
+                     Text = t.Key + " (" + totalGroupChargesRounded.ToCurrencyString() + ")"
                  };
             });
         

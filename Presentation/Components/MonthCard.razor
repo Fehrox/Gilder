@@ -50,7 +50,7 @@
             var groupName = m.Group?.Name ?? "Unresolved";
             var argTransactionCount = m.TransactionCount;
             return new BarChartHorizontal.Bar(){
-                Text = $"{groupName} ({netCost} in {argTransactionCount}, {costPerDay}/d)",
+                Text = $"{groupName} ({netCost.ToCurrencyString()} in {argTransactionCount}, {costPerDay.ToCurrencyString()}/d)",
                 Value = m.Delta,
                 OnBarClicked = () => OnMonthGroupClicked?.Invoke(m)
             };

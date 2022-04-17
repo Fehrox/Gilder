@@ -43,7 +43,7 @@
                     <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");"> </div>
                     <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");"> </div>
                 }
-                <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@interval.Delta</div>
+                <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">@interval.Delta.ToCurrencyString()</div>
                 <div style="display: table-cell;border-top: @(isFirstInterval ? "1px solid lightgrey" : "none");">
                     @(interval.Interval.HasValue
                         ? "Every " + interval.Interval.Value.Days + " Days"

@@ -37,7 +37,7 @@
                 var yearsLong = duration.Value.Days > DAYS_IN_YEAR;
                 @:After @(yearsLong ? Math.Round(duration.Value.Days/DAYS_IN_YEAR,1) : duration.Value.Days) @(yearsLong ? "Years" : "Days"), 
                 var intervals = duration.Value / BudgetInterval.Interval;
-                @(Math.Round(intervals ?? 0) * BudgetInterval.Delta)
+                @((Math.Round(intervals ?? 0) * BudgetInterval.Delta).ToCurrencyString())
             }
         </div>
     }

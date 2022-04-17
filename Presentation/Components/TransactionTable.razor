@@ -21,8 +21,8 @@
             var sumTransactions = SumTransactionGroup(Transactions);
             var periodMonths = GetTransactionPeriod(Transactions);
         }
-        <td>$@Math.Round(sumTransactions)</td>
-        <td>$@Math.Round(sumTransactions / periodMonths, 2)/Day</td>
+        <td>$@Math.Round(sumTransactions).ToCurrencyString()</td>
+        <td>$@Math.Round(sumTransactions / periodMonths, 2).ToCurrencyString()/Day</td>
     </tr>
 </table>
 

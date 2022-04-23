@@ -1,4 +1,4 @@
 namespace Presentation.Store.Transaction
 {
-    public record TransactionCsvLoadAction(string CsvText);
+    public record TransactionCsvLoadAction(IEnumerable<Domain.Transaction> Transactions);
 }

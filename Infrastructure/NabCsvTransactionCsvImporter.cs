@@ -5,33 +5,35 @@ using Domain;
 
 namespace Infrastructure
 {
-    public class NabCsvTransactionImporter : ITransactionImporter
+    public class NabCsvTransactionCsvImporter : ITransactionCsvImporter
     {
         
-        public async Task<IEnumerable<Transaction>> ImportTransactions(string transactionCsv)
+        public async Task<IEnumerable<Transaction>> ImportTransactions(string transactionCsv, string colHeaders)
         {
-            var csvHeaderStr = "Date,Charge,A,B,Classification,Details,Balance\n";
+            // var csvHeaderStr = "Date,Charge,A,B,Classification,Details,Balance\n";
+            var csvHeaderStr = String.Join(",", colHeaders) + "\n";
             using var reader = new StringReader(csvHeaderStr + transactionCsv);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
             var records = csv.GetRecords<CsvTransaction>().ToList();
-
+            
             var transactions = new List<Transaction>();
             foreach (var csvTransaction in records) {
                 var date = DateTime.Parse(csvTransaction.Date);
                 var charge = double.Parse(csvTransaction.Charge);
-                var classification = ParseClassification(csvTransaction.Classification);
+                var classification = ParseClassification(csvTransaction.Class);
                 var details = csvTransaction.Details;
-
+            
                 var transaction = new Transaction {
                     Charge = charge,
                     Date = date,
                     Class = classification,
-                    Details = details
+                    Details = details,
                 };
                 
                 transactions.Add(transaction);
             }
             
+            await Task.CompletedTask;
             return transactions.AsEnumerable();
         }
 
@@ -57,7 +59,7 @@ namespace Infrastructure
         {
             public string Date { get; set; }
             public string Charge { get; set; }
-            public string Classification { get; set; }
+            public string Class { get; set; }
             public string Details { get; set; }
         }
     }

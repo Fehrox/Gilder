@@ -1,0 +1,49 @@
+@using Fluxor
+@using Presentation.Store
+@using Presentation.Store.Transaction
+
+@inject IDispatcher _dispatcher
+
+<InputFile OnChange="@LoadFiles" multiple accept=".csv"/>
+@if (_chosenFiles != null) {
+    <button onclick="@HandleImportClicked"> Import </button>
+}
+
+@code {
+
+    [Parameter]
+    public Action<string> OnTextLoadedFromFile { get; set; } = (e) => { };
+
+    private bool _show = false;
+    
+    private IReadOnlyList<IBrowserFile>? _chosenFiles;
+
+    private void SetShow(bool show)
+    {
+        _show = show;
+        StateHasChanged();
+    }
+
+    private void LoadFiles(InputFileChangeEventArgs e) => 
+        _chosenFiles = e.GetMultipleFiles();
+
+    private async Task HandleImportClicked()
+    {
+        if(_chosenFiles == null) return;
+
+        var ms = new MemoryStream();
+        foreach (var chosenFile in _chosenFiles)
+        {
+            await chosenFile.OpenReadStream().CopyToAsync(ms);
+            
+            ms.Position = 0;
+            using var reader = new StreamReader(ms);
+            var csvText = await reader.ReadToEndAsync();
+            
+            OnTextLoadedFromFile?.Invoke(csvText);
+        }
+
+        SetShow(false);
+    }
+
+}

@@ -6,14 +6,14 @@ namespace Presentation.Store.Transaction
 
     public class TransactionsCsvLoadEffect : Effect<TransactionCsvLoadAction>
     {
-        private readonly ITransactionImporter _transactionImporter;
+        private readonly ITransactionCsvImporter _transactionCsvImporter;
         private readonly IRepo<Domain.Transaction> _transactionRepository;
 
         public TransactionsCsvLoadEffect(
-            ITransactionImporter transactionImporter, 
+            ITransactionCsvImporter transactionCsvImporter, 
             IRepo<Domain.Transaction> transactionRepository) 
         {
-            _transactionImporter = transactionImporter;
+            _transactionCsvImporter = transactionCsvImporter;
             _transactionRepository = transactionRepository;
         }
 
@@ -22,8 +22,7 @@ namespace Presentation.Store.Transaction
             var existingTransactions = await _transactionRepository.Read();
             var existingTransactionsList = existingTransactions.ToArray();
 
-            var transactionSource = action.CsvText;
-            var importedTransactions = await _transactionImporter.ImportTransactions(transactionSource);
+            var importedTransactions = action.Transactions;
             
             var addTransactions = new List<Domain.Transaction>();
             foreach (var transaction in importedTransactions) {

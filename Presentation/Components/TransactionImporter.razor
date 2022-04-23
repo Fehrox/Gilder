@@ -1,20 +1,72 @@
 @using Fluxor
-@using Presentation.Store
 @using Presentation.Store.Transaction
+@using Application
+@using Domain
 
 @inject IDispatcher _dispatcher
+@inject ITransactionCsvImporter _transactionCsvImporter
 
 <ImageLink
     Large
     Source="/icons/import-icon.png" 
-    OnClick="@(() =>SetShow(true))"
+    OnClick="@(() => SetShow(true))"
     Alt="Import Bank Transaction CSV" />
 
 @if (_show) {
-    <Modal OnClose="@(() => SetShow(false))">
-        <InputFile OnChange="@LoadFiles" multiple accept=".csv"/>
-        @if (_chosenFiles != null) {
-            <button onclick="@HandleImportClicked"> Import </button>
+    <Modal OnClose="@HandleClear">
+        @if (!_csvData.Any()) {
+            <div style="display:flex; justify-content: center; align-items: center; height: 100%">
+                <TextFileImporter
+                    OnTextLoadedFromFile="@HandleTextFileLoaded"/>    
+            </div>
+        } else {
+            <div>Imported @_csvData.Length rows.</div>
+            <div style="max-height: 90%; overflow-y: scroll">
+                <table style="position: relative; border-collapse: collapse; ">
+                    <thead>
+                    @{ var headerRows = _csvData.Any() ? _csvData.First() : Array.Empty<string>(); }
+                    @for (int i = 0; i < headerRows.Length; i++) {
+                        int index = i;
+                        <th style="position: sticky; top: 0; background-color: white">
+                            @headerRows[index]
+                            <select @onchange="@(v => HandleColumnChanged(index, (string)v.Value!))">
+                                <option>Ignore</option>
+                                <option>Date</option>
+                                <option>Charge</option>
+                                <option>Class</option>
+                                <option>Details</option>
+                                <option>Balance</option>
+                            </select>
+                        </th>
+                    }
+                    </thead>
+
+                    <tbody>
+                    @foreach (var row in _csvData.Skip(1)) {
+                        <tr>
+                            @foreach (var cell in row) {
+                                <td style="border: 1px solid;">@cell</td>
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div style="display: flex; justify-content: flex-end">
+                @{
+                    var selectedColumns = _columns.GroupBy(c => c);
+                    var hasDate = selectedColumns.Any(g => g.Key == "Date");
+                    var hasCharge = selectedColumns.Any(g => g.Key == "Charge");
+                    var hasClass = selectedColumns.Any(g => g.Key == "Class");
+                    var hasDetails = selectedColumns.Any(g => g.Key == "Details");
+                }
+                <div style="background-color: @(hasDate ? "green" : "red")">Date</div>
+                <div style="background-color: @(hasCharge ? "green" : "red")">Charge</div>
+                <div style="background-color: @(hasClass ? "green" : "red")">Class</div>
+                <div style="background-color: @(hasDetails ? "green" : "red")">Details</div>
+                @{ var canImport = hasDate && hasCharge && hasClass && hasDetails; }
+                <button disabled="@(!canImport)" @onclick="@HandleImportClickedAsync">Import</button>
+            </div>
         }
     </Modal>
 }
@@ -22,8 +74,9 @@
 @code {
 
     private bool _show = false;
-    
-    private IReadOnlyList<IBrowserFile>? _chosenFiles;
+    private string[][] _csvData = Array.Empty<string[]>();
+    private string[] _columns = Array.Empty<string>();
+    private string _csvText = String.Empty;
 
     private void SetShow(bool show)
     {
@@ -31,24 +84,38 @@
         StateHasChanged();
     }
 
-    private void LoadFiles(InputFileChangeEventArgs e) => 
-        _chosenFiles = e.GetMultipleFiles();
-
-    private async Task HandleImportClicked()
+    private void HandleTextFileLoaded(string csvText)
     {
-        if(_chosenFiles == null) return;
+        var csvRows = csvText.Split("\n");
+        var csvCells = csvRows.Select(r => r.Split(",")).ToArray();
+        var csvCols = csvCells.First();
 
-        var ms = new MemoryStream();
-        foreach (var chosenFile in _chosenFiles)
-        {
-            await chosenFile.OpenReadStream().CopyToAsync(ms);
-            
-            ms.Position = 0;
-            using var reader = new StreamReader(ms);
-            var csvText = await reader.ReadToEndAsync();
-            _dispatcher.Dispatch(new TransactionCsvLoadAction(csvText));
-        }
+        _columns = new string[csvCols.Length];
+        _csvData = csvCells;
+        _csvText = csvText;
 
+        StateHasChanged();
+    }
+
+    private void HandleColumnChanged(int columnIndex, string value)
+    {
+        _columns[columnIndex] = value;
+        StateHasChanged();
+    }
+
+    private async Task HandleImportClickedAsync()
+    {
+        var csvHeaderStr = String.Join(",", _columns) + "\n";
+        var transactions = await _transactionCsvImporter
+            .ImportTransactions(_csvText, csvHeaderStr);
+        _dispatcher.Dispatch(new TransactionCsvLoadAction(transactions));
+        SetShow(false);
+    }
+
+    private void HandleClear()
+    {
+        _csvText = String.Empty;
+        _csvData = Array.Empty<string[]>();
         SetShow(false);
     }
 

@@ -8,7 +8,7 @@ namespace Presentation
     {
         public static void InstallInfrastructure(this IServiceCollection services)
         {
-            services.AddSingleton<ITransactionImporter, NabCsvTransactionImporter>();
+            services.AddSingleton<ITransactionCsvImporter, NabCsvTransactionCsvImporter>();
             services.AddScoped<IRepo<Transaction>, LocalStorageTransactionRepo>();
             services.AddScoped<IRepo<Group>, LocalStorageGroupRepository>();
             services.AddScoped<IRepo<Budget>, LocalStorageBudgetRepository>();

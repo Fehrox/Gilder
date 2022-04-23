@@ -1,0 +1,43 @@
+<style>
+    .init-fade-out {
+        position:fixed;
+        padding:0;
+        margin:0;
+    
+        top:0;
+        left:0;
+    
+        width: 100%;
+        height: 100%;
+        background-color: whitesmoke;
+        animation: fade-out;
+        animation-duration: @(FadeTime)s;
+    }
+    
+    @@keyframes fade-out {
+        from { opacity: 100%; }
+        to { opacity: 0; }
+    }
+</style>
+
+@if (_show) {
+    <div class="init-fade-out"></div>   
+}
+
+@code {
+
+    [Parameter]
+    public string Color { get; set; } = "white";
+
+    [Parameter]
+    public double FadeTime { get; set; } = 1;
+
+    private bool _show = true;
+    protected override async Task OnInitializedAsync() {
+        var fadeDuration = TimeSpan.FromSeconds(FadeTime);
+        await Task.Delay(fadeDuration);
+
+        _show = false;
+        StateHasChanged();
+    }
+}

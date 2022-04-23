@@ -2,6 +2,7 @@
 @using Presentation.Store.Budget
 @using Presentation.Store.Group
 @using Presentation.Store.Transaction
+@using Presentation.Components
 @inherits LayoutComponentBase
 
 @inject IDispatcher _dispatcher
@@ -9,6 +10,7 @@
 <div class="page">
     
     <NavMenu />
+    <FadeInFrom Color="whitesmoke" />
     
     <main>
         <article style="
@@ -26,11 +28,11 @@
 
 @code {
     
-    protected override Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() {
         _dispatcher.Dispatch(new GroupRepoLoadAction());
         _dispatcher.Dispatch(new TransactionRepoLoadAction());
         _dispatcher.Dispatch(new BudgetRepoLoadAction());
-        return base.OnInitializedAsync();
+        await base.OnInitializedAsync();
     }
 
 }

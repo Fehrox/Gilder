@@ -12,7 +12,46 @@
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div style="
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        " >
+            <style>
+                .jiggle{
+                    animation: dance 2s infinite;   
+                    animation-timing-function: ease-in-out;
+                }
+                
+                @keyframes dance {
+                    0% { transform: scale(.8) rotate(-5deg); }
+                    50% { transform: scale(1) rotate(5deg); }
+                    100% { transform: scale(.8) rotate(-5deg); }
+                }
+            </style>
+            <div style="zoom: 0.7;">
+                <div style="margin-bottom: -100px; font-size: xx-large">Loading.....</div>
+                <div class="jiggle" style="margin-bottom: -160px;">
+                    <img src="icons/icon-sparkling.svg" alt="Gilder Loading...">
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <div style="align-self: flex-end; font-size: x-large"><b>{ gild }</b></div>
+                    <div style="align-self: flex-end">{ verb }</div>
+                    <div style="font-size: small">-er -ing -s</div>
+                    <div style="display: flex"><div style="font-size: small; align-self: center">/pronounce/</div>gil-der</div>
+                </div>
+                <hr>
+                <div>[+ object]</div>
+                <div>: to cover (something) with a thin layer of gold</div>
+                <div> <b>— gilder</b> <i><b>noun</b></i></div>
+                <ul><li>someone whose occupation is to apply an overlay of gold or gilt</li></ul>
+                <div> <b>— gilded</b> <i><b>adjective</b></i></div>
+                <ul><li>A <b>gilded age</b> is a time of great success and wealth.</li></ul>
+            </div>
+        </div>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.

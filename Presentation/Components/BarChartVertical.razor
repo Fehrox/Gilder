@@ -1,3 +1,4 @@
+@using Domain
 <div style="height:100%; display: flex; flex-direction: column">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 80%; min-height: 200px;">
         @{
@@ -16,7 +17,7 @@
                     @onclick="@(() => bar.OnBarClicked?.Invoke())"
                     style="min-width:25px; height: 100%">
                     <div style="width:25px; height: @(100-posValue)%; background-color: transparent"></div>
-                    <div style="width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #CCD888">
+                    <div style="width:25px; writing-mode: vertical-rl; overflow-y: hidden; height: @posValue%; background-color: #CCD888">
                         @if(bar.Value > 0){
                             @RenderValueString(bar)
                         }
@@ -31,7 +32,7 @@
                 var posValue = barPosValue / Math.Abs(minHeight) * 100;
                 <div
                     @onclick="@(() => bar.OnBarClicked?.Invoke())"
-                    style="min-width:25px; writing-mode: vertical-rl;  height: @posValue%; background-color: #FF576A">
+                    style="min-width:25px; writing-mode: vertical-rl; overflow-y: hidden;  height: @posValue%; background-color: #FF576A">
                     @if (bar.Value < 0) {
                         @RenderValueString(bar)
                     }
@@ -81,7 +82,8 @@
     {
         Default,
         Thousands,
-        Verbose
+        Verbose,
+        Currency
     }
 
     private string RenderValueString(Bar bar)
@@ -89,13 +91,12 @@
         switch (bar.RenderValue) {
             case RenderValue.Default:
                 return Math.Round(bar.Value, 2).ToString();
-                break;
             case RenderValue.Verbose:
                 return bar.Value.ToString();
-                break;
             case RenderValue.Thousands:
                 return Math.Round(bar.Value / 1000) + "k";
-                break;
+            case RenderValue.Currency:
+                return Math.Round(bar.Value, 2).ToCurrencyString();
             default:
                 throw new ArgumentOutOfRangeException();
         }

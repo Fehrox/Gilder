@@ -4,7 +4,6 @@
 @using Domain
 
 @inject IDispatcher _dispatcher
-@inject ITransactionCsvImporter _transactionCsvImporter
 
 <ImageLink
     Large
@@ -53,19 +52,12 @@
                 </table>
             </div>
             <div style="display: flex; justify-content: flex-end">
-                @{
-                    var selectedColumns = _columns.GroupBy(c => c);
-                    var hasDate = selectedColumns.Any(g => g.Key == "Date");
-                    var hasCharge = selectedColumns.Any(g => g.Key == "Charge");
-                    var hasClass = selectedColumns.Any(g => g.Key == "Class");
-                    var hasDetails = selectedColumns.Any(g => g.Key == "Details");
-                }
-                <div style="background-color: @(hasDate ? "green" : "red")">Date</div>
-                <div style="background-color: @(hasCharge ? "green" : "red")">Charge</div>
-                <div style="background-color: @(hasClass ? "green" : "red")">Class</div>
-                <div style="background-color: @(hasDetails ? "green" : "red")">Details</div>
-                @{ var canImport = hasDate && hasCharge && hasClass && hasDetails; }
-                <button disabled="@(!canImport)" @onclick="@HandleImportClickedAsync">Import</button>
+                <ErrorBoundary>
+                    <TransactionImportButton
+                        Columns="@_columns"
+                        CsvText="@_csvText"
+                        OnImported="@(() => SetShow(false))"/>
+                </ErrorBoundary>
             </div>
         }
     </Modal>
@@ -101,15 +93,6 @@
     {
         _columns[columnIndex] = value;
         StateHasChanged();
-    }
-
-    private async Task HandleImportClickedAsync()
-    {
-        var csvHeaderStr = String.Join(",", _columns) + "\n";
-        var transactions = await _transactionCsvImporter
-            .ImportTransactions(_csvText, csvHeaderStr);
-        _dispatcher.Dispatch(new TransactionCsvLoadAction(transactions));
-        SetShow(false);
     }
 
     private void HandleClear()

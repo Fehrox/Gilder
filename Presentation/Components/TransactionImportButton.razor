@@ -1,4 +1,5 @@
 @using Application
+@using Domain
 @using Fluxor
 @using Presentation.Store.Transaction
 
@@ -7,20 +8,34 @@
 
 @{
     var selectedColumns = Columns.GroupBy(c => c);
-    var hasDate = selectedColumns.Any(g => g.Key == "Date");
-    var hasCharge = selectedColumns.Any(g => g.Key == "Charge");
-    var hasClass = selectedColumns.Any(g => g.Key == "Class");
-    var hasDetails = selectedColumns.Any(g => g.Key == "Details");
+    // Mandatory
+    var hasDate = selectedColumns.Any(g => g.Key == nameof(Transaction.Date));
+    var hasCharge = selectedColumns.Any(g => g.Key == nameof(Transaction.Charge));
+    var hasClass = selectedColumns.Any(g => g.Key == nameof(Transaction.Class));
+    var hasDetails = selectedColumns.Any(g => g.Key == nameof(Transaction.Details));
+    // Optional
+    var hasGroup = selectedColumns.Any(g => g.Key == nameof(Transaction.Group));
+    var hasBalance =  selectedColumns.Any(g => g.Key == nameof(Transaction.Balance));
+    var hasMerchant =  selectedColumns.Any(g => g.Key == nameof(Transaction.Merchant));
 }
-<div style="background-color: @(hasDate ? "green" : "red")">Date</div>
-<div style="background-color: @(hasCharge ? "green" : "red")">Charge</div>
-<div style="background-color: @(hasClass ? "green" : "red")">Class</div>
-<div style="background-color: @(hasDetails ? "green" : "red")">Details</div>
+
+<div>First row is heading <input type="checkbox" @bind="@_firstRowIsHeading"/></div>
+@* Mandatory *@
+<div style="background-color: @(hasDate ? "green" : "red")">@nameof(Transaction.Date)</div>
+<div style="background-color: @(hasCharge ? "green" : "red")">@nameof(Transaction.Charge)</div>
+<div style="background-color: @(hasClass ? "green" : "red")">@nameof(Transaction.Class)</div>
+<div style="background-color: @(hasDetails ? "green" : "red")">@nameof(Transaction.Details)</div>
+@* Optional *@
+<div style="background-color: @(hasBalance ? "green" : "orange")">@nameof(Transaction.Balance)</div>
+<div style="background-color: @(hasGroup ? "green" : "orange")">@nameof(Transaction.Group)</div>
+<div style="background-color: @(hasMerchant ? "green" : "orange")">@nameof(Transaction.Merchant)</div>
 @{ var canImport = hasDate && hasCharge && hasClass && hasDetails; }
 <button disabled="@(!canImport)" @onclick="@HandleImportClickedAsync">Import</button>
 
 @code {
 
+    private bool _firstRowIsHeading = false;
+    
     [Parameter]
     public string[] Columns { get; set; } = Array.Empty<string>();
 
@@ -34,9 +49,8 @@
     {
         var csvHeaderStr = String.Join(",", Columns) + "\n";
         var transactions = await _transactionCsvImporter
-            .ImportTransactions(CsvText, csvHeaderStr);
+            .ImportTransactions(CsvText, csvHeaderStr, _firstRowIsHeading);
         _dispatcher.Dispatch(new TransactionCsvLoadAction(transactions));
-        
     }
 
 }

@@ -53,7 +53,7 @@
         .Select(f => new BarChartVertical.Bar {
             Text = f.Month.ToString("MMM-yy"),
             Value = f.NetPosition,
-            RenderValue = BarChartVertical.RenderValue.Thousands
+            RenderValue = BarChartVertical.RenderValue.Verbose
         });
 
     private IEnumerable<MonthForecast> GetMonthForecast()

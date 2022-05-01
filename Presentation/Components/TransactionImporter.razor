@@ -19,7 +19,7 @@
                     OnTextLoadedFromFile="@HandleTextFileLoaded"/>    
             </div>
         } else {
-            <div>Imported @_csvData.Length rows.</div>
+            <div>Found @_csvData.Length rows.</div>
             <div style="max-height: 90%; overflow-y: scroll">
                 <table style="position: relative; border-collapse: collapse; ">
                     <thead>
@@ -30,11 +30,13 @@
                             @headerRows[index]
                             <select @onchange="@(v => HandleColumnChanged(index, (string)v.Value!))">
                                 <option>Ignore</option>
-                                <option>Date</option>
-                                <option>Charge</option>
-                                <option>Class</option>
-                                <option>Details</option>
-                                <option>Balance</option>
+                                <option>@nameof(Transaction.Date)</option>
+                                <option>@nameof(Transaction.Charge)</option>
+                                <option>@nameof(Transaction.Class)</option>
+                                <option>@nameof(Transaction.Details)</option>
+                                <option>@nameof(Transaction.Balance)</option>
+                                <option>@nameof(Transaction.Group)</option>
+                                <option>@nameof(Transaction.Merchant)</option>
                             </select>
                         </th>
                     }
@@ -52,11 +54,16 @@
                 </table>
             </div>
             <div style="display: flex; justify-content: flex-end">
-                <ErrorBoundary>
-                    <TransactionImportButton
-                        Columns="@_columns"
-                        CsvText="@_csvText"
-                        OnImported="@(() => SetShow(false))"/>
+                <ErrorBoundary @ref="@_importError">
+                    <ChildContent>
+                        <TransactionImportButton
+                            Columns="@_columns"
+                            CsvText="@_csvText"
+                            OnImported="@(() => SetShow(false))"/>
+                    </ChildContent>
+                    <ErrorContent>
+                        @context.Message
+                    </ErrorContent>
                 </ErrorBoundary>
             </div>
         }
@@ -64,7 +71,7 @@
 }
 
 @code {
-
+    private ErrorBoundary? _importError = null;
     private bool _show = false;
     private string[][] _csvData = Array.Empty<string[]>();
     private string[] _columns = Array.Empty<string>();
@@ -101,5 +108,4 @@
         _csvData = Array.Empty<string[]>();
         SetShow(false);
     }
-
 }

@@ -2,6 +2,8 @@ namespace Domain
 {
     public record Transaction : IEntity
     {
+        public string Merchant { get; set; }
+        public double Balance { get; set; }
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public double Charge { get; set; }

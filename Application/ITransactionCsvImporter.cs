@@ -4,5 +4,5 @@ namespace Application;
 
 public interface ITransactionCsvImporter
 {
-    Task<IEnumerable<Transaction>> ImportTransactions(string transactionCsv, string colHeaders);
+    Task<IEnumerable<Transaction>> ImportTransactions(string transactionCsv, string colHeaders, bool firstRowIsHeading);
 }

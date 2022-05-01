@@ -1,33 +1,50 @@
 using System.Globalization;
 using Application;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Domain;
 
 namespace Infrastructure
 {
     public class NabCsvTransactionCsvImporter : ITransactionCsvImporter
     {
-        
-        public async Task<IEnumerable<Transaction>> ImportTransactions(string transactionCsv, string colHeaders)
+
+        public async Task<IEnumerable<Transaction>> ImportTransactions(
+            string transactionCsv,
+            string colHeaders,
+            bool firstRowIsHeading)
         {
-            // var csvHeaderStr = "Date,Charge,A,B,Classification,Details,Balance\n";
+            if (firstRowIsHeading) {
+                var firstRowSkipped = transactionCsv.Split("\n").Skip(1);
+                transactionCsv = String.Join("\n", firstRowSkipped);
+            }
+
             var csvHeaderStr = String.Join(",", colHeaders) + "\n";
             using var reader = new StringReader(csvHeaderStr + transactionCsv);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var config = new CsvConfiguration (CultureInfo.CurrentCulture) { MissingFieldFound = null};
+            using var csv = new CsvReader(reader, config) ;
             var records = csv.GetRecords<CsvTransaction>().ToList();
             
             var transactions = new List<Transaction>();
             foreach (var csvTransaction in records) {
+                // Manditory
                 var date = DateTime.Parse(csvTransaction.Date);
                 var charge = double.Parse(csvTransaction.Charge);
                 var classification = ParseClassification(csvTransaction.Class);
                 var details = csvTransaction.Details;
+                // Optional
+                var group = new Group { Name = csvTransaction.Group };
+                double.TryParse(csvTransaction.Balance, out var balance );
+                var merchant = csvTransaction.Merchant; 
             
                 var transaction = new Transaction {
                     Charge = charge,
                     Date = date,
                     Class = classification,
                     Details = details,
+                    Group = group,
+                    Balance = balance,
+                    Merchant = merchant
                 };
                 
                 transactions.Add(transaction);
@@ -61,6 +78,10 @@ namespace Infrastructure
             public string Charge { get; set; }
             public string Class { get; set; }
             public string Details { get; set; }
+            public string Group { get; set; }
+            public string Merchant { get; set; }
+            
+            public string Balance { get; set; }
         }
     }
 }

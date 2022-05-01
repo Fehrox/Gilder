@@ -63,6 +63,7 @@
                     </ChildContent>
                     <ErrorContent>
                         @context.Message
+                        <button @onclick="@(() => _importError?.Recover())">Ok</button>
                     </ErrorContent>
                 </ErrorBoundary>
             </div>

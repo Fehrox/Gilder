@@ -1,0 +1,24 @@
+<ContentPanel>
+    <div style="width: 17vw; display: flex; flex-direction: column; justify-content: center; align-items: center">
+        <img style="width: 10vw; height: 10vw" src="@ImgSrc" alt="Open"/>
+        <h3>
+            @HeadingText
+        </h3>
+        <div style="display: flex; align-items: center">
+            @ChildContent
+        </div>
+    </div>
+</ContentPanel>
+
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? HeadingText { get; set; }
+
+    [Parameter]
+    public string? ImgSrc { get; set; }
+
+}

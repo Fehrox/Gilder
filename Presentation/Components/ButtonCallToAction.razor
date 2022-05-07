@@ -1,0 +1,10 @@
+<button style="background-color: #FFB945; border: 2px solid grey; border-radius: 0; padding: 8px; color: white">
+    @ChildContent
+</button>
+
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

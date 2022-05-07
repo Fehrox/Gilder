@@ -7,7 +7,7 @@
     
     .full {
         width: 100%;
-        margin-left: 0px;
+        margin-left: 0;
     }
 </style>
 
@@ -16,7 +16,7 @@
 
         <ContentPanel>
             <div style="width: 100%; display: flex; justify-content: center; flex-direction: column; align-items: center">
-                <div>
+                <div style="margin-left: -90px">
                     <img src="icons/icon-sparkling.svg"
                          style="
                             width: 250px;
@@ -34,42 +34,46 @@
                                     drop-shadow(1px -1px 0 #231F20)
                                     drop-shadow(-1px -1px 0 #231F20);
                             "/>
-                    <div style="display: flex; justify-content: flex-end; margin-top: -30px; color: grey"><h5>Enrich your life.</h5></div>
+                    <div style="display: flex; justify-content: flex-end; margin-top: -30px; color: grey">
+                        <h5>Enrich your life.</h5>
+                    </div>
                 </div>
-                <div style="margin-top: 50px">
+                <div style="margin-top: 30px">
                     <b>Track, Budget</b> and <b>Forecast</b> finances <br/>
                     with <i>easy, interactive</i> cash-flow planning.
                 </div>
             </div>
-            @* <div style="width: 100%; display: flex; justify-content: center; margin-top: 50px"> *@
-            @*     <button>Get Started!</button> *@
-            @* </div> *@
+            <div style="width: 100%; display: flex; justify-content: center; margin-top: 40px; margin-bottom: 30px">
+                <ButtonCallToAction>
+                    <div style="width: 200px"><b>GET STARTED</b></div>
+                </ButtonCallToAction>
+            </div>
         </ContentPanel>
 
     </div>
-    @* *@
-    @* <div class="landing-section"> *@
-    @* *@
-    @*     <div style="display: flex; justify-content: center"> *@
-    @*         <LandingFeature HeadingText="Open" ImgSrc="icons/calendar-icon.png"> *@
-    @*             Gilder is open source.<br/> *@
-    @*             See how it works, and contribute <br/> *@
-    @*             directly on GitHub. *@
-    @*         </LandingFeature> *@
-    @*         <LandingFeature HeadingText="Free" ImgSrc="icons/calendar-icon.png"> *@
-    @*             Gilder wants to help peop.<br/> *@
-    @*             See how it works, and contribute <br/> *@
-    @*             directly on GitHub. *@
-    @*         </LandingFeature> *@
-    @*         <LandingFeature HeadingText="Open" ImgSrc="icons/calendar-icon.png"> *@
-    @*             Gilder is open source.<br/> *@
-    @*             See how it works, and contribute <br/> *@
-    @*             directly on GitHub. *@
-    @*         </LandingFeature> *@
-    @*     </div> *@
-    @* *@
-    @* </div> *@
-    @* *@
+
+    <div class="landing-section">
+
+        <div style="display: flex; justify-content: center">
+            <LandingFeature HeadingText="Open" ImgSrc="icons/landing-value-open.svg">
+                Gilder is open source.<br/>
+                See how it works, and contribute <br/>
+                directly on GitHub.
+            </LandingFeature>
+            <LandingFeature HeadingText="Free" ImgSrc="icons/landing-value-free.svg">
+                Gilder wants to help people live <br/>
+                wealthier lives. It is, and always <br/> 
+                will be free to use.
+            </LandingFeature>
+            <LandingFeature HeadingText="Unplugged" ImgSrc="icons/landing-value-unplugged.svg">
+                No servers, all of your financial <br/>
+                data stays on your computer,<br/>
+                and in your control.
+            </LandingFeature>
+        </div>
+
+    </div>
+
     @* *@
     @* <div class="landing-section full" style="background-color: white; border-top: 1px solid lightgrey"> *@
     @*     Easy As *@

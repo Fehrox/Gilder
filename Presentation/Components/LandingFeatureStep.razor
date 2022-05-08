@@ -1,0 +1,32 @@
+
+<div style="display: flex; flex-direction: @(Inverted ? "row-reverse" : "row")">
+    <img alt="@Title" src="@ImgSrc" style="width: 200px; height: 200px"/>
+    @* <div style="background-color: black; width: 180px; height: 180px; border-radius: 50%; border: 2px solid #FEB845"></div> *@
+    <div style="margin: 50px">
+        <div style="display: flex; flex-direction: row">
+            <h4 style="color: grey">@Number</h4> &nbsp; - &nbsp;
+            <h4 style="color: #FEB845"><b>@Title</b></h4>
+        </div>
+        <div>@ChildContent</div>
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public bool Inverted { get; set; } = false;
+
+    [Parameter]
+    public string ImgSrc { get; set; } = String.Empty;
+
+    [Parameter]
+    public int Number { get; set; } = 0;
+
+    [Parameter]
+    public string Title { get; set; } = String.Empty;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

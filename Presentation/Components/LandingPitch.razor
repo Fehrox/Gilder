@@ -1,7 +1,6 @@
 <style xmlns="http://www.w3.org/1999/html">
     .landing-section{
         width: 60vw; 
-        height: 90vh;
         margin-left: 20vw;
     }
     
@@ -12,7 +11,7 @@
 </style>
 
 <div style="display: flex; flex-direction: column; width: 100vw">
-    <div class="landing-section" style="padding-top: 5%">
+    <div class="landing-section" style="padding-top: 5%; height: 90vh;">
 
         <ContentPanel>
             <div style="width: 100%; display: flex; justify-content: center; flex-direction: column; align-items: center">
@@ -45,14 +44,16 @@
             </div>
             <div style="width: 100%; display: flex; justify-content: center; margin-top: 40px; margin-bottom: 30px">
                 <ButtonCallToAction>
-                    <div style="width: 200px"><b>GET STARTED</b></div>
+                    <div style="width: 200px">
+                        <b>GET STARTED</b>
+                    </div>
                 </ButtonCallToAction>
             </div>
         </ContentPanel>
 
     </div>
 
-    <div class="landing-section">
+    <div class="landing-section" style="height: 60vh;">
 
         <div style="display: flex; justify-content: center">
             <LandingFeature HeadingText="Open" ImgSrc="icons/landing-value-open.svg">
@@ -62,7 +63,7 @@
             </LandingFeature>
             <LandingFeature HeadingText="Free" ImgSrc="icons/landing-value-free.svg">
                 Gilder wants to help people live <br/>
-                wealthier lives. It is, and always <br/> 
+                wealthier lives. It is, and always <br/>
                 will be free to use.
             </LandingFeature>
             <LandingFeature HeadingText="Unplugged" ImgSrc="icons/landing-value-unplugged.svg">
@@ -74,9 +75,54 @@
 
     </div>
 
-    @* *@
-    @* <div class="landing-section full" style="background-color: white; border-top: 1px solid lightgrey"> *@
-    @*     Easy As *@
-    @* </div> *@
+
+    <div class="landing-section full" style="background-color: white; border: 1px solid lightgrey;">
+        <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+            <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: -20px">
+                <h1 style="color: #FEB845; font: italic bold 40px cursive;">Easy as...</h1>
+            </div>
+            <div style="display: flex; width: 36vw; flex-direction: column; margin: 50px">
+                <LandingFeatureStep Number="1" Title="Import" ImgSrc="/img/landing-step-1-bank.png">
+                    Export your bank transaction <br/>
+                    as CSV, then import them <br/>
+                    straight into Gilder.
+                </LandingFeatureStep>
+                <LandingFeatureStep Number="2" Title="Classify" ImgSrc="/img/landing-step-2-group.png" Inverted>
+                    Gilder's smart tools help you <br/>
+                    organize your transactions, <br/>
+                    and better understand where <br/>
+                    your money's going.
+                </LandingFeatureStep>
+                <LandingFeatureStep Number="3" Title="Budget" ImgSrc="/img/landing-step-3-budget.png">
+                    Use your new insights to <br/>
+                    build better budgets, and <br/>
+                    plan for future expenses. <br/>
+                    your money's going.
+                </LandingFeatureStep>
+                <LandingFeatureStep Number="4" Title="Forecast" ImgSrc="/img/landing-step-4-forecast.png" Inverted>
+                    See your personal wealth forecast, <br/>
+                    and learn live how changing your <br/>
+                    spending will affect your future.
+                </LandingFeatureStep>
+            </div>
+        </div>
+    </div>
+
+    <div class="landing-section">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center">
+            <div style="margin-top: 20px">
+                Gilder's author needed for free a tool to manage and plan finances, and grow wealth.<br/>
+                None existed, and so Gilder was created, and it's doing just that.<br/>
+                Hopefully, it can do the same for you.
+            </div>
+            <div style="margin-bottom: 20px; margin-top: 20px">
+                <ButtonCallToAction>
+                    <div style="width: 200px">
+                        <b>GET STARTED</b>
+                    </div>
+                </ButtonCallToAction>
+            </div>
+        </div>
+    </div>
 
 </div>

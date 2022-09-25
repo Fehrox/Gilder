@@ -23,13 +23,14 @@
 @* Mandatory *@
 <div style="background-color: @(hasDate ? "green" : "red")">@nameof(Transaction.Date)</div>
 <div style="background-color: @(hasCharge ? "green" : "red")">@nameof(Transaction.Charge)</div>
-<div style="background-color: @(hasClass ? "green" : "red")">@nameof(Transaction.Class)</div>
 <div style="background-color: @(hasDetails ? "green" : "red")">@nameof(Transaction.Details)</div>
 @* Optional *@
 <div style="background-color: @(hasBalance ? "green" : "orange")">@nameof(Transaction.Balance)</div>
 <div style="background-color: @(hasGroup ? "green" : "orange")">@nameof(Transaction.Group)</div>
 <div style="background-color: @(hasMerchant ? "green" : "orange")">@nameof(Transaction.Merchant)</div>
-@{ var canImport = hasDate && hasCharge && hasClass && hasDetails; }
+<div style="background-color: @(hasClass ? "green" : "orange")">@nameof(Transaction.Class)</div>
+
+@{ var canImport = hasDate && hasCharge && hasDetails; }
 <button disabled="@(!canImport)" @onclick="@HandleImportClickedAsync">Import</button>
 
 @code {

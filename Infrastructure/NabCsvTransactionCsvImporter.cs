@@ -27,16 +27,18 @@ namespace Infrastructure
             
             var transactions = new List<Transaction>();
             foreach (var csvTransaction in records) {
+                
                 // Manditory
                 var date = DateTime.Parse(csvTransaction.Date);
                 var charge = double.Parse(csvTransaction.Charge);
-                var classification = ParseClassification(csvTransaction.Class);
                 var details = csvTransaction.Details;
+                
                 // Optional
                 var group = new Group { Name = csvTransaction.Group };
                 double.TryParse(csvTransaction.Balance, out var balance );
                 var merchant = csvTransaction.Merchant; 
-            
+                var classification = ParseClassification(csvTransaction.Class);
+
                 var transaction = new Transaction {
                     Charge = charge,
                     Date = date,

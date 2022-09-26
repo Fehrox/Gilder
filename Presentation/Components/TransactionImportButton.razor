@@ -1,6 +1,7 @@
 @using Application
 @using Domain
 @using Fluxor
+@using Presentation.Store.Imports
 @using Presentation.Store.Transaction
 
 @inject ITransactionCsvImporter _transactionCsvImporter
@@ -11,12 +12,12 @@
     // Mandatory
     var hasDate = selectedColumns.Any(g => g.Key == nameof(Transaction.Date));
     var hasCharge = selectedColumns.Any(g => g.Key == nameof(Transaction.Charge));
-    var hasClass = selectedColumns.Any(g => g.Key == nameof(Transaction.Class));
     var hasDetails = selectedColumns.Any(g => g.Key == nameof(Transaction.Details));
     // Optional
     var hasGroup = selectedColumns.Any(g => g.Key == nameof(Transaction.Group));
     var hasBalance =  selectedColumns.Any(g => g.Key == nameof(Transaction.Balance));
     var hasMerchant =  selectedColumns.Any(g => g.Key == nameof(Transaction.Merchant));
+    var hasClass = selectedColumns.Any(g => g.Key == nameof(Transaction.Class));
 }
 
 <div>First row is heading <input type="checkbox" @bind="@_firstRowIsHeading"/></div>
@@ -48,10 +49,39 @@
 
     private async Task HandleImportClickedAsync()
     {
+        
+        // TODO: Validate imports for duplicates:
+        //         var existingTransactions = await _transactionRepository.Read();
+        //         var existingTransactionsList = existingTransactions.ToArray();
+        //             
+        //         var importedTransactions = action.Transactions;
+        //         var addTransactions = new List<Domain.Transaction>();
+        //         foreach (var transaction in importedTransactions)
+        //         {
+        //             var alreadyImported = existingTransactionsList
+        //                 .Any(t => t.ToHash().ToString() == transaction.ToHash().ToString());
+        //             if (alreadyImported) continue;
+        //
+        //             transaction.Id = Guid.NewGuid();
+        //             addTransactions.Add(transaction);
+        //         }
+        
         var csvHeaderStr = String.Join(",", Columns) + "\n";
-        var transactions = await _transactionCsvImporter
-            .ImportTransactions(CsvText, csvHeaderStr, _firstRowIsHeading);
-        _dispatcher.Dispatch(new TransactionCsvLoadAction(transactions));
+        var transactions = (await _transactionCsvImporter
+            .ImportTransactions(CsvText, csvHeaderStr, _firstRowIsHeading))
+            .ToArray();
+        
+        var dateNow = DateTime.Now;
+        var transactionIds = transactions.Select(t => t.Id);
+        var imports = new [] { new Import(dateNow, transactionIds) };
+        _dispatcher.Dispatch(new ImportCreateAction(imports));
+        _dispatcher.Dispatch(new ImportRepoCreateAction(imports));
+        
+        var importedTransaction = new TransactionCreateAction(transactions);
+        _dispatcher.Dispatch(importedTransaction);
+
+        var repoLoadAction = new TransactionRepoCreateAction(transactions);
+        _dispatcher.Dispatch(repoLoadAction);
     }
 
 }

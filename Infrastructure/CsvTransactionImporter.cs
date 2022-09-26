@@ -6,7 +6,7 @@ using Domain;
 
 namespace Infrastructure
 {
-    public class NabCsvTransactionCsvImporter : ITransactionCsvImporter
+    public class CsvTransactionImporter : ITransactionCsvImporter
     {
 
         public async Task<IEnumerable<Transaction>> ImportTransactions(
@@ -21,10 +21,13 @@ namespace Infrastructure
 
             var csvHeaderStr = String.Join(",", colHeaders) + "\n";
             using var reader = new StringReader(csvHeaderStr + transactionCsv);
-            var config = new CsvConfiguration (CultureInfo.CurrentCulture) { MissingFieldFound = null};
-            using var csv = new CsvReader(reader, config) ;
+            using var csv = new CsvReader(reader, 
+                new CsvConfiguration (CultureInfo.CurrentCulture) {
+                    MissingFieldFound = null,
+                    HeaderValidated = null,
+                });
+
             var records = csv.GetRecords<CsvTransaction>().ToList();
-            
             var transactions = new List<Transaction>();
             foreach (var csvTransaction in records) {
                 
@@ -40,6 +43,7 @@ namespace Infrastructure
                 var classification = ParseClassification(csvTransaction.Class);
 
                 var transaction = new Transaction {
+                    Id = Guid.NewGuid(),
                     Charge = charge,
                     Date = date,
                     Class = classification,
@@ -70,7 +74,7 @@ namespace Infrastructure
                 case "AUTOMATIC DRAWING" : return Transaction.Classification.AutomaticDrawing;
                 case "INTEREST PAID" : return Transaction.Classification.InterestPaid;
                 case "MISCELLANEOUS CREDIT": return Transaction.Classification.MiscCredit;
-                default: throw new FormatException($"{transaction} is not a know transaction type.");
+                default: return Transaction.Classification.Unknown;
             }
         }
 

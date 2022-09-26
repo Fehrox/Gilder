@@ -3,6 +3,7 @@
 @using Presentation.Store.Group
 @using Presentation.Store.Transaction
 @using Presentation.Components
+@using Presentation.Store.Imports
 @inherits LayoutComponentBase
 
 @inject IDispatcher _dispatcher
@@ -31,6 +32,7 @@
     protected override async Task OnInitializedAsync() {
         _dispatcher.Dispatch(new GroupRepoLoadAction());
         _dispatcher.Dispatch(new TransactionRepoLoadAction());
+        _dispatcher.Dispatch(new ImportRepoLoadAction());
         _dispatcher.Dispatch(new BudgetRepoLoadAction());
         await base.OnInitializedAsync();
     }

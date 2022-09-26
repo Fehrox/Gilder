@@ -3,6 +3,7 @@ using Fluxor;
 using System.Text.Json;
 using Presentation.Store.Budget;
 using Presentation.Store.Group;
+using Presentation.Store.Imports;
 using Presentation.Store.Transaction;
 
 namespace Presentation.Store.File;
@@ -22,6 +23,11 @@ public class FileLoadEffect : Effect<FileLoadAction>
         
         var gilderData = JsonSerializer.Deserialize<LoadedGilderData>(jsonText);
         if (gilderData != null) {
+            
+            dispatcher.Dispatch(new ImportClearAction());
+            dispatcher.Dispatch(new ImportCreateAction(gilderData.Imports));
+            dispatcher.Dispatch(new ImportRepoCreateAction(gilderData.Imports));
+            
             dispatcher.Dispatch(new TransactionClearAction());
             dispatcher.Dispatch(new TransactionCreateAction(gilderData.Transactions));
             dispatcher.Dispatch(new TransactionRepoCreateAction(gilderData.Transactions));   
@@ -39,6 +45,7 @@ public class FileLoadEffect : Effect<FileLoadAction>
     private class LoadedGilderData
     {
         public IEnumerable<Domain.Group> Groups { get; set; } = new List<Domain.Group>();
+        public IEnumerable<Domain.Import> Imports { get; set; } = new List<Domain.Import>();
         public IEnumerable<Domain.Transaction> Transactions { get; set; } = new List<Domain.Transaction>();
         public IEnumerable<Domain.Budget> Budgets { get; set; } = new List<Domain.Budget>();
     }

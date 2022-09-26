@@ -3,10 +3,12 @@
 @using Presentation.Store.Group
 @using Domain
 @using Fluxor.Blazor.Web.Components
+@using Presentation.Store.Imports
 
 @inherits FluxorComponent
 
 @inject IState<TransactionState> _transactionState
+@inject IState<ImportState> _importState
 @inject IState<GroupState> _groupState
 
 <div style="display: flex; flex-direction: column">
@@ -14,6 +16,25 @@
         <div>First Transaction: @FirstTransaction?.Date.ToShortDateString()</div>
         <div>Last Transaction: @LastTransaction?.Date.ToShortDateString()</div>
         <div>@DurationStr</div>
+    </ContentPanel>
+    
+    <ContentPanel>
+        <table>
+            <thead>
+            <td>Transactions</td>
+            <td>Date Imported</td>
+            <td></td>
+            </thead>
+            @foreach (var row in GetImportRows())
+            {
+                <tr>
+                    <td>@row.TransactionIds.Count()</td>
+                    <td>@row.Created.ToShortDateString()</td>
+                    <td><button>Delete</button></td>
+                </tr>
+            }
+        </table>
+            
     </ContentPanel>
 
     <ContentPanel>
@@ -114,6 +135,8 @@
             Value = tg.Sum( t => t.Charge),
             OnBarClicked = () => HandleGroupClicked(tg)
         });
+
+    private IEnumerable<Import> GetImportRows() => _importState.Value.Imports;
 
     private void HandleGroupClicked(IGrouping<string, Transaction> transactions)
     {

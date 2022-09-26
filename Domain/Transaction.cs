@@ -24,7 +24,8 @@ namespace Domain
             AutomaticDrawing,
             InterestPaid,
             TransferCredit,
-            MiscCredit
+            MiscCredit,
+            Unknown
         }
 
         public Hash ToHash()

@@ -7,6 +7,7 @@
 
 @inherits FluxorComponent
 
+@inject IDispatcher _dispatcher;
 @inject IState<TransactionState> _transactionState
 @inject IState<ImportState> _importState
 @inject IState<GroupState> _groupState
@@ -29,10 +30,11 @@
             {
                 <tr>
                     <td>@row.TransactionIds.Count()</td>
-                    <td>@row.Created.ToShortDateString()</td>
-                    <td><button>Delete</button></td>
+                    <td>@row.Created.ToShortDateString() @row.Created.ToShortTimeString()</td>
+                    <td><button @onclick="@HandleDeleteClicked">Delete</button></td>
                 </tr>
             }
+            <button @onclick="@HandleFixOrphanImportsClicked">Fix Orphan Imports</button>
         </table>
             
     </ContentPanel>
@@ -142,5 +144,12 @@
     {
         
     }
+
+    private Task HandleDeleteClicked()
+    {
+        throw new NotImplementedException("TODO: Handle import deletion...");
+    }
+
+    private void HandleFixOrphanImportsClicked() => _dispatcher.Dispatch(new ImportFixOrphanedAction());
 
 }

@@ -3,6 +3,7 @@
 @using Presentation.Store.Group
 @using Domain
 @using Fluxor.Blazor.Web.Components
+@using Presentation.Store.Import
 @using Presentation.Store.Imports
 
 @inherits FluxorComponent
@@ -31,10 +32,14 @@
                 <tr>
                     <td>@row.TransactionIds.Count()</td>
                     <td>@row.Created.ToShortDateString() @row.Created.ToShortTimeString()</td>
-                    <td><button @onclick="@HandleDeleteClicked">Delete</button></td>
+                    <td><button @onclick="@(() => HandleDeleteImportClicked(row))">Delete</button></td>
                 </tr>
             }
-            <button @onclick="@HandleFixOrphanImportsClicked">Fix Orphan Imports</button>
+            
+            @if(HasOrphanedImports)
+            {
+                <button @onclick="@HandleFixOrphanImportsClicked">Fix Orphan Imports</button>
+            }
         </table>
             
     </ContentPanel>
@@ -91,6 +96,29 @@
 </div>
 
 @code {
+
+    private bool HasOrphanedImports
+    {
+        get
+        {
+            var allImports = _importState.Value.Imports
+                .SelectMany(i => i.TransactionIds)
+                .ToArray();
+            
+            var hasOrphanedImports = false;
+            foreach (var t in _transactionState.Value.Transactions)
+            {
+                var isImported = allImports.Any(i => i == t.Id);
+                if (!isImported){
+                    hasOrphanedImports = true;
+                    break;
+                }
+
+            }
+            return hasOrphanedImports;
+        }
+    }
+
     private int TotalTransactions => _transactionState.Value.Transactions.Count();
     
     private double TotalOutgoing => _transactionState.Value.Transactions
@@ -145,11 +173,10 @@
         
     }
 
-    private Task HandleDeleteClicked()
-    {
-        throw new NotImplementedException("TODO: Handle import deletion...");
-    }
+    private void HandleDeleteImportClicked(Import import) => 
+        _dispatcher.Dispatch(new ImportDeleteAction(new [] { import }));
 
-    private void HandleFixOrphanImportsClicked() => _dispatcher.Dispatch(new ImportFixOrphanedAction());
-
+    private void HandleFixOrphanImportsClicked() => 
+        _dispatcher.Dispatch(new ImportFixOrphanedAction());
+    
 }

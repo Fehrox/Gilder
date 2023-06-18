@@ -29,12 +29,12 @@ public class ImportFixOrphanedEffect : Effect<ImportFixOrphanedAction>
     }
     
     
-    private Import AdoptOrphanedTransactions(HashSet<Domain.Transaction> orphanedTransactions)
+    private Domain.Import AdoptOrphanedTransactions(HashSet<Domain.Transaction> orphanedTransactions)
     {
         var orphanedTransactionIds = orphanedTransactions
             .Select(t => t.Id);
         var timeOfCreation = DateTime.Now;
-        var adoptingImport = new Import(timeOfCreation, orphanedTransactionIds);
+        var adoptingImport = new Domain.Import(timeOfCreation, orphanedTransactionIds);
 
         return adoptingImport;
     }

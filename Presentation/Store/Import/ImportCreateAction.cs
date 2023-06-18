@@ -1,5 +1,3 @@
-using Domain;
-
 namespace Presentation.Store.Imports;
 
-public record ImportCreateAction(IEnumerable<Import> Imports);
+public record ImportCreateAction(IEnumerable<Domain.Import> Imports);

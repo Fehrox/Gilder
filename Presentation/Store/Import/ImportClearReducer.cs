@@ -1,4 +1,3 @@
-using Domain;
 using Fluxor;
 
 namespace Presentation.Store.Imports;
@@ -6,5 +5,5 @@ namespace Presentation.Store.Imports;
 public class ImportClearReducer : Reducer<ImportState, ImportClearAction>
 {
     public override ImportState Reduce(ImportState state, ImportClearAction action) =>
-            new(new List<Import>());
+            new(new List<Domain.Import>());
 }

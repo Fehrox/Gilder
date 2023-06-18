@@ -6,9 +6,9 @@ namespace Presentation.Store.Imports;
 
 public class ImportRepoLoadEffect : Effect<ImportRepoLoadAction>
 {
-    private readonly IRepo<Import> _importRepo;
+    private readonly IRepo<Domain.Import> _importRepo;
 
-    public ImportRepoLoadEffect(IRepo<Import> importRepo) => 
+    public ImportRepoLoadEffect(IRepo<Domain.Import> importRepo) => 
         _importRepo = importRepo;
 
     public override async Task HandleAsync(ImportRepoLoadAction action, IDispatcher dispatcher)

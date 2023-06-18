@@ -6,14 +6,11 @@
 @page "/data"
 
 <div style="display: flex; flex-direction: column">
-    <div>
-        <DataSummary />
-    </div>
-    
-    <div>
+    <div style="display: flex; width: 100%; justify-content: space-around;">
         <FileSaver/>
         <FileLoader/>
-        <GroupEditor/>
-        <TransactionImporter/>
+    </div>
+    <div>
+        <DataSummary/>
     </div>
 </div>

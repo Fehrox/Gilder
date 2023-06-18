@@ -1,0 +1,43 @@
+<ContentPanel>
+    <div onclick="@OnClick" style="display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <ImageLink
+            Alt="@Alt"
+            Href="@Href"
+            Large="@Large"
+            Small="@Small"
+            Source="@Source"
+            NewTab="@NewTab"/>
+        <div>@Text</div>
+    </div>
+</ContentPanel>
+
+
+@code {
+
+    [Parameter]
+    public string Text { get; set; } = String.Empty;
+    
+    [Parameter]
+    public string Source { get; set; } = "data:,";
+
+    [Parameter]
+    public string Href { get; set; } = String.Empty;
+
+    [Parameter]
+    public Action? OnClick { get; set; } = null;
+
+    [Parameter]
+    public string Alt { get; set; } = String.Empty;
+
+    [Parameter]
+    public bool NewTab { get; set; } = false;
+    
+    [Parameter]
+    public bool Small { get; set; } = true;
+
+    [Parameter]
+    public bool Large { get; set; } = false;
+
+    private int Size => Small && !Large ? 20 : 30;
+
+}

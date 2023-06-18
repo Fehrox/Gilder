@@ -15,33 +15,20 @@
 
 <div style="display: flex; flex-direction: column">
     <ContentPanel>
-        <div>First Transaction: @FirstTransaction?.Date.ToShortDateString()</div>
-        <div>Last Transaction: @LastTransaction?.Date.ToShortDateString()</div>
-        <div>@DurationStr</div>
-    </ContentPanel>
-    
-    <ContentPanel>
-        <table>
-            <thead>
-            <td>Transactions</td>
-            <td>Date Imported</td>
-            <td></td>
-            </thead>
-            @foreach (var row in GetImportRows())
-            {
-                <tr>
-                    <td>@row.TransactionIds.Count()</td>
-                    <td>@row.Created.ToShortDateString() @row.Created.ToShortTimeString()</td>
-                    <td><button @onclick="@(() => HandleDeleteImportClicked(row))">Delete</button></td>
-                </tr>
-            }
-            
-            @if(HasOrphanedImports)
-            {
-                <button @onclick="@HandleFixOrphanImportsClicked">Fix Orphan Imports</button>
-            }
-        </table>
-            
+        <div style="display: flex; justify-content: space-around">
+            <div>
+                <div>First Transaction: @FirstTransaction?.Date.ToShortDateString()</div>
+                <div>Last Transaction: @LastTransaction?.Date.ToShortDateString()</div>
+                <div>@DurationStr</div>
+            </div>
+            <div>
+                <div>Total Transactions: @TotalTransactions</div>
+                <div style="display: flex; flex-direction: row">
+                    <HorizontalBarChart BarValues="@TotalBars"/>
+                </div>
+                <div>Net position: @Math.Round(NetPosition, 2).ToCurrencyString()</div>
+            </div>
+        </div>
     </ContentPanel>
 
     <ContentPanel>
@@ -84,15 +71,35 @@
                 </tbody>
             </table>
         </div>
+        <GroupEditor/>
+    </ContentPanel>
+    
+    <ContentPanel>
+        <div>
+            <table>
+                <thead>
+                <td>Transactions</td>
+                <td>Date Imported</td>
+                <td></td>
+                </thead>
+                @foreach (var row in GetImportRows())
+                {
+                    <tr>
+                        <td>@row.TransactionIds.Count()</td>
+                        <td>@row.Created.ToShortDateString() @row.Created.ToShortTimeString()</td>
+                        <td><button @onclick="@(() => HandleDeleteImportClicked(row))">Delete</button></td>
+                    </tr>
+                }
+                
+                @if(HasOrphanedImports)
+                {
+                    <button @onclick="@HandleFixOrphanImportsClicked">Fix Orphan Imports</button>
+                }
+            </table>
+            <TransactionImporter/>
+        </div>
     </ContentPanel>
 
-    <ContentPanel>
-        <div>Total Transactions: @TotalTransactions</div>
-        <div style="display: flex; flex-direction: row">
-            <HorizontalBarChart BarValues="@TotalBars"/>
-        </div>
-        <div>Net position: @Math.Round(NetPosition,2).ToCurrencyString()</div>
-    </ContentPanel>
 </div>
 
 @code {

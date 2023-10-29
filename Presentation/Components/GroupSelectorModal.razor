@@ -1,0 +1,22 @@
+@using Domain
+@using Fluxor
+@using Presentation.Store.Group
+
+@inject IState<GroupState> _groupState
+
+<div style="display: grid">
+    @foreach (var group in _groupState.Value.Groups)
+    {
+        <button @onclick="@(() => { OnSubmit(group); CloseModal(); })">@group.Name</button>
+    }    
+</div>
+
+
+@code {
+
+    [Parameter]
+    public Action<Group> OnSubmit { get; set; } = _ => { };
+    
+    [Parameter]
+    public Action CloseModal { get; set; } = () => { };
+}

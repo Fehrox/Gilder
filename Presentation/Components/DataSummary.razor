@@ -14,7 +14,7 @@
 @inject IState<GroupState> _groupState
 
 <div style="display: flex; flex-direction: column">
-    <ContentPanel>
+    <ContentCard>
         <div style="display: flex; justify-content: space-around">
             <div>
                 <div>First Transaction: @FirstTransaction?.Date.ToShortDateString()</div>
@@ -29,9 +29,9 @@
                 <div>Net position: @Math.Round(NetPosition, 2).ToCurrencyString()</div>
             </div>
         </div>
-    </ContentPanel>
+    </ContentCard>
 
-    <ContentPanel>
+    <ContentCard>
         <div>Total Groups: @TotalGroups</div>
         <div style="display: flex; flex-direction: row">
                     
@@ -72,9 +72,9 @@
             </table>
         </div>
         <GroupEditor/>
-    </ContentPanel>
+    </ContentCard>
     
-    <ContentPanel>
+    <ContentCard>
         <div>
             <table>
                 <thead>
@@ -98,7 +98,7 @@
             </table>
             <TransactionImporter/>
         </div>
-    </ContentPanel>
+    </ContentCard>
 
 </div>
 

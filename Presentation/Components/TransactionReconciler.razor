@@ -12,23 +12,7 @@
 <TransactionTable
     Heading="@heading"
     Transactions="@Transactions"
-    OnGroupChanged="@HandleGroupChanged"
 />    
-
-@if (_similarTransactions.Any()) {
-    <Modal OnClose="@HandleCancel">
-        <div>
-            @foreach (var transaction in _similarTransactions){
-                <div style="display: flex; justify-content: space-between">
-                    <TransactionRow OnGroupChanged="@(_ => StateHasChanged())"  Transaction="@transaction.Transaction"/>
-                    <button @onclick="@(() => HandleExcludeClicked(transaction))">Exclude</button>
-                </div>
-            }    
-            <button @onclick="@HandleApplyAll">Apply to All</button>
-        </div>
-    </Modal>
-}
-
 
 @code {
 
@@ -37,106 +21,6 @@
     
     [Parameter]
     public IEnumerable<Transaction> Transactions { get; set; } = Array.Empty<Transaction>();
-
-    private IEnumerable<SimilarTransaction> _similarTransactions = new List<SimilarTransaction>();
-    Domain.Group? _selectedGroup = null;
-
-    private void HandleGroupChanged(Transaction transaction)
-    {
-        var transactionMatcher = new TransactionMatcher(_state);
-        _similarTransactions = transactionMatcher.FindMatches(transaction, .75f);
-        _selectedGroup = transaction.Group;
-    }
-
-    private void HandleApplyAll()
-    {
-        foreach (var transaction in _similarTransactions) {
-            var updatedTransaction = transaction.Transaction with { Group = _selectedGroup };
-            _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
-        }
-        
-        HandleCancel();
-    }
-
-    private void HandleCancel() => _similarTransactions = new List<SimilarTransaction>();
-
-    private class TransactionMatcher
-    {
-        private readonly IState<TransactionState> _state;
-
-        public TransactionMatcher(IState<TransactionState> state) => _state = state;
-
-        public IEnumerable<SimilarTransaction> FindMatches(Transaction transaction, float cutoff)
-        {
-            var matchList = new List<SimilarTransaction>();
-            foreach (var otherTransaction in _state.Value.Transactions)
-            {
-                if (otherTransaction.Id == transaction.Id) continue;
-                
-                var transactionDetails = Sanitize(transaction.Details);
-                var otherTransactionDetails = Sanitize(otherTransaction.Details);
-                
-                var distance = LevenshteinDistance(transactionDetails, otherTransactionDetails);
-                var distancePercent = 1f - (distance / (float)transaction.Details.Length);
-                if (distancePercent < cutoff) continue;
-
-                matchList.Add(new SimilarTransaction {
-                    Similarity = distancePercent,
-                    Transaction = otherTransaction
-                });
-            }
-
-            return matchList.OrderByDescending(x => x.Similarity);
-        }
-
-        private string Sanitize(string details) => 
-            new(details.Where(c => c != '-' && c is < '0' or > '9').ToArray());
-
-        private static int LevenshteinDistance(string a, string b)
-        {
-            if (string.IsNullOrEmpty(a) && string.IsNullOrEmpty(b))
-                return 0;
-
-            if (string.IsNullOrEmpty(a))
-                return b.Length;
-
-            if (string.IsNullOrEmpty(b))
-                return a.Length;
-
-            var lengthA = a.Length;
-            var lengthB = b.Length;
-            var distances = new int[lengthA + 1, lengthB + 1];
-            for (var i = 0; i <= lengthA; distances[i, 0] = i++) ;
-            for (var j = 0; j <= lengthB; distances[0, j] = j++) ;
-
-            for (var i = 1; i <= lengthA; i++)
-                for (var j = 1; j <= lengthB; j++) {
-                    var cost = b[j - 1] == a[i - 1] ? 0 : 1;
-                    distances[i, j] = Math.Min(
-                        Math.Min(distances[i - 1, j] + 1, distances[i, j - 1] + 1),
-                        distances[i - 1, j - 1] + cost);
-                }
-
-            return distances[lengthA, lengthB];
-        }
-    }
-
-    private record SimilarTransaction
-    {
-        public float Similarity { get; set; }
-        public Transaction Transaction { get; set; }
-    }
-
-    private void HandleExcludeClicked(SimilarTransaction transaction)
-    {
-        var copySimilarTransactions = _similarTransactions.ToList();
-        var wasExcluded = copySimilarTransactions.Remove(transaction);
-        
-        if(wasExcluded)
-            _similarTransactions = copySimilarTransactions; 
-        
-        StateHasChanged();
-    }
 
     private double SumTransactionGroup(IEnumerable<Transaction> transactions) => 
         transactions.Sum(tg => tg.Charge);

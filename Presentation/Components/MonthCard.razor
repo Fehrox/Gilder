@@ -2,7 +2,7 @@
 @using System.Reflection.Metadata
 @using Presentation.Store.Spending
 
-<ContentPanel>
+<ContentCard>
     <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; margin: 5px; padding: 10px">
         <div style="font-size: larger; text-decoration: underline;" >
             @Month.ToString("MMMM") @Month.ToString("yyyy")    
@@ -18,7 +18,7 @@
             Net="@Net"
         />
     </div>
-</ContentPanel>
+</ContentCard>
 
 @code {
 

@@ -5,11 +5,9 @@
 @using Presentation.Components
 @using Presentation.Store.Group
 @using Transaction = Domain.Transaction
-@using Domain
 
 @inherits FluxorComponent
 
-@inject IDispatcher _dispatcher
 @inject IState<TransactionState> _transactionState
 @inject IState<GroupState> _groupState
 
@@ -23,18 +21,18 @@
         gap: 10px; 
         max-width: 935px;
     ">
-        <ContentPanel>
-        @foreach (var group in transactionGroups) {
-            var selected = _selectedGroupName == group.Key;
-            <div
-                style="
-                    color: @(selected ? "#E8A941" : "black"); 
-                    stroke-linejoin : round;
-                    stroke: black;
-                    stroke-width: @(selected ? 1 : 0)px;"
-                @onclick="@(() => { _selectedGroupName = group.Key; StateHasChanged(); })"> @group.Key </div>
-        }
-        </ContentPanel>
+        <ContentCard>
+            @foreach (var group in transactionGroups) {
+                var selected = _selectedGroupName == group.Key;
+                <div
+                    style="
+                        color: @(selected ? "#E8A941" : "black"); 
+                        stroke-linejoin : round;
+                        stroke: black;
+                        stroke-width: @(selected ? 1 : 0)px;"
+                    @onclick="@(() => { _selectedGroupName = group.Key; StateHasChanged(); })"> @group.Key </div>
+            }
+        </ContentCard>
     </div>
 </div>
 
@@ -43,11 +41,11 @@
     @foreach (var transactionGroup in transactionGroups) {
         if(_selectedGroupName != transactionGroup.Key) continue;
         var transactions = transactionGroup.OrderBy(t => t.Date).AsEnumerable();
-        <ContentPanel>
+        <ContentCard>
             <TransactionReconciler
                 GroupName="@transactionGroup.Key"
                 Transactions="@transactions" />
-        </ContentPanel>
+        </ContentCard>
     }
 </div>
 

@@ -1,0 +1,36 @@
+@using Portal.Store.Modals
+@using Fluxor
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<ModalState> _modalState
+@inject IDispatcher _dispatcher
+
+
+@foreach (var modal in _modalState.Value.RenderingModals)
+{
+    var type = modal.Value.Key;
+    var parameters = modal.Value.Value;
+    if(!parameters.ContainsKey("CloseModal"))
+        parameters.Add("CloseModal", (Action)(() => HandleModalDismissed(modal.Key)));
+    
+    <Modal OnClose="@(() => HandleModalDismissed(modal.Key))">
+        <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
+            <div @onclick:stopPropagation="true" @onkeydown="@((e) => HandleKeyDown(e, modal.Key))">
+                <DynamicComponent Type="@type" Parameters="@parameters"/>
+            </div>
+        </MudFocusTrap>
+    </Modal>
+}
+
+@code {
+
+    private void HandleModalDismissed(Guid modalKey) =>
+        _dispatcher.Dispatch(new ModalDismissAction(modalKey));
+
+    private void HandleKeyDown(KeyboardEventArgs e, Guid modalKey)
+    {
+        if(e.Key == "Escape") 
+            _dispatcher.Dispatch(new ModalDismissAction(modalKey));
+    }
+}

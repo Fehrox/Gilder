@@ -11,20 +11,20 @@
 @inject IState<ForecastState> _forecastState
 
 <div style="display: flex; flex-direction: column">
-    <ContentPanel>
+    <ContentCard>
         <ForecastTimeline />
         <div style="height: 38vh; max-width: 935px; overflow-x: scroll; overflow-y: hidden">
             <BarChartVertical Bars="@ForecastBars"/>
         </div>
-    </ContentPanel>
+    </ContentCard>
     <div style="display: flex; flex-direction: row">
         <div style="flex-grow: 5">
-            <ContentPanel>
+            <ContentCard>
                 <BudgetTable/>
-            </ContentPanel>
+            </ContentCard>
         </div>
         <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center">
-            <ContentPanel>
+            <ContentCard>
                 <div style="text-decoration: underline">Forecast Totals</div>
 
                 @{
@@ -43,7 +43,7 @@
                     var net = income + spent;
                 }
                 <TransactionSummary Spent="@spent" Income="@income" Net="@net"/>
-            </ContentPanel>
+            </ContentCard>
         </div>
     </div>
 </div>

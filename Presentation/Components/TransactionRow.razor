@@ -4,10 +4,16 @@
 @using Domain
 @using System.Text.RegularExpressions
 @using System.Net
+@using Presentation.Store.Transaction
+@using Group = Domain.Group
 
 @inherits FluxorComponent
-<tr style="background-color: @(_selected ? "yellow" : "initial")">
+
+@inject IDispatcher _dispatcher
+
+<tr style="background-color: @(_highlighted ? "yellow" : "initial")">
     <td style="font-size: small;">
+        <SimilarTransactionFinder Transaction="@Transaction" OnClick="@Highlight"/>
         <ImageLink NewTab Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
         <ImageLink NewTab Source="icons/calendar-icon.png" Href=@EncodeCalendarLink() OnClick="@Highlight"/>
         @GetPaidDate().ToShortDateString()
@@ -18,20 +24,33 @@
         <ImageLink NewTab Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
         @Transaction.Details
     </td>
-    <td><TransactionNoteInput Transaction=@Transaction /></td>
-    <td><TransactionGroupSelect Transaction=@Transaction OnTransactionGroupChanged=@( t => HandleGroupChanged(t) ) /></td>
+    <td><TransactionNoteInput Transaction=@Transaction/></td>
+    <td>
+        @* <GroupSelectButton  *@
+        @*     Text="@(Transaction?.Group?.Name ?? "Select")"  *@
+        @*     CurrentGroup=@Transaction.Group  *@
+        @*     OnTransactionGroupChanged=@HandleGroupChanged /> *@
+        <TransactionGroupSelect Transaction=@Transaction OnTransactionGroupChanged=@(t => HandleGroupChanged(t.Group))/>
+    </td>
+    <td><input type="checkbox" checked="@IsSelected" onclick="@(() => OnSelected(Transaction))"/></td>
 </tr>
 
 @code {
 
-    private bool _selected = false;
+    private bool _highlighted = false;
 
     [Parameter]
     public Transaction Transaction { get; set; } = new();
 
     [Parameter]
+    public bool IsSelected { get; set; } = false;
+    
+    [Parameter]
     public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
 
+    [Parameter]
+    public Action<Transaction> OnSelected { get; set; } = _ => { };
+    
     private DateTime GetPaidDate()
     {
         var dateRegex = new Regex("(\\d\\d/\\d\\d)");
@@ -95,14 +114,17 @@
 
     private void Highlight()
     {
-        _selected = true;
+        _highlighted = true;
         StateHasChanged();
     }
 
-    private void HandleGroupChanged(Transaction transaction)
+    private void HandleGroupChanged(Group group)
     {
-        OnGroupChanged?.Invoke(transaction);
-        _selected = false;
+        var updatedTransaction = Transaction with { Group = group };
+        _dispatcher.Dispatch(new TransactionUpdateAction(updatedTransaction));
+        
+        OnGroupChanged?.Invoke(Transaction);
+        _highlighted = false;
         StateHasChanged();
     }
 

@@ -1,4 +1,9 @@
 @using Domain
+@using Fluxor
+@using Presentation.Store.Modals
+@using Presentation.Store.Transaction
+
+@inject IDispatcher _dispatcher
 
 <h3>@Heading</h3>
 <table>
@@ -9,11 +14,14 @@
     <td>Details</td>
     <td>Note</td>
     <td>Group</td>
+    <td><input type="checkbox" @onclick="@HandleCheckAllClicked"/></td>
     </thead>
     @foreach (var transaction in Transactions) {
         <TransactionRow 
+            IsSelected=@_selectedTransactions.Any(r => r.Id == transaction.Id)
             Transaction=@transaction 
-            OnGroupChanged=@OnGroupChanged/>
+            OnGroupChanged=@OnGroupChanged
+            OnSelected=@OnSelected />
     }
     <tr>
         <td>Total:</td>
@@ -26,6 +34,17 @@
     </tr>
 </table>
 
+@if (_selectedTransactions.Any())
+{
+    <div style="position: fixed; right: 20px; bottom: 20px">
+        <ContentCard>
+            Update group: 
+            <button @onclick=@UpdateSelectedTransactions>
+                @_selectedTransactions.Count selected
+            </button>
+        </ContentCard>
+    </div>
+}
 
 @code {
 
@@ -37,6 +56,14 @@
 
     [Parameter]
     public Action<Transaction> OnGroupChanged { get; set; } = _ => { };
+
+    private List<Transaction> _selectedTransactions = new();
+
+    private void OnSelected(Transaction transaction)
+    {
+        _selectedTransactions.Add(transaction);
+        StateHasChanged();
+    }
 
     private double SumTransactionGroup(IEnumerable<Transaction> transactions) => 
         transactions.Sum(tg => tg.Charge);
@@ -52,5 +79,29 @@
 
         return period.TotalDays;
     }
-    
+
+    private void HandleCheckAllClicked()
+    {
+        if (_selectedTransactions.Any()) {
+            _selectedTransactions.Clear();
+        } else {
+            _selectedTransactions.AddRange(Transactions);
+        }
+    }
+
+    private void UpdateSelectedTransactions()
+    {
+        _dispatcher.Dispatch(new ModalAction(typeof(GroupSelectorModal)).WithParams(
+            ("OnSubmit", new Action<Group>(g => {
+                foreach (var transaction in _selectedTransactions) {
+                    transaction.Group = g;
+                    _dispatcher.Dispatch(new TransactionUpdateAction(transaction));
+                }
+                                                    
+                _selectedTransactions.Clear();
+            }))    
+        ));
+        
+    }
+
 }

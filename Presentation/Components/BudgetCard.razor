@@ -4,7 +4,7 @@
 
 @inject IDispatcher _dispatcher;
 
-<ContentPanel>
+<ContentCard>
     <div @onclick="@HandleShowEditorClicked">
         <h2>@Budget.Description</h2>
         <h3>@(Budget.Group?.Name ?? "Unresolved")</h3>
@@ -35,7 +35,7 @@
         
         <button @onclick="@HandleBudgetDeleteClicked" @onclick:stopPropagation="true">Delete</button>
     </div>
-</ContentPanel>
+</ContentCard>
 
 @if (_showEditor) {
     <BudgetEditor Budget="@Budget" OnActionEditComplete="@HandleUpdateEditor" />

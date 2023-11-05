@@ -1,0 +1,73 @@
+@using Domain
+@using System.Collections
+@using Fluxor
+@using Presentation.Store.Deductions
+@using Presentation.Store.Group
+
+@inject IState<GroupState> _groupState
+
+@code{
+
+    [Parameter]
+    public string Year { get; set; } = String.Empty;
+
+    [Parameter]
+    public List<Transaction> Transactions { get; set; } = new();
+
+}
+
+<style>
+    .container {
+      display: grid;
+      grid-template-columns: auto auto auto auto auto auto;
+      /*gap: 5px;*/
+      align-items: center;
+    }
+    
+    .heading {
+        grid-column-start: 1;
+        grid-column-end: 7;
+    }
+    
+    .cell {
+        border: 1px solid lightgrey;
+    }
+</style>
+
+<div class="container">
+    
+    @foreach (var transactionGroup in GroupByGroup(Transactions))
+    {
+        var group = _groupState.Value.Groups.FirstOrDefault(g => g.Name == transactionGroup.Key);
+        <div class="heading">
+            <h3>@(group?.Name ?? "Unreconciled")</h3>
+        </div>
+
+        <h5>Date</h5>
+        <h5>Charge</h5>
+        <h5>Details</h5>
+        <h5>Merchant</h5>
+        <h5>Note</h5>
+        <h5>Deductible</h5>
+
+        @foreach (var transaction in transactionGroup.Value)
+        {
+            <div class="cell">@transaction.Date.ToShortDateString()</div>
+            <div class="cell">@transaction.Charge.ToCurrencyString()</div>
+            <div class="cell" style="font-size: x-small;">@transaction.Details</div>
+            <div class="cell" style="font-size: x-small;">@transaction.Merchant</div>
+            <div class="cell" style="font-size: x-small;">@transaction.Note</div>
+            <div class="cell" style="font-size: x-small; text-align: center">
+                <TaxYearDeductionEditor Transaction="transaction"/>
+            </div>
+        }
+
+    }
+</div>
+
+@code {
+
+    private Dictionary<string, List<Transaction>> GroupByGroup(List<Transaction> transactions) => 
+        transactions.GroupBy(t => t.Group?.Name??"Unreconciled")
+            .ToDictionary(g => g.Key, g => g.ToList());
+}

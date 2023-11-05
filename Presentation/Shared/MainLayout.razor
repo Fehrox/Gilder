@@ -3,6 +3,7 @@
 @using Presentation.Store.Group
 @using Presentation.Store.Transaction
 @using Presentation.Components
+@using Presentation.Store.Deductions
 @using Presentation.Store.Imports
 @inherits LayoutComponentBase
 
@@ -37,6 +38,7 @@
         _dispatcher.Dispatch(new TransactionRepoLoadAction());
         _dispatcher.Dispatch(new ImportRepoLoadAction());
         _dispatcher.Dispatch(new BudgetRepoLoadAction());
+        _dispatcher.Dispatch(new DeductionLoadAction());
         await base.OnInitializedAsync();
     }
 

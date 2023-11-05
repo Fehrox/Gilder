@@ -24,13 +24,16 @@
         <ContentCard>
             @foreach (var group in transactionGroups) {
                 var selected = _selectedGroupName == group.Key;
+                var isDefinedGroup = _groupState.Value.Groups.Any(g => g.Name == group.Key);
                 <div
                     style="
-                        color: @(selected ? "#E8A941" : "black"); 
+                        color: @(selected ? "#E8A941" : isDefinedGroup ? "black": "lightgray"); 
                         stroke-linejoin : round;
                         stroke: black;
                         stroke-width: @(selected ? 1 : 0)px;"
-                    @onclick="@(() => { _selectedGroupName = group.Key; StateHasChanged(); })"> @group.Key </div>
+                    @onclick="@(() => { _selectedGroupName = group.Key; StateHasChanged(); })">
+                     @group.Key
+                </div>
             }
         </ContentCard>
     </div>

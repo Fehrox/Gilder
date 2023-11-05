@@ -1,0 +1,63 @@
+@using Presentation.Store.Deductions
+@using Fluxor
+@using Domain
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<DeductionState> _deductionsState
+@inject IDispatcher _dispatcher
+
+@code {
+    [Parameter]
+    public string Year { get; set; } = String.Empty;
+    
+    [Parameter]
+    public Transaction Transaction { get; set; } = new();
+}
+
+@{ var deduction = _deductionsState.Value.Deductions.FirstOrDefault(d => d.TransactionId == Transaction.Id); }
+
+@if (deduction == null)
+{
+    <button @onclick="HandleAddDeduction">
+        Mark as Deduction
+    </button>
+}
+else
+{
+    <input
+        value="@deduction.Reason"
+        @onchange="e => HandleReasonChanged(e, deduction)">
+    <button @onclick="@(() => HandleRemoveDeduction(deduction))">X</button>
+}
+
+@code {
+    
+    private void HandleReasonChanged(ChangeEventArgs e, Deduction deduction)
+    {
+        if (e.Value == null) return;
+    
+        var reason = (string) e.Value;
+        deduction.Reason = reason;
+        _dispatcher.Dispatch(new DeductionUpdateAction(deduction));
+    }
+
+    private void HandleAddDeduction()
+    {
+        var deduction = new Deduction {
+            TransactionId = Transaction.Id,
+            Id = Guid.NewGuid(),
+            Reason = String.Empty,
+        };
+        
+        _dispatcher.Dispatch(new DeductionRepoCreateAction(deduction));
+        _dispatcher.Dispatch(new DeductionCreateAction(deduction));
+    }
+    
+    private void HandleRemoveDeduction(Deduction deduction)
+    {
+        var action = new DeductionRemoveAction(deduction);
+        _dispatcher.Dispatch(action);
+    }
+
+}

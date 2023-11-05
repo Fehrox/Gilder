@@ -2,6 +2,7 @@ using Fluxor;
 
 using System.Text.Json;
 using Presentation.Store.Budget;
+using Presentation.Store.Deductions;
 using Presentation.Store.Group;
 using Presentation.Store.Imports;
 using Presentation.Store.Transaction;
@@ -15,7 +16,8 @@ public class FileLoadEffect : Effect<FileLoadAction>
         var chosenFile = action.FileToLoad;
         
         var ms = new MemoryStream();
-        await chosenFile.OpenReadStream().CopyToAsync(ms);
+        const long MAX_FILE_SIZE_1_GB = 1L * 1024 * 1024 * 1024;
+        await chosenFile.OpenReadStream(MAX_FILE_SIZE_1_GB).CopyToAsync(ms);
             
         ms.Position = 0;
         using var reader = new StreamReader(ms);
@@ -39,6 +41,11 @@ public class FileLoadEffect : Effect<FileLoadAction>
             dispatcher.Dispatch(new BudgetClearAction());
             dispatcher.Dispatch(new BudgetCreateAction(gilderData.Budgets));
             dispatcher.Dispatch(new BudgetRepoCreateAction(gilderData.Budgets));
+            
+            dispatcher.Dispatch(new DeductionClearAction());
+            var deductionArray = gilderData.Deductions.ToArray();
+            dispatcher.Dispatch(new DeductionCreateAction(deductionArray));
+            dispatcher.Dispatch(new DeductionRepoCreateAction(deductionArray));
         }
     }
     
@@ -48,5 +55,6 @@ public class FileLoadEffect : Effect<FileLoadAction>
         public IEnumerable<Domain.Import> Imports { get; set; } = new List<Domain.Import>();
         public IEnumerable<Domain.Transaction> Transactions { get; set; } = new List<Domain.Transaction>();
         public IEnumerable<Domain.Budget> Budgets { get; set; } = new List<Domain.Budget>();
+        public IEnumerable<Domain.Deduction> Deductions { get; set; } = new List<Domain.Deduction>();
     }
 }

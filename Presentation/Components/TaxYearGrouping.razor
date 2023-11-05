@@ -1,0 +1,75 @@
+@using Domain
+@using Fluxor
+
+@inject IDispatcher _dispatcher
+
+@code {
+
+    [Parameter]
+    public List<Transaction> Transactions { get; set; } = new();
+
+    private List<string> _shownDivs { get; set; } = new();
+}
+
+<div>
+    <div>
+        <h1> Tax Financial Years </h1>
+    </div>
+    @* Display reversed *@
+    <div style="display: flex; flex-direction: column-reverse">
+        @foreach (var tasksByFinancialYear in GroupByFinancialYear(Transactions))
+        {
+            var show = _shownDivs.Contains(tasksByFinancialYear.Key);
+            @if (show) {
+                <TaxYearDeductables Transactions="@tasksByFinancialYear.Value" Year="@tasksByFinancialYear.Key" />
+            }
+            
+            <div 
+                style="display: flex; flex-direction: row; justify-content: space-between; width: 100%; align-items: center" 
+                @onclick="@(() => ToggleShowGroup(tasksByFinancialYear.Key))"
+            >
+                <h3>FY @tasksByFinancialYear.Key</h3>
+                <hr/>
+                <div style="display: flex">
+                    <ImageTextLink
+                        Text="Export"
+                        Large
+                        OnClick="@(() => HandleExportClicked(tasksByFinancialYear.Key, tasksByFinancialYear.Value))" 
+                        Source="icons/save-icon.png"
+                        Alt="Export Tax report" />
+                    <button>@(show ? "\u25b2" : "\u25bc" )</button>
+                </div>
+            </div>
+  
+            <hr/>
+        }
+    </div>
+</div>
+
+@code {
+    
+
+    private void HandleExportClicked(string tasksByFinancialYear, List<Transaction> value)
+    {
+        // TODO: Export the deductions as report for Tax Agent.
+    }
+    
+    private static Dictionary<string, List<Transaction>> GroupByFinancialYear(List<Transaction> transactions)
+    {
+        return transactions
+            .GroupBy(t => FinancialYear.GetFinancialYear(t.Date))
+            .OrderBy(g => g.Key)
+            .ToDictionary(g => g.Key, g => g.ToList());
+    }
+
+    private void ToggleShowGroup(string taskGroupKey)
+    {
+        var clickedSame = _shownDivs.Contains(taskGroupKey);
+        _shownDivs.Clear();
+        
+        if(!clickedSame)_shownDivs.Add(taskGroupKey);
+        
+        StateHasChanged();
+    }
+
+}

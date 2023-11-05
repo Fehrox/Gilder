@@ -63,11 +63,11 @@ public abstract class LocalStorageRepo<TEntity> : IRepo<TEntity> where TEntity :
         var entities = await ReadEntitiesFree();
         var updatedEntities = new List<TEntity>();
         foreach (var existing in entities) {
-            var savedEntities =
+            var entityToSave =
                 existing.Id == entity.Id
                     ? entity
                     : existing;
-            updatedEntities.Add(savedEntities);
+            updatedEntities.Add(entityToSave);
         }
 
         await _localStorage.SetItemAsync(_key, updatedEntities);

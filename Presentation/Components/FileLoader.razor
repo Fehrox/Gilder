@@ -12,7 +12,9 @@
 
 @if (_show){
     <Modal OnClose="@Hide">
-        <InputFile OnChange="@LoadSavedFileAsync" accept=".gdb" />
+        <InputFile
+            size=""
+            OnChange="@LoadSavedFileAsync" accept=".gdb" />
     </Modal>
 }
 

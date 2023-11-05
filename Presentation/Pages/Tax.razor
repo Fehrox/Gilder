@@ -1,0 +1,23 @@
+@page "/tax"
+
+@using Domain
+@using Fluxor
+@using Presentation.Store.Transaction
+@using Presentation.Components
+
+@inject IState<TransactionState> _transactionState;
+@inject IDispatcher _dispatcher;
+
+<TaxYearGrouping Transactions="@_transactionState.Value.Transactions">
+    
+</TaxYearGrouping>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        // _dispatcher.Dispatch(new LoadTrans);
+        base.OnInitialized();
+    }
+
+}

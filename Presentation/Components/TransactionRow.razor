@@ -24,6 +24,7 @@
         <ImageLink NewTab Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
         @Transaction.Details
     </td>
+    <td>@Transaction.Merchant</td>
     <td><TransactionNoteInput Transaction=@Transaction/></td>
     <td>
         @* <GroupSelectButton  *@
@@ -91,21 +92,29 @@
 
     private string EncodeMapLink()
     {
-        var transactionDetails = Transaction.Details; 
-        
-        var visaRegex = new Regex("V\\d\\d\\d\\d");
-        if (visaRegex.IsMatch(transactionDetails))
-            transactionDetails = visaRegex.Replace(transactionDetails, "");
+        string transactionDetails;
 
-        var dateRegex = new Regex("\\d\\d/\\d\\d");
-        if (dateRegex.IsMatch(transactionDetails))
-            transactionDetails = dateRegex.Replace(transactionDetails, "");
+        if (string.IsNullOrEmpty(Transaction.Merchant))
+        {
+            transactionDetails = Transaction.Details;
+            var visaRegex = new Regex("V\\d\\d\\d\\d");
+            if (visaRegex.IsMatch(transactionDetails))
+                transactionDetails = visaRegex.Replace(transactionDetails, "");
 
-        var transactionIdRegex = new Regex("\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d");
-        if (transactionIdRegex.IsMatch(transactionDetails))
-            transactionDetails = transactionIdRegex.Replace(transactionDetails, "");
+            var dateRegex = new Regex("\\d\\d/\\d\\d");
+            if (dateRegex.IsMatch(transactionDetails))
+                transactionDetails = dateRegex.Replace(transactionDetails, "");
 
-        transactionDetails = WebUtility.UrlEncode(transactionDetails);
+            var transactionIdRegex = new Regex("\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d");
+            if (transactionIdRegex.IsMatch(transactionDetails))
+                transactionDetails = transactionIdRegex.Replace(transactionDetails, "");
+
+            transactionDetails = WebUtility.UrlEncode(transactionDetails);
+        }
+        else
+        {
+            transactionDetails = Transaction.Merchant;
+        }
         
         var mapLink = $"https://www.google.com.au/maps/search/{transactionDetails}?hl=en&source=opensearch";
 

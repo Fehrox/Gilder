@@ -55,7 +55,7 @@ public class FileSaveEffect : Effect<FileSaveAction>
         // Requires saveAsFile.js
         await _jsRuntime.InvokeAsync<object>(
             "saveAsFile",
-            $"GilderData-{System.DateTime.Today.Date.ToShortDateString()}.gdb",
+            $"GilderData-{DateTime.Today.Date.ToShortDateString()}.gdb",
             gilderDataByteStr);
     }
     

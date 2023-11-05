@@ -1,5 +1,6 @@
 @using Domain
 @using Fluxor
+@using Presentation.Store.Deductions
 
 @inject IDispatcher _dispatcher
 
@@ -34,7 +35,7 @@
                     <ImageTextLink
                         Text="Export"
                         Large
-                        OnClick="@(() => HandleExportClicked(tasksByFinancialYear.Key, tasksByFinancialYear.Value))" 
+                        OnClick="@(() => HandleExportClicked(tasksByFinancialYear.Key))" 
                         Source="icons/save-icon.png"
                         Alt="Export Tax report" />
                     <button>@(show ? "\u25b2" : "\u25bc" )</button>
@@ -49,9 +50,9 @@
 @code {
     
 
-    private void HandleExportClicked(string tasksByFinancialYear, List<Transaction> value)
+    private void HandleExportClicked(string financialYear)
     {
-        // TODO: Export the deductions as report for Tax Agent.
+        _dispatcher.Dispatch(new DeductionsReportExportAction(financialYear));
     }
     
     private static Dictionary<string, List<Transaction>> GroupByFinancialYear(List<Transaction> transactions)

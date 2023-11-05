@@ -13,10 +13,6 @@ public class DeductionLoadEffect : Effect<DeductionLoadAction>
     public override async Task HandleAsync(DeductionLoadAction action, IDispatcher dispatcher)
     {
         var deductions = await _deductionRepository.Read();
-        foreach (var loadedDeduction in deductions)
-        {
-            Console.WriteLine(loadedDeduction.Id.ToString());
-        }
         dispatcher.Dispatch(new DeductionLoadedAction(deductions.ToArray()));
     }
 }

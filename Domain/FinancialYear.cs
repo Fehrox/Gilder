@@ -23,4 +23,16 @@ public class FinancialYear
         // Format the financial year as "YYYY-YYYY"
         return $"{startYear}-{endYear}";
     }
+
+    public static void GetSpan(string actionFinancialYear, out DateTime startDate, out DateTime endDate)
+    {
+        // Parse the financial year start and end years
+        var years = actionFinancialYear.Split('-');
+        if (years.Length != 2 || !int.TryParse(years[0], out int startYear) || !int.TryParse(years[1], out int endYear))
+            throw new ArgumentException("The financial year format should be 'YYYY-YYYY'.");
+
+        // Assuming the financial year starts on July 1st and ends on June 30th
+        startDate = new DateTime(startYear, 7, 1);
+        endDate = new DateTime(endYear, 6, 30);
+    }
 }

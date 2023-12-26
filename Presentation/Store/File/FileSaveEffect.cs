@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
 using Application;
+using Domain;
 using Fluxor;
 using Microsoft.JSInterop;
-using Presentation.Store.Imports;
 
 namespace Presentation.Store.File;
 
@@ -14,6 +14,7 @@ public class FileSaveEffect : Effect<FileSaveAction>
     private readonly IRepo<Domain.Budget> _budgetRepo;
     private readonly IRepo<Domain.Deduction> _deductionRepo;
     private readonly IRepo<Domain.Import> _importRepo;
+    private readonly IRepo<Domain.Review> _reviewRepo;
     private readonly IJSRuntime _jsRuntime;
 
     public FileSaveEffect(
@@ -21,7 +22,8 @@ public class FileSaveEffect : Effect<FileSaveAction>
         IRepo<Domain.Group> groupRepo,
         IRepo<Domain.Budget> budgetRepo,
         IRepo<Domain.Import> importRepo,
-        IRepo<Domain.Deduction> deductionRepo,
+        IRepo<Deduction> deductionRepo,
+        IRepo<Review> reviewRepo,
         IJSRuntime jsRuntime)
     {
         _transactionRepo = transactionRepo;
@@ -29,6 +31,7 @@ public class FileSaveEffect : Effect<FileSaveAction>
         _budgetRepo = budgetRepo;
         _deductionRepo = deductionRepo;
         _importRepo = importRepo;
+        _reviewRepo = reviewRepo;
         _jsRuntime = jsRuntime;
     }
     
@@ -39,6 +42,7 @@ public class FileSaveEffect : Effect<FileSaveAction>
         var budgets = await _budgetRepo.Read();
         var deductions = await _deductionRepo.Read();
         var imports = await _importRepo.Read();
+        var reviews = await _reviewRepo.Read();
         
         var gilderData = new DataToSave {
             Groups = groups,
@@ -46,6 +50,7 @@ public class FileSaveEffect : Effect<FileSaveAction>
             Transactions = transactions,
             Imports = imports,
             Deductions = deductions,
+            Reviews = reviews,
         };
         
         string gilderDataJson = JsonSerializer.Serialize(gilderData);
@@ -66,5 +71,6 @@ public class FileSaveEffect : Effect<FileSaveAction>
         public IEnumerable<Domain.Transaction> Transactions { get; set; }
         public IEnumerable<Domain.Import> Imports { get; set; }
         public IEnumerable<Domain.Deduction> Deductions { get; set; }
+        public IEnumerable<Review> Reviews { get; set; }
     }
 }

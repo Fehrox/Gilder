@@ -1,8 +1,7 @@
-using Domain;
 using Fluxor;
 using Presentation.Store.Transaction;
 
-namespace Presentation.Store.Imports;
+namespace Presentation.Store.Import;
 
 public class ImportFixOrphanedEffect : Effect<ImportFixOrphanedAction>
 {

@@ -21,7 +21,7 @@ public class DeductionToggleEffect : Effect<DeductionToggleAction>
                 Id = Guid.NewGuid()
             });   
         } else {
-            await _deductionRepo.Remove(deduction);
+            await _deductionRepo.Delete(deduction);
         }
     }
 }

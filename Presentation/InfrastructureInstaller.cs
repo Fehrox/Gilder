@@ -14,6 +14,8 @@ namespace Presentation
             services.AddScoped<IRepo<Budget>, LocalStorageBudgetRepository>();
             services.AddScoped<IRepo<Import>, LocalStorageImportRepository>();
             services.AddScoped<IRepo<Deduction>, LocalStorageDeductionRepository>();
+            services.AddScoped<IRepo<Review>, LocalStorageReviewRepository>();
+
         }
     }
 }

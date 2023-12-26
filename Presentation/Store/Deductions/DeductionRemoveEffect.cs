@@ -11,5 +11,5 @@ public class DeductionRemoveEffect : Effect<DeductionRemoveAction>
     public DeductionRemoveEffect(IRepo<Deduction> deductionRepo) => _deductionRepo = deductionRepo;
 
     public override async Task HandleAsync(DeductionRemoveAction action, IDispatcher dispatcher) => 
-        await _deductionRepo.Remove(action.Deduction);
+        await _deductionRepo.Delete(action.Deduction);
 }

@@ -1,12 +1,6 @@
-namespace Presentation.Store.Transaction
-{
-    public class TransactionState
-    {
-        public TransactionState(IEnumerable<Domain.Transaction> transactions)
-        {
-            Transactions = transactions.ToList();
-        }
+namespace Presentation.Store.Transaction;
 
-        public List<Domain.Transaction> Transactions { get; }
-    }
+public record TransactionState
+{
+    public IEnumerable<Domain.Transaction> Transactions { get; set; } = new List<Domain.Transaction>();
 }

@@ -16,6 +16,18 @@ public abstract class LocalStorageRepo<TEntity> : IRepo<TEntity> where TEntity :
         _key = key;
     }
 
+    public async Task<IEnumerable<TEntity>> Read(params Guid[] ids)
+    {
+        var entities = new List<TEntity>();
+        foreach (var id in ids) {
+            var entity = await Read(id);
+            if (entity is not null)
+                entities.Add(entity);
+        }
+
+        return entities;
+    }
+
     public async Task Create(TEntity entity)
         => await Create(new[] {entity});
 
@@ -61,7 +73,7 @@ public abstract class LocalStorageRepo<TEntity> : IRepo<TEntity> where TEntity :
         await _semaphore.WaitAsync();
 
         var entities = await ReadEntitiesFree();
-        var updatedEntities = new List<TEntity>();
+        var updatedEntities = new List<TEntity>();  
         foreach (var existing in entities) {
             var entityToSave =
                 existing.Id == entity.Id
@@ -75,23 +87,43 @@ public abstract class LocalStorageRepo<TEntity> : IRepo<TEntity> where TEntity :
         _semaphore.Release();
     }
 
-    public Task Remove(params TEntity[] entities) 
-        => Remove(entities.AsEnumerable());
-
-    public async Task Remove(IEnumerable<TEntity> groups)
+    public async Task Delete(Guid id)
     {
         await _semaphore.WaitAsync();
-    
-        var groupsList = groups.ToList();
+
         var currentGroups = (await ReadEntitiesFree()).ToList();
         var newGroups = new List<TEntity>();
         foreach (var entity in currentGroups)
-            if (groupsList.All(g => g.Id != entity.Id))
+            if (id != entity.Id)
                 newGroups.Add(entity);
         
         await _localStorage.SetItemAsync(_key, newGroups);
         
         _semaphore.Release();
+    }
+
+    public async Task Delete(params Guid[] ids)
+    {
+        await _semaphore.WaitAsync();
+        
+        var currentGroups = (await ReadEntitiesFree()).ToList();
+        var newGroups = new List<TEntity>();
+        foreach (var entity in currentGroups)
+            if (ids.All(g => g != entity.Id))
+                newGroups.Add(entity);
+        
+        await _localStorage.SetItemAsync(_key, newGroups);
+        
+        _semaphore.Release();
+    }
+
+    public Task Delete(params TEntity[] entities) 
+        => Delete(entities.AsEnumerable());
+
+    public async Task Delete(IEnumerable<TEntity> groups)
+    {
+        var groupIds = groups.Select(g => g.Id);
+        await Delete(groupIds.ToArray());
     }
 
     private async Task<IEnumerable<TEntity>> ReadEntitiesFree()

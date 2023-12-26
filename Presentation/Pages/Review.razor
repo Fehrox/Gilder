@@ -1,0 +1,94 @@
+@page "/review"
+@using Fluxor
+@using Presentation.Store.Reviews
+@using Presentation.Store.Transaction
+@using Presentation.Components
+@using Domain
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IDispatcher _dispatcher
+@inject IState<TransactionState> _transactionState
+@inject IState<ReviewState> _reviewState
+
+@code {
+    private List<Transaction> _selectedTransactions = new();
+}
+
+<div style="display: flex; flex-direction: column; justify-content: center;">
+    <ContentCard>
+        <table>
+            <thead>
+            <td>Date</td>
+            <td>Charge</td>
+            @* <td>Class</td> *@
+            <td>Details</td>
+            <td>Merchant</td>
+            <td>Note</td>
+            <td>Group</td>
+            <td><input type="checkbox" @onclick="@HandleCheckAllClicked"/></td>
+            </thead>
+            @foreach(var transaction in _transactionState.Value.Transactions) {
+                bool hasBeenReviewed = _reviewState.Value.Reviews.Any(r => r.TransactionId == transaction.Id);
+                if (!hasBeenReviewed) {
+                    <TransactionRow 
+                        Transaction="@transaction" 
+                        IsSelected="@GetIsSelected(transaction)"  
+                        OnSelected="@OnSelected"
+                    />
+                }
+            }
+        </table>
+    </ContentCard>
+</div>
+
+@if (_selectedTransactions.Any())
+{
+    <div style="position: fixed; right: 20px; bottom: 20px">
+        <ContentCard>
+            <div style="display: flex; flex-direction: column;">
+                <div style="text-align: center; width: 100%;">
+                    @_selectedTransactions.Count rows selected
+                </div>
+                <button @onclick=@SetSelectedReviewed>
+                    Mark Selected Reviewed
+                </button>
+            </div>
+        </ContentCard>
+    </div>
+}
+
+@code {
+    
+    private void SetSelectedReviewed()
+    {
+        var dateNow = DateTime.Now;
+        var reviews = _selectedTransactions.Select(r => new Domain.Review {
+            TransactionId = r.Id,
+            Id = Guid.NewGuid(),
+            ReviewedAt = dateNow
+        });
+        _dispatcher.Dispatch(new ReviewCreateAction(reviews));
+        _selectedTransactions = new List<Transaction>();
+    }
+
+    private bool GetIsSelected(Transaction transaction) => 
+        _selectedTransactions.Contains(transaction);
+    
+    private void HandleCheckAllClicked() {
+        foreach(var transaction in _transactionState.Value.Transactions) {
+            bool hasBeenReviewed = _reviewState.Value.Reviews.Any(r => r.TransactionId == transaction.Id);
+            if(!hasBeenReviewed)
+                _selectedTransactions.Add(transaction);
+        }
+        
+        StateHasChanged();
+    }
+
+    private void OnSelected(Transaction transaction)
+    {
+        _selectedTransactions.Add(transaction);
+        StateHasChanged();
+    }
+
+}

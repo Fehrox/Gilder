@@ -8,6 +8,7 @@
 
 @inherits FluxorComponent
 
+@inject NavigationManager _navigationManager
 @inject IState<TransactionState> _transactionState
 @inject IState<GroupState> _groupState
 
@@ -22,17 +23,22 @@
         max-width: 935px;
     ">
         <ContentCard>
-            @foreach (var group in transactionGroups) {
+            <div onclick="@HandleReviewClicked">
+                Pending Review
+            </div>
+            <hr/>
+            @foreach (var group in transactionGroups)
+            {
                 var selected = _selectedGroupName == group.Key;
                 var isDefinedGroup = _groupState.Value.Groups.Any(g => g.Name == group.Key);
                 <div
                     style="
-                        color: @(selected ? "#E8A941" : isDefinedGroup ? "black": "lightgray"); 
+                        color: @(selected ? "#E8A941" : isDefinedGroup ? "black" : "lightgray"); 
                         stroke-linejoin : round;
                         stroke: black;
                         stroke-width: @(selected ? 1 : 0)px;"
                     @onclick="@(() => { _selectedGroupName = group.Key; StateHasChanged(); })">
-                     @group.Key
+                    @group.Key
                 </div>
             }
         </ContentCard>
@@ -52,6 +58,8 @@
     }
 </div>
 
+
+
 @code{
     
     private string _selectedGroupName = null;
@@ -64,4 +72,6 @@
 
     private IEnumerable<IGrouping<string, Transaction>> TransactionGroups => _transactionState.Value.Transactions
         .GroupBy(g => g.Group?.Name??"Unreconciled");
+    
+    private void HandleReviewClicked() => _navigationManager.NavigateTo("/review");
 }

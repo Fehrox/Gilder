@@ -7,7 +7,7 @@
 @code {
 
     [Parameter]
-    public List<Transaction> Transactions { get; set; } = new();
+    public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
 
     private List<string> _shownDivs { get; set; } = new();
 }
@@ -55,7 +55,7 @@
         _dispatcher.Dispatch(new DeductionsReportExportAction(financialYear));
     }
     
-    private static Dictionary<string, List<Transaction>> GroupByFinancialYear(List<Transaction> transactions)
+    private static Dictionary<string, List<Transaction>> GroupByFinancialYear(IEnumerable<Transaction> transactions)
     {
         return transactions
             .GroupBy(t => FinancialYear.GetFinancialYear(t.Date))

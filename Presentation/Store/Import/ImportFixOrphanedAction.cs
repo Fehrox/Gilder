@@ -1,4 +1,4 @@
-namespace Presentation.Store.Imports;
+namespace Presentation.Store.Import;
 
 public record ImportFixOrphanedAction
 {

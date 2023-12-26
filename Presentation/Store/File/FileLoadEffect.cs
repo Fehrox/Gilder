@@ -1,10 +1,12 @@
 using Fluxor;
 
 using System.Text.Json;
+using Domain;
 using Presentation.Store.Budget;
 using Presentation.Store.Deductions;
 using Presentation.Store.Group;
-using Presentation.Store.Imports;
+using Presentation.Store.Import;
+using Presentation.Store.Reviews;
 using Presentation.Store.Transaction;
 
 namespace Presentation.Store.File;
@@ -43,9 +45,12 @@ public class FileLoadEffect : Effect<FileLoadAction>
             dispatcher.Dispatch(new BudgetRepoCreateAction(gilderData.Budgets));
             
             dispatcher.Dispatch(new DeductionClearAction());
-            var deductionArray = gilderData.Deductions.ToArray();
-            dispatcher.Dispatch(new DeductionCreateAction(deductionArray));
-            dispatcher.Dispatch(new DeductionRepoCreateAction(deductionArray));
+            dispatcher.Dispatch(new DeductionCreateAction(gilderData.Deductions));
+            dispatcher.Dispatch(new DeductionRepoCreateAction(gilderData.Deductions));
+            
+            dispatcher.Dispatch(new ReviewClearAction());
+            dispatcher.Dispatch(new ReviewCreateAction(gilderData.Reviews));
+            dispatcher.Dispatch(new ReviewRepoCreateAction(gilderData.Reviews));
         }
     }
     
@@ -55,6 +60,7 @@ public class FileLoadEffect : Effect<FileLoadAction>
         public IEnumerable<Domain.Import> Imports { get; set; } = new List<Domain.Import>();
         public IEnumerable<Domain.Transaction> Transactions { get; set; } = new List<Domain.Transaction>();
         public IEnumerable<Domain.Budget> Budgets { get; set; } = new List<Domain.Budget>();
-        public IEnumerable<Domain.Deduction> Deductions { get; set; } = new List<Domain.Deduction>();
+        public IEnumerable<Deduction> Deductions { get; set; } = new List<Deduction>();
+        public IEnumerable<Review> Reviews { get; set; } = new List<Review>();
     }
 }

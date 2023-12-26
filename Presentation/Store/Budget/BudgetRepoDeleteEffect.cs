@@ -10,5 +10,5 @@ public class BudgetRepoDeleteEffect : Effect<BudgetRepoDeleteAction>
     public BudgetRepoDeleteEffect(IRepo<Domain.Budget> budgetRepo) => _budgetRepo = budgetRepo;
 
     public override async Task HandleAsync(BudgetRepoDeleteAction action, IDispatcher dispatcher)
-        => await _budgetRepo.Remove(action.Budget);
+        => await _budgetRepo.Delete(action.Budget);
 }

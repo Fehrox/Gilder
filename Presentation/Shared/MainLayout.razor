@@ -4,7 +4,8 @@
 @using Presentation.Store.Transaction
 @using Presentation.Components
 @using Presentation.Store.Deductions
-@using Presentation.Store.Imports
+@using Presentation.Store.Import
+@using Presentation.Store.Reviews
 @inherits LayoutComponentBase
 
 @inject IDispatcher _dispatcher
@@ -39,6 +40,7 @@
         _dispatcher.Dispatch(new ImportRepoLoadAction());
         _dispatcher.Dispatch(new BudgetRepoLoadAction());
         _dispatcher.Dispatch(new DeductionLoadAction());
+        _dispatcher.Dispatch(new ReviewRepoLoadAction());
         await base.OnInitializedAsync();
     }
 

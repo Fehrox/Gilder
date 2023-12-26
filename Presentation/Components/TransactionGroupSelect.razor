@@ -13,7 +13,12 @@
 
 @inherits FluxorComponent
 
-<button @onclick="@HandleShowGroupSelector" style="">
+@{
+    var isKnownGroup = _groupState.Value.Groups
+        .Any(g => g.Name == Transaction?.Group?.Name);
+    var styleString = $"background-color: {(isKnownGroup ? "lightgrey" : "initial")}";
+}
+<button @onclick="@HandleShowGroupSelector" style="@styleString" >
     @(Transaction?.Group?.Name ?? "Select")
 </button>
 
@@ -47,5 +52,4 @@
         
         OnTransactionGroupChanged?.Invoke(updatedTransaction);
     }
-    
 }

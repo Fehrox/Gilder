@@ -1,7 +1,7 @@
 using Application;
 using Fluxor;
 
-namespace Presentation.Store.Imports;
+namespace Presentation.Store.Import;
 
 public class ImportRepoCreateEffect : Effect<ImportRepoCreateAction>
 {

@@ -1,6 +1,6 @@
 using Fluxor;
 
-namespace Presentation.Store.Imports;
+namespace Presentation.Store.Import;
 
 public class ImportCreateReducer : Reducer<ImportState, ImportCreateAction>{
     public override ImportState Reduce(ImportState state, ImportCreateAction action) => 

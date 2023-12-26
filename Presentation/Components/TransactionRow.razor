@@ -4,14 +4,17 @@
 @using Domain
 @using System.Text.RegularExpressions
 @using System.Net
+@using Presentation.Store.Reviews
 @using Presentation.Store.Transaction
 @using Group = Domain.Group
 
 @inherits FluxorComponent
 
 @inject IDispatcher _dispatcher
+@inject IState<ReviewState> _reviewState
 
-<tr style="background-color: @(_highlighted ? "yellow" : "initial")">
+@{ var bgColor = _highlighted ? "yellow" : "initial"; }
+<tr style="background-color: @bgColor">
     <td style="font-size: small;">
         <SimilarTransactionFinder Transaction="@Transaction" OnClick="@Highlight"/>
         <ImageLink NewTab Source="icons/location-icon.png" Href=@EncodeLocationLink() OnClick="@Highlight"/>
@@ -21,17 +24,18 @@
     <td>@Transaction.Charge.ToCurrencyString()</td>
     @* <td>@Transaction.Class</td> *@
     <td style="font-size: x-small;">
+        @if (_reviewState.Value.Reviews.Any(r => r.TransactionId == Transaction.Id)){
+            @: ☑️
+        }
         <ImageLink NewTab Source="icons/map-icon.png" Href=@EncodeMapLink() OnClick="@Highlight"/>
         @Transaction.Details
     </td>
     <td>@Transaction.Merchant</td>
     <td><TransactionNoteInput Transaction=@Transaction/></td>
     <td>
-        @* <GroupSelectButton  *@
-        @*     Text="@(Transaction?.Group?.Name ?? "Select")"  *@
-        @*     CurrentGroup=@Transaction.Group  *@
-        @*     OnTransactionGroupChanged=@HandleGroupChanged /> *@
-        <TransactionGroupSelect Transaction=@Transaction OnTransactionGroupChanged=@(t => HandleGroupChanged(t.Group))/>
+        <TransactionGroupSelect 
+            Transaction=@Transaction 
+            OnTransactionGroupChanged=@(t => HandleGroupChanged(t.Group))/>
     </td>
     <td><input type="checkbox" checked="@IsSelected" onclick="@(() => OnSelected(Transaction))"/></td>
 </tr>

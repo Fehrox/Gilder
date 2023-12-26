@@ -1,6 +1,6 @@
 using Fluxor;
 
-namespace Presentation.Store.Imports;
+namespace Presentation.Store.Import;
 
 public class ImportClearReducer : Reducer<ImportState, ImportClearAction>
 {

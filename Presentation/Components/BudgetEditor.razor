@@ -27,7 +27,7 @@
         @foreach (var interval in Budget.Intervals) {
             <div style="display: flex">
                 <BudgetIntervalEditor BudgetInterval="@interval" />
-                <button @onclick="@(() => HandleRemoveIntervalClicked(interval))"> Remove Interval </button>
+                <button @onclick="@(() => HandleRemoveIntervalClicked(interval))"> Delete Interval </button>
             </div>
         }
         <button @onclick="@HandleAddIntervalClicked"> Add Interval </button>

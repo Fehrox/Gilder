@@ -1,6 +1,7 @@
 @using Domain
 @using Fluxor
 @using Presentation.Store.Modals
+@using Presentation.Store.Reviews
 @using Presentation.Store.Transaction
 
 @inject IDispatcher _dispatcher
@@ -39,10 +40,14 @@
 {
     <div style="position: fixed; right: 20px; bottom: 20px">
         <ContentCard>
-            Update group: 
-            <button @onclick=@UpdateSelectedTransactions>
-                @_selectedTransactions.Count selected
-            </button>
+            <div style="display: flex; flex-direction: column;">
+                <div style="text-align: center; width: 100%;">
+                    @_selectedTransactions.Count rows selected
+                </div>
+                <button @onclick=@UpdateSelectedTransactions>
+                    Update group
+                </button>
+            </div>
         </ContentCard>
     </div>
 }
@@ -62,7 +67,11 @@
 
     private void OnSelected(Transaction transaction)
     {
-        _selectedTransactions.Add(transaction);
+        if(_selectedTransactions.Contains(transaction))
+            _selectedTransactions.Remove(transaction);
+        else
+            _selectedTransactions.Add(transaction);
+        
         StateHasChanged();
     }
 
@@ -104,5 +113,23 @@
         ));
         
     }
+    //
+    // private void UnMarkSelectedReviewed()
+    // {
+    //     var timeNow = DateTime.Now;
+    //     _dispatcher.Dispatch(new ReviewDeleteAction(_selectedTransactions.Select(t => new Review {
+    //         TransactionId = t.Id,
+    //         ReviewedAt = timeNow
+    //     })));
+    // }
+    //
+    // private void MarkSelectedReviewed()
+    // {
+    //     var timeNow = DateTime.Now;
+    //     _dispatcher.Dispatch(new ReviewCreateAction(_selectedTransactions.Select(t => new Review {
+    //         TransactionId = t.Id,
+    //         ReviewedAt = timeNow
+    //     })));
+    // }
 
 }
